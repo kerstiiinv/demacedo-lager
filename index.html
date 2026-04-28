@@ -585,7 +585,7 @@ function renderResTab(){
     const st=checkStock(r);
     let stockHtml='';
     if(st){
-      const cls=st.ok===true?'':'st.ok==='partial'?'partial':'warn';
+      const cls=st.ok===true?'ok':st.ok==='partial'?'partial':'warn';
       stockHtml=`<div class="res-stock ${st.ok===true?'':st.ok==='partial'?'partial':'warn'}">${st.msg}</div>`;
     }
     html+=`<div class="res-card">
