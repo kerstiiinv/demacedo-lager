@@ -7,80 +7,64 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --black:#111;--white:#fff;--off:#f8f8f6;
-  --gL:#f0f0ed;--gM:#dededa;--gD:#888880;
-  --red:#b83232;--green:#2a5e42;--orange:#c27820;--blue:#1e4a8a;
-  --font:'Helvetica Neue',Helvetica,Arial,sans-serif;
-}
+:root{--black:#111;--white:#fff;--off:#f8f8f6;--gL:#f0f0ed;--gM:#dededa;--gD:#888880;--red:#b83232;--green:#2a5e42;--orange:#c27820;--blue:#1e4a8a;--font:'Helvetica Neue',Helvetica,Arial,sans-serif}
 html,body{background:var(--white);color:var(--black);font-family:var(--font);font-size:14px;line-height:1.5;min-height:100vh}
-
 .hdr{position:sticky;top:0;z-index:100;background:var(--white);border-bottom:2px solid var(--black);padding:0 14px;display:flex;align-items:center;justify-content:space-between;height:50px}
 .logo{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
 .logo span{font-weight:300}
-.hdr-r{font-size:11px;color:var(--gD);text-align:right}
-
+.hdr-r{font-size:11px;color:var(--gD)}
 .stats{display:flex;border-bottom:1px solid var(--gM);background:var(--off);overflow-x:auto}
-.sc{flex:1;min-width:70px;padding:8px 10px;border-right:1px solid var(--gM)}
+.sc{flex:1;min-width:68px;padding:8px 10px;border-right:1px solid var(--gM)}
 .sc:last-child{border-right:none}
 .sn{font-size:18px;font-weight:300;line-height:1}
-.sl{font-size:9px;color:var(--gD);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
-.warn{color:var(--red)!important}.sok2{color:var(--green)!important}.sorange{color:var(--orange)!important}
-
-.alert-bar{display:none;padding:7px 14px;background:#fff3cd;border-bottom:1px solid #e0c060;font-size:12px;line-height:1.5}
+.sl{font-size:9px;color:var(--gD);text-transform:uppercase;letter-spacing:.05em;margin-top:2px}
+.warn{color:var(--red)!important}.sorange{color:var(--orange)!important}
+.alert-bar{display:none;padding:7px 14px;background:#fff8e1;border-bottom:1px solid #e0c060;font-size:12px;line-height:1.6}
 .alert-bar.show{display:block}
-
 .nav{display:flex;border-bottom:2px solid var(--black);overflow-x:auto;-webkit-overflow-scrolling:touch}
 .nt{flex-shrink:0;padding:10px 14px;font-size:11px;font-weight:400;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;border-right:1px solid var(--black);border-bottom:3px solid transparent;white-space:nowrap;-webkit-tap-highlight-color:transparent;user-select:none}
 .nt:last-child{border-right:none}
 .nt.active{border-bottom:3px solid var(--black);font-weight:700}
 .nt:hover:not(.active){background:var(--gL)}
-
 .toolbar{padding:10px 14px;display:flex;gap:7px;flex-wrap:wrap;align-items:center;border-bottom:1px solid var(--gM)}
 .toolbar input[type=text]{flex:1;min-width:100px;height:40px;border:1px solid var(--black);padding:0 10px;font-family:var(--font);font-size:16px;background:var(--white);outline:none;-webkit-appearance:none}
 .toolbar input[type=text]:focus{background:var(--gL)}
 .toolbar select{height:40px;border:1px solid var(--black);padding:0 26px 0 8px;font-family:var(--font);font-size:13px;background:var(--white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23111' stroke-width='1.5' fill='none'/%3E%3C/svg%3E") no-repeat right 8px center;cursor:pointer;outline:none;-webkit-appearance:none}
-
 .btn{height:40px;padding:0 14px;border:1.5px solid var(--black);font-family:var(--font);font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;background:var(--white);cursor:pointer;transition:background .12s,color .12s;white-space:nowrap;-webkit-tap-highlight-color:transparent}
 .btn:hover,.btn:active{background:var(--black);color:var(--white)}
 .btn-fill{background:var(--black);color:var(--white)}.btn-fill:hover{background:#333}
 .btn-danger{border-color:var(--red);color:var(--red)}.btn-danger:hover{background:var(--red);color:var(--white)}
-.btn-orange{border-color:var(--orange);color:var(--orange)}.btn-orange:hover{background:var(--orange);color:var(--white)}
 .btn-green{border-color:var(--green);color:var(--green)}.btn-green:hover{background:var(--green);color:var(--white)}
 .btn-sm{height:32px;font-size:10px;padding:0 10px}
-
 .excel-bar{padding:7px 14px;display:flex;gap:7px;flex-wrap:wrap;border-bottom:1px solid var(--gM);background:var(--off)}
 .excel-bar label.btn{display:flex;align-items:center;cursor:pointer}
 input[type=file]{display:none}
-
 .gw{padding:12px 14px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:1px;background:var(--black);border:1px solid var(--black)}
 .card{background:var(--white);padding:11px;cursor:pointer;transition:background .1s;display:flex;flex-direction:column;-webkit-tap-highlight-color:transparent}
 .card:hover,.card:active{background:var(--gL)}
-.card-img{width:100%;height:80px;display:flex;align-items:center;justify-content:center;background:var(--off);margin-bottom:8px;overflow:hidden;position:relative}
-.card-img svg{width:62px;height:62px}
+.card-img{width:100%;height:78px;display:flex;align-items:center;justify-content:center;background:var(--off);margin-bottom:8px;overflow:hidden}
+.card-img svg{width:60px;height:60px}
 .card-img img{width:100%;height:100%;object-fit:cover}
 .ctype{font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--gD);margin-bottom:2px}
-.cname{font-size:13px;font-weight:700;margin-bottom:1px;line-height:1.2}
+.cname{font-size:12px;font-weight:700;margin-bottom:1px;line-height:1.2}
 .csku{font-size:9px;color:var(--gD);margin-bottom:2px;font-family:monospace}
-.cloc{font-size:10px;color:var(--orange);margin-bottom:5px;font-weight:500}
+.cloc{font-size:10px;color:var(--orange);margin-bottom:4px;font-weight:500}
+.cnotiz{font-size:10px;color:var(--gD);margin-bottom:4px;font-style:italic}
 .ctags{display:flex;gap:3px;flex-wrap:wrap;margin-bottom:7px}
 .tag{font-size:10px;padding:2px 6px;border:1px solid var(--black);display:inline-flex;align-items:center;gap:3px}
 .tag-s{border-color:var(--gD);color:var(--gD)}
-.tag-res{border-color:var(--orange);color:var(--orange)}
-.tag-sample{border-color:var(--blue);color:var(--blue)}
+.tag-sample{border-color:var(--blue);color:var(--blue);font-size:9px}
+.tag-archiv{border-color:var(--gD);color:var(--gD);font-size:9px;font-style:italic}
 .cdot{display:inline-block;width:9px;height:9px;border-radius:50%;border:1px solid rgba(0,0,0,.2);flex-shrink:0}
 .cstock{display:flex;align-items:baseline;justify-content:space-between;margin-top:auto}
 .snum{font-size:22px;font-weight:300}
 .sunit{font-size:10px;color:var(--gD);margin-left:2px}
-.sg{color:var(--green)}.sr{color:var(--red)}.so{color:var(--orange)}
+.sg{color:var(--green)}.sr{color:var(--red)}
 .lbadge{font-size:9px;color:var(--red);text-transform:uppercase;font-weight:700}
-.rbadge{font-size:9px;color:var(--orange);text-transform:uppercase}
 .sbar{height:2px;background:var(--gM);margin-top:6px}
 .sfill{height:2px}
 .empty{padding:40px;text-align:center;color:var(--gD);font-size:13px;background:var(--white);grid-column:1/-1}
-
-/* MODAL */
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200}
 .overlay.open{display:block}
 .modal{position:fixed;left:0;right:0;bottom:0;background:var(--white);border-top:2px solid var(--black);max-height:93vh;display:flex;flex-direction:column;overflow:hidden}
@@ -97,105 +81,75 @@ input[type=file]{display:none}
 .ff input:focus,.ff select:focus,.ff textarea:focus{background:var(--gL)}
 .ff textarea{resize:vertical;height:52px;font-size:14px}
 .f2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.divider{border:none;border-top:1px solid var(--gM);margin:11px 0}
-
-/* SS PICKER */
-.ss-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px;max-height:190px;overflow-y:auto;margin-top:5px}
+.divider{border:none;border-top:1px solid var(--gM);margin:10px 0}
+.ss-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px;max-height:180px;overflow-y:auto;margin-top:5px}
 .ssi{padding:7px 8px;border:1px solid var(--gM);cursor:pointer;transition:all .1s}
 .ssi:hover,.ssi.sel{border-color:var(--black);background:var(--gL)}
 .ssi-name{font-weight:700;font-size:11px}
 .ssi-sku{font-size:10px;color:var(--gD);font-family:monospace}
 .ssi-sub{font-size:10px;color:var(--gD)}
-
-/* COLOR DOTS */
 .cdots{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
 .cpick{width:22px;height:22px;border-radius:50%;border:2px solid transparent;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .cpick.sel{border-color:var(--black)!important}
-
-/* RESERVATIONEN */
 .res-list{padding:0 14px 14px}
 .res-card{border:1px solid var(--black);padding:12px;margin-bottom:8px;background:var(--white)}
 .res-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
 .res-auftrag{font-size:13px;font-weight:700;margin-bottom:3px}
 .res-detail{font-size:12px;color:var(--gD)}
 .res-date{font-size:11px;color:var(--orange);margin-top:3px;font-weight:500}
-.res-stock{margin-top:8px;padding:8px;background:var(--off);font-size:12px;border-left:3px solid var(--green)}
-.res-stock.warn{border-color:var(--red)}
-.res-stock.partial{border-color:var(--orange)}
+.res-stock{margin-top:8px;padding:8px 10px;font-size:12px;border-left:3px solid var(--green);background:var(--off)}
+.res-stock.warn{border-color:var(--red)}.res-stock.partial{border-color:var(--orange)}
 .res-actions{display:flex;gap:5px;flex-shrink:0}
 .res-empty{padding:30px;text-align:center;color:var(--gD);font-size:13px}
-.sec-hdr{padding:10px 14px 8px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gD);border-bottom:1px solid var(--gM);background:var(--off);margin-bottom:0}
+.sec-hdr{padding:10px 14px 8px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gD);border-bottom:1px solid var(--gM);background:var(--off)}
 .toolbar-res{padding:10px 14px;display:flex;justify-content:flex-end;border-bottom:1px solid var(--gM)}
-
-/* ACCESSOIRES TAB */
-.acc-list{padding:12px 14px}
-.acc-card{border:1px solid var(--black);padding:11px;margin-bottom:7px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;background:var(--white)}
-.acc-card:hover{background:var(--gL)}
-.acc-name{font-size:13px;font-weight:500}
-.acc-typ{font-size:10px;color:var(--gD);text-transform:uppercase;letter-spacing:.06em}
-.acc-n{font-size:22px;font-weight:300}
 </style>
 </head>
 <body>
-
 <header class="hdr">
   <div class="logo">Studio <span>de Macedo</span></div>
   <div class="hdr-r" id="hdrDate"></div>
 </header>
-
 <div class="stats" id="stats"></div>
 <div class="alert-bar" id="alertBar"></div>
-
 <div class="nav">
   <div class="nt active" data-tab="textilien">Textilien</div>
   <div class="nt" data-tab="accessoires">Bags &amp; Acc.</div>
   <div class="nt" data-tab="material">Farben</div>
   <div class="nt" data-tab="reservationen">Aufträge</div>
 </div>
-
 <div id="tabContent"></div>
-
-<div class="overlay" id="overlay">
-  <div class="modal" id="modal"></div>
-</div>
+<div class="overlay" id="overlay"><div class="modal" id="modal"></div></div>
 
 <script>
-// ── SVG ILLUSTRATIONS ────────────────────────────────────────────────────
+// SVG ILLUSTRATIONS
 const SVG={
   tshirt:c=>`<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 15L9 24L18 28L18 63L62 63L62 28L71 24L60 15C57 21 51 25 40 25C29 25 23 21 20 15Z" fill="${c}" stroke="#111" stroke-width="1.8" stroke-linejoin="round"/></svg>`,
-  hoodie:c=>`<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 14L9 25L18 29L18 64L62 64L62 29L71 25L60 14C57 20 51 23 40 23C29 23 23 20 20 14Z" fill="${c}" stroke="#111" stroke-width="1.8" stroke-linejoin="round"/><path d="M31 14C31 14 34 27 40 27C46 27 49 14 49 14" fill="${c}" stroke="#111" stroke-width="1.5" stroke-linejoin="round"/><circle cx="40" cy="14" r="5.5" fill="${c}" stroke="#111" stroke-width="1.5"/><line x1="18" y1="45" x2="62" y2="45" stroke="#111" stroke-width=".7" opacity=".4"/></svg>`,
+  hoodie:c=>`<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 14L9 25L18 29L18 64L62 64L62 29L71 25L60 14C57 20 51 23 40 23C29 23 23 20 20 14Z" fill="${c}" stroke="#111" stroke-width="1.8" stroke-linejoin="round"/><path d="M31 14C31 14 34 27 40 27C46 27 49 14 49 14" fill="${c}" stroke="#111" stroke-width="1.5"/><circle cx="40" cy="14" r="5.5" fill="${c}" stroke="#111" stroke-width="1.5"/></svg>`,
   crewneck:c=>`<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 16L9 27L18 31L18 64L62 64L62 31L71 27L60 16C57 22 51 25 40 25C29 25 23 22 20 16Z" fill="${c}" stroke="#111" stroke-width="1.8" stroke-linejoin="round"/><path d="M32 16Q40 23 48 16" fill="none" stroke="#111" stroke-width="1.5"/></svg>`,
   longsleeve:c=>`<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 18L6 30L14 34L14 63L66 63L66 34L74 30L60 18C57 23 51 26 40 26C29 26 23 23 20 18Z" fill="${c}" stroke="#111" stroke-width="1.8" stroke-linejoin="round"/></svg>`,
-  jacke:c=>`<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 14L8 26L18 30L18 65L62 65L62 30L72 26L60 14C57 20 51 22 40 22C29 22 23 20 20 14Z" fill="${c}" stroke="#111" stroke-width="1.8" stroke-linejoin="round"/><line x1="40" y1="22" x2="40" y2="65" stroke="#111" stroke-width="1.2"/><rect x="32" y="35" width="7" height="5" rx="1" fill="${c}" stroke="#111" stroke-width="1"/></svg>`,
+  jacke:c=>`<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 14L8 26L18 30L18 65L62 65L62 30L72 26L60 14C57 20 51 22 40 22C29 22 23 20 20 14Z" fill="${c}" stroke="#111" stroke-width="1.8" stroke-linejoin="round"/><line x1="40" y1="22" x2="40" y2="65" stroke="#111" stroke-width="1.2"/></svg>`,
   weste:c=>`<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M25 14L14 26L24 30L24 65L56 65L56 30L66 26L55 14C52 20 47 23 40 23C33 23 28 20 25 14Z" fill="${c}" stroke="#111" stroke-width="1.8" stroke-linejoin="round"/><line x1="40" y1="23" x2="40" y2="65" stroke="#111" stroke-width="1.2"/></svg>`,
   totebag:()=>`<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 30L15 65L65 65L62 30Z" fill="#ddd" stroke="#111" stroke-width="1.5"/><path d="M30 30C30 22 34 16 40 16C46 16 50 22 50 30" fill="none" stroke="#111" stroke-width="1.8" stroke-linecap="round"/></svg>`,
   farbdose:()=>`<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="20" y="26" width="40" height="36" rx="3" fill="#ddd" stroke="#111" stroke-width="1.5"/><rect x="20" y="26" width="40" height="10" rx="2" fill="#bbb" stroke="#111" stroke-width="1.5"/><rect x="28" y="18" width="24" height="9" rx="2" fill="#ccc" stroke="#111" stroke-width="1.2"/></svg>`,
   flasche:()=>`<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="33" y="13" width="14" height="9" rx="2" fill="#ccc" stroke="#111" stroke-width="1.2"/><path d="M29 22Q23 30 23 41L23 63Q23 65 25 65L55 65Q57 65 57 63L57 41Q57 30 51 22Z" fill="#ddd" stroke="#111" stroke-width="1.5"/></svg>`,
 };
-
-const CLRS={
-  'Schwarz':'#1a1a1a','Weiß':'#f0f0ec','Weiss':'#f0f0ec','Off White':'#e8e2d4',
-  'Natural Raw':'#d4c8a8','Cotton Pink':'#e8b4b8','Navy':'#1e2d55','Grau':'#9a9a94',
-  'Dark Heather Grey':'#6a6a64','Light Heather Grey':'#c0c0ba','Heritage Brown':'#7a5a3a',
-  'Glazed Green':'#6a8a5a','Black Rock':'#2a2a2a','Fiesta':'#e87060',
-  'Serene Blue':'#7aA4c4','Caribbean Blue':'#4090c4','Vulcano Stone':'#8a8078',
-  'Lemon':'#e8d860','Beige':'#d4c5a5','Red Brown':'#8a3a2a','Pink':'#e090a0',
-};
+const CLRS={'Schwarz':'#1a1a1a','Weiß':'#f0f0ec','Weiss':'#f0f0ec','Off White':'#e8e2d4','Natural Raw':'#d4c8a8','Cotton Pink':'#e8b4b8','Navy':'#1e2d55','Grau':'#9a9a94','Dark Heather Grey':'#6a6a64','Light Heather Grey':'#c0c0ba','Cool Heather Grey':'#b0b0aa','Heritage Brown':'#7a5a3a','Glazed Green':'#6a8a5a','Black Rock':'#2a2a2a','Fiesta':'#e87060','Serene Blue':'#7aa4c4','Caribbean Blue':'#4090c4','Vulcano Stone':'#8a8078','Lemon':'#e8d860','Beige':'#d4c5a5','Red Brown':'#8a3a2a','Desert Dust':'#c8b89a','Pink':'#e090a0','Forest':'#2a4430','Yellow':'#f0d040','Stargazer':'#3a3a5a','French Navy':'#1a2050','Schwarz (LW)':'#2a2a2a'};
 function clr(n){return CLRS[n]||'#aaa'}
-
 function svgFor(item){
   const c=clr(item.farbe);
   const cat=(item.cat||'').toLowerCase();
-  if(cat.includes('hoodie')) return SVG.hoodie(c);
-  if(cat.includes('crewneck')||cat.includes('sweatshirt')) return SVG.crewneck(c);
-  if(cat.includes('longsleeve')||cat.includes('ls')) return SVG.longsleeve(c);
-  if(cat.includes('jacke')||cat.includes('bomber')||cat.includes('liner')) return SVG.jacke(c);
-  if(cat.includes('weste')) return SVG.weste(c);
-  if(cat.includes('bag')||cat.includes('tote')) return SVG.totebag();
+  const ss=(item.ss||'').toLowerCase();
+  if(ss.includes('hoodie')||cat.includes('hoodie')) return SVG.hoodie(c);
+  if(cat.includes('crewneck')||ss.includes('muser')||ss.includes('changer')||ss.includes('roller')) return SVG.crewneck(c);
+  if(cat.includes('longsleeve')||ss.includes(' ls ')||ss.includes('longsleeve')||ss.includes('shifts dry')||ss.includes('freestyler ls')) return SVG.longsleeve(c);
+  if(cat.includes('jacke')||ss.includes('bomber')||ss.includes('breezer')||ss.includes('coach')) return SVG.jacke(c);
+  if(cat.includes('weste')||ss.includes('liner vest')) return SVG.weste(c);
+  if(cat.includes('bag')||ss.includes('shopper')) return SVG.totebag();
   return SVG.tshirt(c);
 }
 
-// ── SS CATALOGUE ──────────────────────────────────────────────────────────
+// STANLEY/STELLA CATALOGUE
 const SS=[
   {name:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',gsm:'180 GSM',sizes:['XS','S','M','L','XL','XXL','3XL']},
   {name:'Sparker 2.0',sku:'STTU061',cat:'T-Shirt Unisex',gsm:'180 GSM',sizes:['XS','S','M','L','XL','XXL']},
@@ -209,686 +163,652 @@ const SS=[
   {name:'Stella Ella',sku:'SATW031',cat:'T-Shirt Damen',gsm:'180 GSM',sizes:['XS','S','M','L','XL']},
   {name:'Drummer 2.0',sku:'STSU168',cat:'Hoodie Unisex',gsm:'280 GSM',sizes:['XS','S','M','L','XL','XXL']},
   {name:'Slammer 2.0',sku:'STSU211',cat:'Hoodie Oversized',gsm:'380 GSM',sizes:['XS','S','M','L','XL','XXL']},
-  {name:'Connector 2.0',sku:'STSU207',cat:'Zip-Hoodie Unisex',gsm:'300 GSM',sizes:['XS','S','M','L','XL','XXL']},
+  {name:'Connector 2.0',sku:'STSU207',cat:'Zip-Hoodie',gsm:'300 GSM',sizes:['XS','S','M','L','XL','XXL']},
   {name:'Changer 2.0',sku:'STSU173',cat:'Crewneck Unisex',gsm:'280 GSM',sizes:['XS','S','M','L','XL','XXL']},
   {name:'Stella Ava',sku:'SATW033',cat:'Tank Top Damen',gsm:'180 GSM',sizes:['XS','S','M','L','XL']},
 ];
 
-// ── STORAGE ───────────────────────────────────────────────────────────────
+// STORAGE
 function load(){
   try{
+    const keys={t:'textilien',m:'material',r:'reservationen',a:'accessoires'};
     ['t','m','r','a'].forEach(k=>{
-      const v=JSON.parse(localStorage.getItem('sdm_'+k));
-      if(v) data[{t:'textilien',m:'material',r:'reservationen',a:'accessoires'}[k]]=v;
+      const v=JSON.parse(localStorage.getItem('sdm2_'+k));
+      if(v && v.length>0) data[keys[k]]=v;
     });
-    const n=JSON.parse(localStorage.getItem('sdm_nid'));
+    const n=JSON.parse(localStorage.getItem('sdm2_nid'));
     if(n) Object.assign(nid,n);
   }catch(e){}
 }
 function save(){
   try{
-    localStorage.setItem('sdm_t',JSON.stringify(data.textilien));
-    localStorage.setItem('sdm_m',JSON.stringify(data.material));
-    localStorage.setItem('sdm_r',JSON.stringify(data.reservationen));
-    localStorage.setItem('sdm_a',JSON.stringify(data.accessoires));
-    localStorage.setItem('sdm_nid',JSON.stringify(nid));
+    localStorage.setItem('sdm2_t',JSON.stringify(data.textilien));
+    localStorage.setItem('sdm2_m',JSON.stringify(data.material));
+    localStorage.setItem('sdm2_r',JSON.stringify(data.reservationen));
+    localStorage.setItem('sdm2_a',JSON.stringify(data.accessoires));
+    localStorage.setItem('sdm2_nid',JSON.stringify(nid));
   }catch(e){}
 }
 
-// ── REAL INVENTORY DATA (from PDF 14.01.2026) ─────────────────────────────
+// ── DATA ──────────────────────────────────────────────────────────────────
 let data={
 textilien:[
-  // Creator 2.0 Schwarz
   {id:1,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'S',lagerort:'M',bestand:3,min:3,img:'',notiz:'',sample:1},
   {id:2,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'M',lagerort:'M',bestand:7,min:3,img:'',notiz:'',sample:1},
   {id:3,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'L',lagerort:'M',bestand:6,min:3,img:'',notiz:'',sample:1},
   {id:4,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'XL',lagerort:'M',bestand:9,min:3,img:'',notiz:'',sample:1},
-  {id:5,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'XXL',lagerort:'M',bestand:4,min:2,img:'',notiz:'',sample:0},
-  // Creator 2.0 Weiß
-  {id:6,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Weiß',groesse:'S',lagerort:'',bestand:4,min:3,img:'',notiz:'',sample:0},
-  {id:7,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Weiß',groesse:'M',lagerort:'',bestand:9,min:3,img:'',notiz:'',sample:0},
-  {id:8,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Weiß',groesse:'L',lagerort:'',bestand:9,min:3,img:'',notiz:'',sample:0},
-  {id:9,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Weiß',groesse:'XL',lagerort:'',bestand:1,min:2,img:'',notiz:'',sample:0},
-  // Creator 2.0 Off White
-  {id:10,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Off White',groesse:'S',lagerort:'',bestand:0,min:2,img:'',notiz:'',sample:0},
-  // Creator 2.0 Cotton Pink
-  {id:11,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Cotton Pink',groesse:'XXS',lagerort:'',bestand:4,min:2,img:'',notiz:'',sample:0},
-  {id:12,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Cotton Pink',groesse:'XS',lagerort:'',bestand:4,min:2,img:'',notiz:'',sample:0},
-  {id:13,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Cotton Pink',groesse:'S',lagerort:'',bestand:6,min:3,img:'',notiz:'',sample:0},
-  {id:14,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Cotton Pink',groesse:'M',lagerort:'',bestand:2,min:2,img:'',notiz:'',sample:0},
-  {id:15,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Cotton Pink',groesse:'L',lagerort:'',bestand:2,min:2,img:'',notiz:'',sample:0},
-  // Sparker 2.0 Schwarz
-  {id:16,ss:'Sparker 2.0',sku:'STTU061',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'XS',lagerort:'M',bestand:4,min:3,img:'',notiz:'',sample:1},
-  {id:17,ss:'Sparker 2.0',sku:'STTU061',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'S',lagerort:'M',bestand:10,min:3,img:'',notiz:'',sample:1},
-  {id:18,ss:'Sparker 2.0',sku:'STTU061',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'M',lagerort:'M',bestand:6,min:3,img:'',notiz:'',sample:1},
-  {id:19,ss:'Sparker 2.0',sku:'STTU061',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'L',lagerort:'M',bestand:9,min:3,img:'',notiz:'',sample:1},
-  {id:20,ss:'Sparker 2.0',sku:'STTU061',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'XL',lagerort:'M',bestand:6,min:3,img:'',notiz:'',sample:1},
-  // Sparker 2.0 Weiß
-  {id:21,ss:'Sparker 2.0',sku:'STTU061',cat:'T-Shirt Unisex',farbe:'Weiß',groesse:'S',lagerort:'',bestand:5,min:3,img:'',notiz:'',sample:0},
-  {id:22,ss:'Sparker 2.0',sku:'STTU061',cat:'T-Shirt Unisex',farbe:'Weiß',groesse:'M',lagerort:'',bestand:9,min:3,img:'',notiz:'',sample:0},
-  {id:23,ss:'Sparker 2.0',sku:'STTU061',cat:'T-Shirt Unisex',farbe:'Weiß',groesse:'L',lagerort:'',bestand:7,min:3,img:'',notiz:'',sample:0},
-  {id:24,ss:'Sparker 2.0',sku:'STTU061',cat:'T-Shirt Unisex',farbe:'Weiß',groesse:'XL',lagerort:'',bestand:4,min:2,img:'',notiz:'',sample:0},
-  // Sparker 2.0 Off White
-  {id:25,ss:'Sparker 2.0',sku:'STTU061',cat:'T-Shirt Unisex',farbe:'Off White',groesse:'S',lagerort:'',bestand:6,min:3,img:'',notiz:'',sample:0},
-  {id:26,ss:'Sparker 2.0',sku:'STTU061',cat:'T-Shirt Unisex',farbe:'Off White',groesse:'M',lagerort:'',bestand:4,min:3,img:'',notiz:'',sample:0},
-  {id:27,ss:'Sparker 2.0',sku:'STTU061',cat:'T-Shirt Unisex',farbe:'Off White',groesse:'L',lagerort:'',bestand:5,min:3,img:'',notiz:'',sample:0},
-  // Sparker 2.0 Natural Raw
-  {id:28,ss:'Sparker 2.0',sku:'STTU061',cat:'T-Shirt Unisex',farbe:'Natural Raw',groesse:'XS',lagerort:'Box 1',bestand:1,min:2,img:'',notiz:'',sample:0},
-  {id:29,ss:'Sparker 2.0',sku:'STTU061',cat:'T-Shirt Unisex',farbe:'Natural Raw',groesse:'S',lagerort:'Box 1',bestand:2,min:2,img:'',notiz:'',sample:0},
-  {id:30,ss:'Sparker 2.0',sku:'STTU061',cat:'T-Shirt Unisex',farbe:'Natural Raw',groesse:'M',lagerort:'Box 1',bestand:2,min:2,img:'',notiz:'',sample:0},
-  // Freestyler
-  {id:31,ss:'Freestyler',sku:'STTU799',cat:'T-Shirt Unisex',farbe:'Dark Heather Grey',groesse:'XXS',lagerort:'M',bestand:1,min:2,img:'',notiz:'1x S,M,L bei Sarah Schott',sample:1},
-  {id:32,ss:'Freestyler',sku:'STTU799',cat:'T-Shirt Unisex',farbe:'Dark Heather Grey',groesse:'XS',lagerort:'M',bestand:2,min:2,img:'',notiz:'1x S,M,L bei Sarah Schott',sample:0},
-  {id:33,ss:'Freestyler',sku:'STTU799',cat:'T-Shirt Unisex',farbe:'Dark Heather Grey',groesse:'S',lagerort:'M',bestand:4,min:2,img:'',notiz:'',sample:0},
-  {id:34,ss:'Freestyler',sku:'STTU799',cat:'T-Shirt Unisex',farbe:'Dark Heather Grey',groesse:'M',lagerort:'M',bestand:4,min:2,img:'',notiz:'',sample:0},
-  {id:35,ss:'Freestyler',sku:'STTU799',cat:'T-Shirt Unisex',farbe:'Dark Heather Grey',groesse:'L',lagerort:'M',bestand:6,min:3,img:'',notiz:'',sample:0},
-  {id:36,ss:'Freestyler',sku:'STTU799',cat:'T-Shirt Unisex',farbe:'Dark Heather Grey',groesse:'XL',lagerort:'M',bestand:1,min:2,img:'',notiz:'',sample:0},
-  {id:37,ss:'Freestyler Vintage',sku:'',cat:'T-Shirt Unisex',farbe:'Black Rock',groesse:'S',lagerort:'M',bestand:3,min:2,img:'',notiz:'',sample:1},
-  {id:38,ss:'Freestyler Vintage',sku:'',cat:'T-Shirt Unisex',farbe:'Black Rock',groesse:'M',lagerort:'M',bestand:3,min:2,img:'',notiz:'',sample:0},
-  {id:39,ss:'Freestyler Vintage',sku:'',cat:'T-Shirt Unisex',farbe:'Black Rock',groesse:'L',lagerort:'M',bestand:2,min:2,img:'',notiz:'',sample:0},
-  // Asher
-  {id:40,ss:'Asher',sku:'STTU078',cat:'T-Shirt Oversized',farbe:'Weiß',groesse:'S',lagerort:'',bestand:1,min:2,img:'',notiz:'',sample:0},
-  {id:41,ss:'Asher',sku:'STTU078',cat:'T-Shirt Oversized',farbe:'Weiß',groesse:'L',lagerort:'',bestand:1,min:2,img:'',notiz:'',sample:0},
-  // Blaster
-  {id:42,ss:'Blaster',sku:'',cat:'T-Shirt Oversized',farbe:'Schwarz',groesse:'onesize',lagerort:'Box 1',bestand:1,min:2,img:'',notiz:'',sample:0},
-  // Stella Muser
-  {id:43,ss:'Stella Muser',sku:'SAWU034',cat:'Sweatshirt Damen',farbe:'Off White',groesse:'XS',lagerort:'M',bestand:1,min:2,img:'',notiz:'',sample:1},
-  {id:44,ss:'Stella Muser',sku:'SAWU034',cat:'Sweatshirt Damen',farbe:'Off White',groesse:'S',lagerort:'M',bestand:7,min:3,img:'',notiz:'',sample:0},
-  {id:45,ss:'Stella Muser',sku:'SAWU034',cat:'Sweatshirt Damen',farbe:'Off White',groesse:'M',lagerort:'M',bestand:4,min:2,img:'',notiz:'',sample:0},
-  {id:46,ss:'Stella Muser',sku:'SAWU034',cat:'Sweatshirt Damen',farbe:'Off White',groesse:'L',lagerort:'M',bestand:3,min:2,img:'',notiz:'',sample:0},
-  {id:47,ss:'Stella Muser',sku:'SAWU034',cat:'Sweatshirt Damen',farbe:'Weiß',groesse:'onesize',lagerort:'M',bestand:1,min:2,img:'',notiz:'',sample:1},
-  // Stella Nova Black
-  {id:48,ss:'Stella Nova',sku:'SATW030',cat:'T-Shirt Damen',farbe:'Schwarz',groesse:'onesize',lagerort:'M',bestand:1,min:2,img:'',notiz:'bei Sarah Schott',sample:1},
-  // Stella Collider
-  {id:49,ss:'Stella Collider',sku:'',cat:'T-Shirt Damen',farbe:'Schwarz',groesse:'XS',lagerort:'',bestand:1,min:2,img:'',notiz:'',sample:0},
-  // Longsleeves
-  {id:50,ss:'Creator LS 2.0',sku:'',cat:'Longsleeve Unisex',farbe:'Weiß',groesse:'S',lagerort:'Box 2',bestand:1,min:2,img:'',notiz:'',sample:1},
-  {id:51,ss:'Creator LS 2.0',sku:'',cat:'Longsleeve Unisex',farbe:'Weiß',groesse:'M',lagerort:'Box 2',bestand:1,min:2,img:'',notiz:'',sample:0},
-  // Breezer
-  {id:52,ss:'Breezer',sku:'',cat:'Jacke',farbe:'Weiß',groesse:'S',lagerort:'Box 1',bestand:2,min:1,img:'',notiz:'',sample:1},
-  {id:53,ss:'Breezer',sku:'',cat:'Jacke',farbe:'Weiß',groesse:'M',lagerort:'Box 1',bestand:3,min:1,img:'',notiz:'',sample:0},
-  {id:54,ss:'Breezer',sku:'',cat:'Jacke',farbe:'Weiß',groesse:'L',lagerort:'Box 1',bestand:4,min:1,img:'',notiz:'',sample:0},
-  {id:55,ss:'Breezer',sku:'',cat:'Jacke',farbe:'Weiß',groesse:'XL',lagerort:'Box 1',bestand:1,min:1,img:'',notiz:'',sample:0},
-  // Liner Vest
-  {id:56,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Schwarz',groesse:'XS',lagerort:'',bestand:1,min:1,img:'',notiz:'',sample:0},
-  {id:57,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Schwarz',groesse:'M',lagerort:'',bestand:1,min:1,img:'',notiz:'',sample:0},
-  {id:58,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Schwarz',groesse:'L',lagerort:'',bestand:5,min:1,img:'',notiz:'',sample:0},
-  {id:59,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Schwarz',groesse:'XL',lagerort:'',bestand:1,min:1,img:'',notiz:'',sample:0},
-  // Changer
-  {id:60,ss:'Changer 2.0',sku:'STSU173',cat:'Crewneck Unisex',farbe:'Glazed Green',groesse:'onesize',lagerort:'Box 2',bestand:1,min:1,img:'',notiz:'',sample:0},
-  // Crafter
-  {id:61,ss:'Crafter',sku:'',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'onesize',lagerort:'Box 1',bestand:5,min:2,img:'',notiz:'',sample:1},
-  // Sparker Old
-  {id:62,ss:'Sparker (Old)',sku:'',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'L',lagerort:'Box 1',bestand:2,min:1,img:'',notiz:'',sample:0},
-  // MING JOSÉ
-  {id:63,ss:'Stella Muser Club Tropical',sku:'',cat:'Sweatshirt Damen',farbe:'Pink',groesse:'XS',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
-  {id:64,ss:'Stella Muser Club Tropical',sku:'',cat:'Sweatshirt Damen',farbe:'Pink',groesse:'S',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'',sample:0},
-  {id:65,ss:'Stella Muser Club Tropical',sku:'',cat:'Sweatshirt Damen',farbe:'Pink',groesse:'M',lagerort:'Ming José',bestand:5,min:1,img:'',notiz:'',sample:0},
-  {id:66,ss:'Stella Muser Club Tropical',sku:'',cat:'Sweatshirt Damen',farbe:'Pink',groesse:'L',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'',sample:0},
-  {id:67,ss:'Stella Muser Club Tropical',sku:'',cat:'Sweatshirt Damen',farbe:'Off White',groesse:'XS',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'XS dreckig',sample:0},
-  {id:68,ss:'Stella Muser Club Tropical',sku:'',cat:'Sweatshirt Damen',farbe:'Off White',groesse:'S',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
-  {id:69,ss:'Stella Muser Club Tropical',sku:'',cat:'Sweatshirt Damen',farbe:'Light Heather Grey',groesse:'onesize',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
-  {id:70,ss:'Coach Jacket',sku:'',cat:'Jacke',farbe:'Schwarz',groesse:'onesize',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
-  {id:71,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Red Brown',groesse:'XS',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
-  {id:72,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Red Brown',groesse:'S',lagerort:'Ming José',bestand:3,min:1,img:'',notiz:'',sample:0},
-  {id:73,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Red Brown',groesse:'M',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
-  {id:74,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Beige',groesse:'S',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'',sample:0},
-  {id:75,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Beige',groesse:'M',lagerort:'Ming José',bestand:3,min:1,img:'',notiz:'',sample:0},
-  {id:76,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Beige',groesse:'L',lagerort:'Ming José',bestand:3,min:1,img:'',notiz:'',sample:0},
-  {id:77,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Beige',groesse:'XL',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
-  {id:78,ss:'Bomber Jacket',sku:'',cat:'Jacke',farbe:'Schwarz',groesse:'S',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
-  {id:79,ss:'Bomber Jacket',sku:'',cat:'Jacke',farbe:'Schwarz',groesse:'M',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'',sample:0},
-  {id:80,ss:'Bomber Jacket',sku:'',cat:'Jacke',farbe:'Schwarz',groesse:'L',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
-  {id:81,ss:'Stella Muser',sku:'',cat:'Sweatshirt Damen',farbe:'Weiß',groesse:'XS',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'',sample:0},
-  {id:82,ss:'Stella Muser',sku:'',cat:'Sweatshirt Damen',farbe:'Weiß',groesse:'S',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'',sample:0},
-  {id:83,ss:'Stella Muser',sku:'',cat:'Sweatshirt Damen',farbe:'Weiß',groesse:'M',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
-  {id:84,ss:'Stella Muser',sku:'',cat:'Sweatshirt Damen',farbe:'Weiß',groesse:'L',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
-  {id:85,ss:'Stella Muser',sku:'',cat:'Sweatshirt Damen',farbe:'Weiß',groesse:'XL',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
-  {id:86,ss:'Stella Muser',sku:'',cat:'Sweatshirt Damen',farbe:'Grau',groesse:'XS',lagerort:'Ming José',bestand:3,min:1,img:'',notiz:'',sample:0},
-  {id:87,ss:'Stella Muser',sku:'',cat:'Sweatshirt Damen',farbe:'Grau',groesse:'S',lagerort:'Ming José',bestand:3,min:1,img:'',notiz:'',sample:0},
-  {id:88,ss:'Stella Muser',sku:'',cat:'Sweatshirt Damen',farbe:'Grau',groesse:'M',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'',sample:0},
-  {id:89,ss:'Stella Muser Club Tropical',sku:'',cat:'Sweatshirt Damen',farbe:'Fiesta',groesse:'S',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'',sample:0},
-  {id:90,ss:'Stella Muser Club Tropical',sku:'',cat:'Sweatshirt Damen',farbe:'Fiesta',groesse:'M',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
-  {id:91,ss:'Muser Dog',sku:'',cat:'Sweatshirt Damen',farbe:'Schwarz',groesse:'XS',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'',sample:0},
-  {id:92,ss:'Muser Dog',sku:'',cat:'Sweatshirt Damen',farbe:'Schwarz',groesse:'S',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'',sample:0},
-  {id:93,ss:'Muser Dog',sku:'',cat:'Sweatshirt Damen',farbe:'Schwarz',groesse:'M',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
-  {id:94,ss:'Muser Dog',sku:'',cat:'Sweatshirt Damen',farbe:'Schwarz',groesse:'L',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
-  {id:95,ss:'Freestyler (For the Arts)',sku:'',cat:'T-Shirt Unisex',farbe:'Grau',groesse:'XXS',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
-  {id:96,ss:'Freestyler (For the Arts)',sku:'',cat:'T-Shirt Unisex',farbe:'Grau',groesse:'XS',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
-  {id:97,ss:'Freestyler (For the Arts)',sku:'',cat:'T-Shirt Unisex',farbe:'Grau',groesse:'S',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
-  {id:98,ss:'Freestyler (For the Arts)',sku:'',cat:'T-Shirt Unisex',farbe:'Grau',groesse:'M',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
-  {id:99,ss:'Freestyler (For the Arts)',sku:'',cat:'T-Shirt Unisex',farbe:'Grau',groesse:'L',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
-  {id:100,ss:'Freestyler (For the Arts)',sku:'',cat:'T-Shirt Unisex',farbe:'Grau',groesse:'XL',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
-  {id:101,ss:'Sparker Dog',sku:'',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'XS',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'',sample:0},
-  {id:102,ss:'Sparker Dog',sku:'',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'S',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'',sample:0},
-  {id:103,ss:'Sparker Dog',sku:'',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'M',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
-  {id:104,ss:'Sparker Dog',sku:'',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'L',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
-  // Lotus Collab
-  {id:105,ss:'Muser LS Lotus',sku:'',cat:'Longsleeve Damen',farbe:'Schwarz',groesse:'S',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'Lotus Fragrance',sample:0},
-  {id:106,ss:'Muser LS Lotus',sku:'',cat:'Longsleeve Damen',farbe:'Schwarz',groesse:'M',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'Lotus Fragrance',sample:0},
-  {id:107,ss:'Creator LS 2.0 Lotus',sku:'',cat:'Longsleeve Unisex',farbe:'Schwarz',groesse:'XS',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'Lotus Fragrance',sample:0},
-  {id:108,ss:'Creator LS 2.0 Lotus',sku:'',cat:'Longsleeve Unisex',farbe:'Schwarz',groesse:'S',lagerort:'Ming José',bestand:4,min:1,img:'',notiz:'Lotus Fragrance',sample:0},
-  {id:109,ss:'Creator LS 2.0 Lotus',sku:'',cat:'Longsleeve Unisex',farbe:'Schwarz',groesse:'M',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'Lotus Fragrance',sample:0},
-  {id:110,ss:'Creator LS 2.0 Lotus',sku:'',cat:'Longsleeve Unisex',farbe:'Schwarz',groesse:'L',lagerort:'Ming José',bestand:4,min:1,img:'',notiz:'Lotus Fragrance',sample:0},
-  {id:111,ss:'Creator LS 2.0 Lotus',sku:'',cat:'Longsleeve Unisex',farbe:'Schwarz',groesse:'XL',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'Lotus Fragrance',sample:0},
-  {id:112,ss:'Asher Lotus',sku:'',cat:'T-Shirt Oversized',farbe:'Weiß',groesse:'XS',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'Lotus Fragrance',sample:0},
-  {id:113,ss:'Asher Lotus',sku:'',cat:'T-Shirt Oversized',farbe:'Weiß',groesse:'S',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'Lotus Fragrance',sample:0},
-  {id:114,ss:'Asher Lotus',sku:'',cat:'T-Shirt Oversized',farbe:'Weiß',groesse:'M',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'Lotus Fragrance',sample:0},
-  {id:115,ss:'Muser LS Lotus',sku:'',cat:'Longsleeve Damen',farbe:'Weiß',groesse:'XS',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'Lotus Fragrance',sample:0},
-  {id:116,ss:'Muser LS Lotus',sku:'',cat:'Longsleeve Damen',farbe:'Weiß',groesse:'S',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'Lotus Fragrance',sample:0},
-  {id:117,ss:'Muser LS Lotus',sku:'',cat:'Longsleeve Damen',farbe:'Weiß',groesse:'M',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'Lotus Fragrance',sample:0},
-  {id:118,ss:'Creator LS 2.0 Lotus',sku:'',cat:'Longsleeve Unisex',farbe:'Weiß',groesse:'S',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'Lotus Fragrance',sample:0},
-  {id:119,ss:'Creator LS 2.0 Lotus',sku:'',cat:'Longsleeve Unisex',farbe:'Weiß',groesse:'M',lagerort:'Ming José',bestand:4,min:1,img:'',notiz:'Lotus Fragrance',sample:0},
-  {id:120,ss:'Radder 2.0',sku:'STTU868',cat:'T-Shirt Unisex',farbe:'Lemon',groesse:'XS',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
-  {id:121,ss:'Radder 2.0',sku:'STTU868',cat:'T-Shirt Unisex',farbe:'Lemon',groesse:'S',lagerort:'Ming José',bestand:3,min:1,img:'',notiz:'',sample:0},
-  {id:122,ss:'Radder 2.0',sku:'STTU868',cat:'T-Shirt Unisex',farbe:'Lemon',groesse:'M',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'',sample:0},
-  // Kids / Baby
-  {id:123,ss:'Baby Changer',sku:'',cat:'Baby',farbe:'Serene Blue',groesse:'12-18M',lagerort:'',bestand:9,min:2,img:'',notiz:'',sample:0},
-  {id:124,ss:'Baby Changer',sku:'',cat:'Baby',farbe:'Serene Blue',groesse:'18-24M',lagerort:'',bestand:4,min:2,img:'',notiz:'',sample:0},
-  {id:125,ss:'Mini Creator 2.0',sku:'',cat:'Kids',farbe:'Weiß',groesse:'3-4J',lagerort:'',bestand:6,min:2,img:'',notiz:'',sample:0},
-  {id:126,ss:'Mini Creator 2.0',sku:'',cat:'Kids',farbe:'Weiß',groesse:'5-6J',lagerort:'',bestand:2,min:2,img:'',notiz:'',sample:0},
-  {id:127,ss:'Mini Creator 2.0',sku:'',cat:'Kids',farbe:'Caribbean Blue',groesse:'3-4J',lagerort:'',bestand:8,min:2,img:'',notiz:'',sample:0},
-  {id:128,ss:'Mini Creator 2.0',sku:'',cat:'Kids',farbe:'Vulcano Stone',groesse:'3-4J',lagerort:'',bestand:2,min:2,img:'',notiz:'',sample:0},
-  {id:129,ss:'Mini Creator 2.0',sku:'',cat:'Kids',farbe:'Vulcano Stone',groesse:'5-6J',lagerort:'',bestand:4,min:2,img:'',notiz:'',sample:0},
-  {id:130,ss:'Mini Creator 2.0',sku:'',cat:'Kids',farbe:'Vulcano Stone',groesse:'7-8J',lagerort:'',bestand:4,min:2,img:'',notiz:'',sample:0},
-  {id:131,ss:'Mini Changer 2.0',sku:'',cat:'Kids',farbe:'Lemon',groesse:'3-4J',lagerort:'',bestand:3,min:2,img:'',notiz:'',sample:0},
-  {id:132,ss:'Mini Changer 2.0',sku:'',cat:'Kids',farbe:'Lemon',groesse:'5-6J',lagerort:'',bestand:4,min:2,img:'',notiz:'',sample:0},
-  {id:133,ss:'Mini Changer 2.0',sku:'',cat:'Kids',farbe:'Lemon',groesse:'7-8J',lagerort:'',bestand:1,min:1,img:'',notiz:'',sample:0},
-  {id:134,ss:'Mini Changer 2.0',sku:'',cat:'Kids',farbe:'Lemon',groesse:'9-11J',lagerort:'',bestand:1,min:1,img:'',notiz:'',sample:0},
-  {id:135,ss:'Mini Changer 2.0',sku:'',cat:'Kids',farbe:'Heritage Brown',groesse:'3-4J',lagerort:'',bestand:1,min:1,img:'',notiz:'',sample:0},
-  {id:136,ss:'Mini Changer 2.0',sku:'',cat:'Kids',farbe:'Heritage Brown',groesse:'5-6J',lagerort:'',bestand:2,min:1,img:'',notiz:'',sample:0},
-  {id:137,ss:'Mini Changer 2.0',sku:'',cat:'Kids',farbe:'Heritage Brown',groesse:'7-8J',lagerort:'',bestand:2,min:1,img:'',notiz:'',sample:0},
-  // Hoodies Ming José
-  {id:138,ss:'Hoodie',sku:'',cat:'Hoodie Unisex',farbe:'Grau',groesse:'S',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
-  {id:139,ss:'Hoodie',sku:'',cat:'Hoodie Unisex',farbe:'Grau',groesse:'M',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
-  {id:140,ss:'Hoodie',sku:'',cat:'Hoodie Unisex',farbe:'Grau',groesse:'L',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:5,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'XXL',lagerort:'M',bestand:4,min:3,img:'',notiz:'',sample:1},
+  {id:6,ss:'Sparker 2.0',sku:'STTU061',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'XS',lagerort:'M',bestand:4,min:3,img:'',notiz:'',sample:1},
+  {id:7,ss:'Sparker 2.0',sku:'STTU061',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'S',lagerort:'M',bestand:10,min:3,img:'',notiz:'',sample:1},
+  {id:8,ss:'Sparker 2.0',sku:'STTU061',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'M',lagerort:'M',bestand:6,min:3,img:'',notiz:'',sample:1},
+  {id:9,ss:'Sparker 2.0',sku:'STTU061',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'L',lagerort:'M',bestand:9,min:3,img:'',notiz:'',sample:1},
+  {id:10,ss:'Sparker 2.0',sku:'STTU061',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'XL',lagerort:'M',bestand:6,min:3,img:'',notiz:'',sample:1},
+  {id:11,ss:'Sparker (Old)',sku:'',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'L',lagerort:'Box 1',bestand:2,min:1,img:'',notiz:'',sample:0},
+  {id:12,ss:'Freestyler',sku:'STTU799',cat:'T-Shirt Unisex',farbe:'Dark Heather Grey',groesse:'XXS',lagerort:'M',bestand:1,min:2,img:'',notiz:'1x S,M,L bei Sarah Schott',sample:1},
+  {id:13,ss:'Freestyler',sku:'STTU799',cat:'T-Shirt Unisex',farbe:'Dark Heather Grey',groesse:'XS',lagerort:'M',bestand:2,min:2,img:'',notiz:'1x S,M,L bei Sarah Schott',sample:1},
+  {id:14,ss:'Freestyler',sku:'STTU799',cat:'T-Shirt Unisex',farbe:'Dark Heather Grey',groesse:'S',lagerort:'M',bestand:4,min:2,img:'',notiz:'1x S,M,L bei Sarah Schott',sample:1},
+  {id:15,ss:'Freestyler',sku:'STTU799',cat:'T-Shirt Unisex',farbe:'Dark Heather Grey',groesse:'M',lagerort:'M',bestand:4,min:2,img:'',notiz:'1x S,M,L bei Sarah Schott',sample:1},
+  {id:16,ss:'Freestyler',sku:'STTU799',cat:'T-Shirt Unisex',farbe:'Dark Heather Grey',groesse:'L',lagerort:'M',bestand:6,min:2,img:'',notiz:'1x S,M,L bei Sarah Schott',sample:1},
+  {id:17,ss:'Freestyler',sku:'STTU799',cat:'T-Shirt Unisex',farbe:'Dark Heather Grey',groesse:'XL',lagerort:'M',bestand:1,min:2,img:'',notiz:'1x S,M,L bei Sarah Schott',sample:1},
+  {id:18,ss:'Freestyler Vintage',sku:'',cat:'T-Shirt Unisex',farbe:'Black Rock',groesse:'S',lagerort:'M',bestand:3,min:2,img:'',notiz:'',sample:1},
+  {id:19,ss:'Freestyler Vintage',sku:'',cat:'T-Shirt Unisex',farbe:'Black Rock',groesse:'M',lagerort:'M',bestand:3,min:2,img:'',notiz:'',sample:1},
+  {id:20,ss:'Freestyler Vintage',sku:'',cat:'T-Shirt Unisex',farbe:'Black Rock',groesse:'L',lagerort:'M',bestand:2,min:2,img:'',notiz:'',sample:1},
+  {id:21,ss:'Crafter',sku:'',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'onesize',lagerort:'Box 1',bestand:5,min:2,img:'',notiz:'',sample:1},
+  {id:22,ss:'Blaster',sku:'',cat:'T-Shirt Oversized',farbe:'Schwarz',groesse:'onesize',lagerort:'Box 1',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:23,ss:'Stella Collider',sku:'',cat:'T-Shirt Damen',farbe:'Schwarz',groesse:'XS',lagerort:'',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:24,ss:'Stella Nova',sku:'SATW030',cat:'T-Shirt Damen',farbe:'Schwarz',groesse:'onesize',lagerort:'M',bestand:1,min:1,img:'',notiz:'bei Sarah Schott',sample:1},
+  {id:25,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Schwarz (LW)',groesse:'XS',lagerort:'',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:26,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Schwarz (LW)',groesse:'M',lagerort:'',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:27,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Schwarz (LW)',groesse:'L',lagerort:'',bestand:5,min:1,img:'',notiz:'',sample:0},
+  {id:28,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Schwarz (LW)',groesse:'XL',lagerort:'',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:29,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Weiß',groesse:'S',lagerort:'',bestand:4,min:3,img:'',notiz:'',sample:0},
+  {id:30,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Weiß',groesse:'M',lagerort:'',bestand:9,min:3,img:'',notiz:'',sample:0},
+  {id:31,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Weiß',groesse:'L',lagerort:'',bestand:9,min:3,img:'',notiz:'',sample:0},
+  {id:32,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Weiß',groesse:'XL',lagerort:'',bestand:1,min:3,img:'',notiz:'',sample:0},
+  {id:33,ss:'Sparker 2.0',sku:'STTU061',cat:'T-Shirt Unisex',farbe:'Weiß',groesse:'S',lagerort:'',bestand:5,min:3,img:'',notiz:'',sample:0},
+  {id:34,ss:'Sparker 2.0',sku:'STTU061',cat:'T-Shirt Unisex',farbe:'Weiß',groesse:'M',lagerort:'',bestand:9,min:3,img:'',notiz:'',sample:0},
+  {id:35,ss:'Sparker 2.0',sku:'STTU061',cat:'T-Shirt Unisex',farbe:'Weiß',groesse:'L',lagerort:'',bestand:7,min:3,img:'',notiz:'',sample:0},
+  {id:36,ss:'Sparker 2.0',sku:'STTU061',cat:'T-Shirt Unisex',farbe:'Weiß',groesse:'XL',lagerort:'',bestand:4,min:3,img:'',notiz:'',sample:0},
+  {id:37,ss:'Sparker 2.0',sku:'STTU061',cat:'T-Shirt Unisex',farbe:'Off White',groesse:'S',lagerort:'',bestand:6,min:2,img:'',notiz:'',sample:0},
+  {id:38,ss:'Sparker 2.0',sku:'STTU061',cat:'T-Shirt Unisex',farbe:'Off White',groesse:'M',lagerort:'',bestand:4,min:2,img:'',notiz:'',sample:0},
+  {id:39,ss:'Sparker 2.0',sku:'STTU061',cat:'T-Shirt Unisex',farbe:'Off White',groesse:'L',lagerort:'',bestand:5,min:2,img:'',notiz:'',sample:0},
+  {id:40,ss:'Stella Muser',sku:'SAWU034',cat:'Sweatshirt Damen',farbe:'Off White',groesse:'XS',lagerort:'M',bestand:1,min:2,img:'',notiz:'',sample:1},
+  {id:41,ss:'Stella Muser',sku:'SAWU034',cat:'Sweatshirt Damen',farbe:'Off White',groesse:'S',lagerort:'M',bestand:7,min:2,img:'',notiz:'',sample:1},
+  {id:42,ss:'Stella Muser',sku:'SAWU034',cat:'Sweatshirt Damen',farbe:'Off White',groesse:'M',lagerort:'M',bestand:4,min:2,img:'',notiz:'',sample:1},
+  {id:43,ss:'Stella Muser',sku:'SAWU034',cat:'Sweatshirt Damen',farbe:'Off White',groesse:'L',lagerort:'M',bestand:3,min:2,img:'',notiz:'',sample:1},
+  {id:44,ss:'Stella Muser',sku:'SAWU034',cat:'Sweatshirt Damen',farbe:'Weiß',groesse:'onesize',lagerort:'M',bestand:1,min:1,img:'',notiz:'',sample:1},
+  {id:45,ss:'Creator LS 2.0',sku:'',cat:'Longsleeve Unisex',farbe:'Weiß',groesse:'S',lagerort:'Box 2',bestand:1,min:2,img:'',notiz:'',sample:1},
+  {id:46,ss:'Creator LS 2.0',sku:'',cat:'Longsleeve Unisex',farbe:'Weiß',groesse:'M',lagerort:'Box 2',bestand:1,min:2,img:'',notiz:'',sample:1},
+  {id:47,ss:'Breezer',sku:'',cat:'Jacke',farbe:'Weiß',groesse:'S',lagerort:'Box 1',bestand:2,min:1,img:'',notiz:'',sample:1},
+  {id:48,ss:'Breezer',sku:'',cat:'Jacke',farbe:'Weiß',groesse:'M',lagerort:'Box 1',bestand:3,min:1,img:'',notiz:'',sample:1},
+  {id:49,ss:'Breezer',sku:'',cat:'Jacke',farbe:'Weiß',groesse:'L',lagerort:'Box 1',bestand:4,min:1,img:'',notiz:'',sample:1},
+  {id:50,ss:'Breezer',sku:'',cat:'Jacke',farbe:'Weiß',groesse:'XL',lagerort:'Box 1',bestand:1,min:1,img:'',notiz:'',sample:1},
+  {id:51,ss:'Asher',sku:'STTU078',cat:'T-Shirt Oversized',farbe:'Weiß',groesse:'S',lagerort:'',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:52,ss:'Asher',sku:'STTU078',cat:'T-Shirt Oversized',farbe:'Weiß',groesse:'L',lagerort:'',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:53,ss:'Stella Muser LS',sku:'',cat:'Longsleeve Damen',farbe:'French Navy',groesse:'onesize',lagerort:'M',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:54,ss:'Sparker 2.0',sku:'STTU061',cat:'T-Shirt Unisex',farbe:'Natural Raw',groesse:'XS',lagerort:'Box 1',bestand:1,min:2,img:'',notiz:'',sample:0},
+  {id:55,ss:'Sparker 2.0',sku:'STTU061',cat:'T-Shirt Unisex',farbe:'Natural Raw',groesse:'S',lagerort:'Box 1',bestand:2,min:2,img:'',notiz:'',sample:0},
+  {id:56,ss:'Sparker 2.0',sku:'STTU061',cat:'T-Shirt Unisex',farbe:'Natural Raw',groesse:'M',lagerort:'Box 1',bestand:2,min:2,img:'',notiz:'',sample:0},
+  {id:57,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Cotton Pink',groesse:'XXS',lagerort:'',bestand:4,min:2,img:'',notiz:'',sample:0},
+  {id:58,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Cotton Pink',groesse:'XS',lagerort:'',bestand:4,min:2,img:'',notiz:'',sample:0},
+  {id:59,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Cotton Pink',groesse:'S',lagerort:'',bestand:6,min:2,img:'',notiz:'',sample:0},
+  {id:60,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Cotton Pink',groesse:'M',lagerort:'',bestand:2,min:2,img:'',notiz:'',sample:0},
+  {id:61,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Cotton Pink',groesse:'L',lagerort:'',bestand:2,min:2,img:'',notiz:'',sample:0},
+  {id:62,ss:'Changer 2.0',sku:'STSU173',cat:'Crewneck Unisex',farbe:'Glazed Green',groesse:'onesize',lagerort:'Box 2',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:63,ss:'Freestyler LS',sku:'',cat:'Longsleeve Unisex',farbe:'Stargazer',groesse:'onesize',lagerort:'Box 2',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:64,ss:'Stella Muser Club Tropical',sku:'',cat:'Sweatshirt Damen',farbe:'Pink',groesse:'XS',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:65,ss:'Stella Muser Club Tropical',sku:'',cat:'Sweatshirt Damen',farbe:'Pink',groesse:'S',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'',sample:0},
+  {id:66,ss:'Stella Muser Club Tropical',sku:'',cat:'Sweatshirt Damen',farbe:'Pink',groesse:'M',lagerort:'Ming José',bestand:5,min:1,img:'',notiz:'',sample:0},
+  {id:67,ss:'Stella Muser Club Tropical',sku:'',cat:'Sweatshirt Damen',farbe:'Pink',groesse:'L',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'',sample:0},
+  {id:68,ss:'Stella Muser Club Tropical',sku:'',cat:'Sweatshirt Damen',farbe:'Off White',groesse:'XS',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'XS dreckig',sample:0},
+  {id:69,ss:'Stella Muser Club Tropical',sku:'',cat:'Sweatshirt Damen',farbe:'Off White',groesse:'S',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'XS dreckig',sample:0},
+  {id:70,ss:'Stella Muser Club Tropical',sku:'',cat:'Sweatshirt Damen',farbe:'Light Heather Grey',groesse:'onesize',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:71,ss:'Coach Jacket',sku:'',cat:'Jacke',farbe:'Schwarz',groesse:'onesize',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:72,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Red Brown',groesse:'XS',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:73,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Red Brown',groesse:'S',lagerort:'Ming José',bestand:3,min:1,img:'',notiz:'',sample:0},
+  {id:74,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Red Brown',groesse:'M',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:75,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Beige',groesse:'S',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'',sample:0},
+  {id:76,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Beige',groesse:'M',lagerort:'Ming José',bestand:3,min:1,img:'',notiz:'',sample:0},
+  {id:77,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Beige',groesse:'L',lagerort:'Ming José',bestand:3,min:1,img:'',notiz:'',sample:0},
+  {id:78,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Beige',groesse:'XL',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:79,ss:'Bomber Jacket',sku:'',cat:'Jacke',farbe:'Schwarz',groesse:'S',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:80,ss:'Bomber Jacket',sku:'',cat:'Jacke',farbe:'Schwarz',groesse:'M',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'',sample:0},
+  {id:81,ss:'Bomber Jacket',sku:'',cat:'Jacke',farbe:'Schwarz',groesse:'L',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:82,ss:'Stella Muser',sku:'',cat:'Sweatshirt Damen',farbe:'Weiß',groesse:'XS',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'',sample:0},
+  {id:83,ss:'Stella Muser',sku:'',cat:'Sweatshirt Damen',farbe:'Weiß',groesse:'S',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'',sample:0},
+  {id:84,ss:'Stella Muser',sku:'',cat:'Sweatshirt Damen',farbe:'Weiß',groesse:'M',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:85,ss:'Stella Muser',sku:'',cat:'Sweatshirt Damen',farbe:'Weiß',groesse:'L',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:86,ss:'Stella Muser',sku:'',cat:'Sweatshirt Damen',farbe:'Weiß',groesse:'XL',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:87,ss:'Stella Muser',sku:'',cat:'Sweatshirt Damen',farbe:'Grau',groesse:'XS',lagerort:'Ming José',bestand:3,min:1,img:'',notiz:'',sample:0},
+  {id:88,ss:'Stella Muser',sku:'',cat:'Sweatshirt Damen',farbe:'Grau',groesse:'S',lagerort:'Ming José',bestand:3,min:1,img:'',notiz:'',sample:0},
+  {id:89,ss:'Stella Muser',sku:'',cat:'Sweatshirt Damen',farbe:'Grau',groesse:'M',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'',sample:0},
+  {id:90,ss:'Stella Muser Club Tropical',sku:'',cat:'Sweatshirt Damen',farbe:'Fiesta',groesse:'S',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'',sample:0},
+  {id:91,ss:'Stella Muser Club Tropical',sku:'',cat:'Sweatshirt Damen',farbe:'Fiesta',groesse:'M',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:92,ss:'Hoodie',sku:'',cat:'Hoodie Unisex',farbe:'Grau',groesse:'S',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:93,ss:'Hoodie',sku:'',cat:'Hoodie Unisex',farbe:'Grau',groesse:'M',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:94,ss:'Hoodie',sku:'',cat:'Hoodie Unisex',farbe:'Grau',groesse:'L',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:95,ss:'Muser Dog',sku:'',cat:'Sweatshirt Damen',farbe:'Schwarz',groesse:'XS',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'',sample:0},
+  {id:96,ss:'Muser Dog',sku:'',cat:'Sweatshirt Damen',farbe:'Schwarz',groesse:'S',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'',sample:0},
+  {id:97,ss:'Muser Dog',sku:'',cat:'Sweatshirt Damen',farbe:'Schwarz',groesse:'M',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:98,ss:'Muser Dog',sku:'',cat:'Sweatshirt Damen',farbe:'Schwarz',groesse:'L',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:99,ss:'Freestyler For the Arts',sku:'',cat:'T-Shirt Unisex',farbe:'Grau',groesse:'XXS',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:100,ss:'Freestyler For the Arts',sku:'',cat:'T-Shirt Unisex',farbe:'Grau',groesse:'XS',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:101,ss:'Freestyler For the Arts',sku:'',cat:'T-Shirt Unisex',farbe:'Grau',groesse:'S',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:102,ss:'Freestyler For the Arts',sku:'',cat:'T-Shirt Unisex',farbe:'Grau',groesse:'M',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:103,ss:'Freestyler For the Arts',sku:'',cat:'T-Shirt Unisex',farbe:'Grau',groesse:'L',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:104,ss:'Freestyler For the Arts',sku:'',cat:'T-Shirt Unisex',farbe:'Grau',groesse:'XL',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:105,ss:'Sparker Dog',sku:'',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'XS',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'',sample:0},
+  {id:106,ss:'Sparker Dog',sku:'',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'S',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'',sample:0},
+  {id:107,ss:'Sparker Dog',sku:'',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'M',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:108,ss:'Sparker Dog',sku:'',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'L',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:109,ss:'Muser LS Lotus',sku:'',cat:'Longsleeve Damen',farbe:'Schwarz',groesse:'S',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'Lotus Fragrance',sample:0},
+  {id:110,ss:'Muser LS Lotus',sku:'',cat:'Longsleeve Damen',farbe:'Schwarz',groesse:'M',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'Lotus Fragrance',sample:0},
+  {id:111,ss:'Creator LS 2.0 Lotus',sku:'',cat:'Longsleeve Unisex',farbe:'Schwarz',groesse:'XS',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'Lotus Fragrance',sample:0},
+  {id:112,ss:'Creator LS 2.0 Lotus',sku:'',cat:'Longsleeve Unisex',farbe:'Schwarz',groesse:'S',lagerort:'Ming José',bestand:4,min:1,img:'',notiz:'Lotus Fragrance',sample:0},
+  {id:113,ss:'Creator LS 2.0 Lotus',sku:'',cat:'Longsleeve Unisex',farbe:'Schwarz',groesse:'M',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'Lotus Fragrance',sample:0},
+  {id:114,ss:'Creator LS 2.0 Lotus',sku:'',cat:'Longsleeve Unisex',farbe:'Schwarz',groesse:'L',lagerort:'Ming José',bestand:4,min:1,img:'',notiz:'Lotus Fragrance',sample:0},
+  {id:115,ss:'Creator LS 2.0 Lotus',sku:'',cat:'Longsleeve Unisex',farbe:'Schwarz',groesse:'XL',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'Lotus Fragrance',sample:0},
+  {id:116,ss:'Asher Lotus',sku:'STTU078',cat:'T-Shirt Oversized',farbe:'Weiß',groesse:'XS',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'Lotus Fragrance',sample:0},
+  {id:117,ss:'Asher Lotus',sku:'STTU078',cat:'T-Shirt Oversized',farbe:'Weiß',groesse:'S',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'Lotus Fragrance',sample:0},
+  {id:118,ss:'Asher Lotus',sku:'STTU078',cat:'T-Shirt Oversized',farbe:'Weiß',groesse:'M',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'Lotus Fragrance',sample:0},
+  {id:119,ss:'Muser LS Lotus',sku:'',cat:'Longsleeve Damen',farbe:'Weiß',groesse:'XS',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'Lotus Fragrance',sample:0},
+  {id:120,ss:'Muser LS Lotus',sku:'',cat:'Longsleeve Damen',farbe:'Weiß',groesse:'S',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'Lotus Fragrance',sample:0},
+  {id:121,ss:'Muser LS Lotus',sku:'',cat:'Longsleeve Damen',farbe:'Weiß',groesse:'M',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'Lotus Fragrance',sample:0},
+  {id:122,ss:'Creator LS 2.0 Lotus',sku:'',cat:'Longsleeve Unisex',farbe:'Weiß',groesse:'S',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'Lotus Fragrance',sample:0},
+  {id:123,ss:'Creator LS 2.0 Lotus',sku:'',cat:'Longsleeve Unisex',farbe:'Weiß',groesse:'M',lagerort:'Ming José',bestand:4,min:1,img:'',notiz:'Lotus Fragrance',sample:0},
+  {id:124,ss:'Radder 2.0',sku:'STTU868',cat:'T-Shirt Unisex',farbe:'Lemon',groesse:'XS',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:125,ss:'Radder 2.0',sku:'STTU868',cat:'T-Shirt Unisex',farbe:'Lemon',groesse:'S',lagerort:'Ming José',bestand:3,min:1,img:'',notiz:'',sample:0},
+  {id:126,ss:'Radder 2.0',sku:'STTU868',cat:'T-Shirt Unisex',farbe:'Lemon',groesse:'M',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'',sample:0},
+  {id:127,ss:'Baby Changer',sku:'',cat:'Baby',farbe:'Serene Blue',groesse:'12-18M',lagerort:'',bestand:9,min:2,img:'',notiz:'',sample:0},
+  {id:128,ss:'Baby Changer',sku:'',cat:'Baby',farbe:'Serene Blue',groesse:'18-24M',lagerort:'',bestand:4,min:2,img:'',notiz:'',sample:0},
+  {id:129,ss:'Mini Creator 2.0',sku:'',cat:'Kids',farbe:'Weiß',groesse:'3-4J',lagerort:'',bestand:6,min:2,img:'',notiz:'',sample:0},
+  {id:130,ss:'Mini Creator 2.0',sku:'',cat:'Kids',farbe:'Weiß',groesse:'5-6J',lagerort:'',bestand:2,min:2,img:'',notiz:'',sample:0},
+  {id:131,ss:'Mini Creator 2.0',sku:'',cat:'Kids',farbe:'Caribbean Blue',groesse:'3-4J',lagerort:'',bestand:8,min:2,img:'',notiz:'',sample:0},
+  {id:132,ss:'Mini Creator 2.0',sku:'',cat:'Kids',farbe:'Vulcano Stone',groesse:'3-4J',lagerort:'',bestand:2,min:2,img:'',notiz:'',sample:0},
+  {id:133,ss:'Mini Creator 2.0',sku:'',cat:'Kids',farbe:'Vulcano Stone',groesse:'5-6J',lagerort:'',bestand:4,min:2,img:'',notiz:'',sample:0},
+  {id:134,ss:'Mini Creator 2.0',sku:'',cat:'Kids',farbe:'Vulcano Stone',groesse:'7-8J',lagerort:'',bestand:4,min:2,img:'',notiz:'',sample:0},
+  {id:135,ss:'Mini Changer 2.0',sku:'',cat:'Kids',farbe:'Lemon',groesse:'3-4J',lagerort:'',bestand:3,min:1,img:'',notiz:'',sample:0},
+  {id:136,ss:'Mini Changer 2.0',sku:'',cat:'Kids',farbe:'Lemon',groesse:'5-6J',lagerort:'',bestand:4,min:1,img:'',notiz:'',sample:0},
+  {id:137,ss:'Mini Changer 2.0',sku:'',cat:'Kids',farbe:'Lemon',groesse:'7-8J',lagerort:'',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:138,ss:'Mini Changer 2.0',sku:'',cat:'Kids',farbe:'Lemon',groesse:'9-11J',lagerort:'',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:139,ss:'Mini Changer 2.0',sku:'',cat:'Kids',farbe:'Heritage Brown',groesse:'3-4J',lagerort:'',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:140,ss:'Mini Changer 2.0',sku:'',cat:'Kids',farbe:'Heritage Brown',groesse:'5-6J',lagerort:'',bestand:2,min:1,img:'',notiz:'',sample:0},
+  {id:141,ss:'Mini Changer 2.0',sku:'',cat:'Kids',farbe:'Heritage Brown',groesse:'7-8J',lagerort:'',bestand:2,min:1,img:'',notiz:'',sample:0},
+  {id:142,ss:'Creator (Old)',sku:'',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'onesize',lagerort:'Archiv',bestand:4,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
+  {id:143,ss:'Creator LS 2.0',sku:'',cat:'Longsleeve Unisex',farbe:'Schwarz',groesse:'S',lagerort:'Archiv',bestand:1,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
+  {id:144,ss:'Creator LS 2.0',sku:'',cat:'Longsleeve Unisex',farbe:'Schwarz',groesse:'M',lagerort:'Archiv',bestand:2,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
+  {id:145,ss:'Creator LS 2.0',sku:'',cat:'Longsleeve Unisex',farbe:'Schwarz',groesse:'L',lagerort:'Archiv',bestand:1,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
+  {id:146,ss:'Creator LS 2.0',sku:'',cat:'Longsleeve Unisex',farbe:'Schwarz',groesse:'XL',lagerort:'Archiv',bestand:1,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
+  {id:147,ss:'Shifts Dry',sku:'',cat:'Longsleeve Unisex',farbe:'Schwarz',groesse:'onesize',lagerort:'Archiv',bestand:1,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
+  {id:148,ss:'Hoodie Cruiser 2.0',sku:'',cat:'Hoodie Unisex',farbe:'Cool Heather Grey',groesse:'M',lagerort:'Archiv',bestand:1,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
+  {id:149,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Desert Dust',groesse:'S',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
+  {id:150,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Desert Dust',groesse:'M',lagerort:'Ming José',bestand:3,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
+  {id:151,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Desert Dust',groesse:'L',lagerort:'Ming José',bestand:3,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
+  {id:152,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Desert Dust',groesse:'XL',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
+  {id:153,ss:'Roller Xmas',sku:'',cat:'Sweatshirt Unisex',farbe:'Forest',groesse:'XS',lagerort:'Ming José',bestand:5,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
+  {id:154,ss:'Roller Xmas',sku:'',cat:'Sweatshirt Unisex',farbe:'Forest',groesse:'S',lagerort:'Ming José',bestand:5,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
+  {id:155,ss:'Roller Xmas',sku:'',cat:'Sweatshirt Unisex',farbe:'Forest',groesse:'M',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
+  {id:156,ss:'Roller Xmas',sku:'',cat:'Sweatshirt Unisex',farbe:'Forest',groesse:'L',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
+  {id:157,ss:'Roller Xmas',sku:'',cat:'Sweatshirt Unisex',farbe:'Forest',groesse:'XL',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
+  {id:158,ss:'Roller Green',sku:'',cat:'Sweatshirt Unisex',farbe:'Forest',groesse:'S',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
+  {id:159,ss:'Roller Green',sku:'',cat:'Sweatshirt Unisex',farbe:'Forest',groesse:'M',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
+  {id:160,ss:'Roller Green',sku:'',cat:'Sweatshirt Unisex',farbe:'Forest',groesse:'L',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
+  {id:161,ss:'Roller Green',sku:'',cat:'Sweatshirt Unisex',farbe:'Forest',groesse:'XL',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
+  {id:162,ss:'Shopper',sku:'',cat:'Bag',farbe:'Yellow',groesse:'onesize',lagerort:'Ming José',bestand:4,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
+  {id:163,ss:'Shopper',sku:'',cat:'Bag',farbe:'Pink',groesse:'onesize',lagerort:'Ming José',bestand:7,min:1,img:'',notiz:'Archiv Feb 2025',sample:0}
 ],
 accessoires:[
-  {id:1,name:'Light Tote Bag Sky Blue',typ:'Tote Bag',lagerort:'',bestand:5,min:3,img:'',notiz:''},
-  {id:2,name:'Light Tote Bag Mint',typ:'Tote Bag',lagerort:'',bestand:5,min:3,img:'',notiz:''},
-  {id:3,name:'Light Tote Bag Lime Green',typ:'Tote Bag',lagerort:'',bestand:5,min:3,img:'',notiz:''},
-  {id:4,name:'Light Tote Bag Orange',typ:'Tote Bag',lagerort:'',bestand:5,min:3,img:'',notiz:''},
-  {id:5,name:'Light Tote Bag Pink',typ:'Tote Bag',lagerort:'',bestand:8,min:3,img:'',notiz:''},
-  {id:6,name:'Light Tote Bag Red',typ:'Tote Bag',lagerort:'',bestand:19,min:5,img:'',notiz:''},
-  {id:7,name:'Shopping Bag 2.0 Black',typ:'Shopping Bag',lagerort:'',bestand:5,min:3,img:'',notiz:''},
-  {id:8,name:'Shopping Bag 2.0 Latte',typ:'Shopping Bag',lagerort:'',bestand:10,min:3,img:'',notiz:''},
-  {id:9,name:'Shopping Bag Natural',typ:'Shopping Bag',lagerort:'',bestand:10,min:3,img:'',notiz:''},
-  {id:10,name:'Tote Bag Natural',typ:'Tote Bag',lagerort:'',bestand:5,min:3,img:'',notiz:''},
-  {id:11,name:'Tote Bag Black',typ:'Tote Bag',lagerort:'',bestand:6,min:3,img:'',notiz:''},
-  {id:12,name:'Re-Tote Bag Black',typ:'Tote Bag',lagerort:'',bestand:14,min:5,img:'',notiz:''},
-  {id:13,name:'Mid Tote Bag Fiesta',typ:'Tote Bag',lagerort:'',bestand:17,min:5,img:'',notiz:''},
-  {id:14,name:'Mid Tote Bag Heritage Brown',typ:'Tote Bag',lagerort:'',bestand:11,min:5,img:'',notiz:''},
-  {id:15,name:'Pencil Cases Natural',typ:'Accessoire',lagerort:'',bestand:12,min:5,img:'',notiz:''},
+  {id:1,name:'Light Tote Bag Sky Blue',typ:'Tote Bag',lagerort:'',bestand:5,min:3,notiz:''},
+  {id:2,name:'Light Tote Bag Mint',typ:'Tote Bag',lagerort:'',bestand:5,min:3,notiz:''},
+  {id:3,name:'Light Tote Bag Lime Green',typ:'Tote Bag',lagerort:'',bestand:5,min:3,notiz:''},
+  {id:4,name:'Light Tote Bag Orange',typ:'Tote Bag',lagerort:'',bestand:5,min:3,notiz:''},
+  {id:5,name:'Light Tote Bag Pink',typ:'Tote Bag',lagerort:'',bestand:8,min:3,notiz:''},
+  {id:6,name:'Light Tote Bag Red',typ:'Tote Bag',lagerort:'',bestand:19,min:5,notiz:''},
+  {id:7,name:'Shopping Bag 2.0 Black',typ:'Shopping Bag',lagerort:'',bestand:5,min:3,notiz:''},
+  {id:8,name:'Shopping Bag 2.0 Latte',typ:'Shopping Bag',lagerort:'',bestand:10,min:3,notiz:''},
+  {id:9,name:'Shopping Bag Natural',typ:'Shopping Bag',lagerort:'',bestand:10,min:3,notiz:''},
+  {id:10,name:'Tote Bag Natural',typ:'Tote Bag',lagerort:'',bestand:5,min:3,notiz:''},
+  {id:11,name:'Tote Bag Black',typ:'Tote Bag',lagerort:'',bestand:6,min:3,notiz:''},
+  {id:12,name:'Re-Tote Bag Black',typ:'Tote Bag',lagerort:'',bestand:14,min:5,notiz:''},
+  {id:13,name:'Mid Tote Bag Fiesta',typ:'Tote Bag',lagerort:'',bestand:17,min:5,notiz:''},
+  {id:14,name:'Mid Tote Bag Heritage Brown',typ:'Tote Bag',lagerort:'',bestand:11,min:5,notiz:''},
+  {id:15,name:'Pencil Cases Natural',typ:'Accessoire',lagerort:'',bestand:12,min:5,notiz:''},
 ],
 material:[
-  {id:1,name:'Plastisol Weiß',typ:'Siebdruckfarbe',hersteller:'Murakami',einheit:'kg',lagerort:'',bestand:0,min:2,img:'',notiz:''},
-  {id:2,name:'Plastisol Schwarz',typ:'Siebdruckfarbe',hersteller:'Murakami',einheit:'kg',lagerort:'',bestand:0,min:2,img:'',notiz:''},
-  {id:3,name:'Siebdruckreiniger',typ:'Reiniger',hersteller:'',einheit:'l',lagerort:'',bestand:0,min:1,img:'',notiz:''},
-  {id:4,name:'Verdünner',typ:'Verdünner',hersteller:'',einheit:'l',lagerort:'',bestand:0,min:1,img:'',notiz:''},
-  {id:5,name:'Fotosieb-Emulsion',typ:'Emulsion',hersteller:'Murakami',einheit:'l',lagerort:'',bestand:0,min:0.5,img:'',notiz:'Deckweiss bei Dylan'},
+  {id:1,name:'Plastisol Weiß',typ:'Siebdruckfarbe',hersteller:'Murakami',einheit:'kg',lagerort:'',bestand:0,min:2,notiz:'Deckweiss bei Dylan'},
+  {id:2,name:'Plastisol Schwarz',typ:'Siebdruckfarbe',hersteller:'Murakami',einheit:'kg',lagerort:'',bestand:0,min:2,notiz:''},
+  {id:3,name:'Plastisol Rot',typ:'Siebdruckfarbe',hersteller:'',einheit:'kg',lagerort:'',bestand:0,min:1,notiz:''},
+  {id:4,name:'Plastisol Blau',typ:'Siebdruckfarbe',hersteller:'',einheit:'kg',lagerort:'',bestand:0,min:1,notiz:''},
+  {id:5,name:'Siebdruckreiniger',typ:'Reiniger',hersteller:'',einheit:'l',lagerort:'',bestand:0,min:1,notiz:''},
+  {id:6,name:'Verdünner',typ:'Verdünner',hersteller:'',einheit:'l',lagerort:'',bestand:0,min:1,notiz:''},
+  {id:7,name:'Fotosieb-Emulsion',typ:'Emulsion',hersteller:'Murakami',einheit:'l',lagerort:'',bestand:0,min:0.5,notiz:''},
 ],
 reservationen:[
-  {id:1,auftrag:'Ravi — Chimpy Festival',artikel:'Hoodies + T-Shirts',menge:100,datum:'2025-08-06',status:'offen',notiz:'50x Hoodies, 50x T-Shirts'},
+  {id:1,auftrag:'Ravi — Chimpy Festival',artikel:'Hoodie + T-Shirt',menge:100,datum:'2025-08-06',status:'offen',notiz:'50x Hoodies, 50x T-Shirts'},
   {id:2,auftrag:'Nina Loosli',artikel:'Stella Muser & Sparker',menge:0,datum:'',status:'offen',notiz:''},
   {id:3,auftrag:'TCF — Asdin',artikel:'Creator 2.0 + Mini Creator',menge:0,datum:'',status:'offen',notiz:''},
-  {id:4,auftrag:'Sophie Beugen — Racing Garage 94',artikel:'Merch',menge:0,datum:'',status:'offen',notiz:''},
-  {id:5,auftrag:'Vermicelleria',artikel:'',menge:0,datum:'2025-09-30',status:'offen',notiz:'Samples yellow, End Sept'},
-  {id:6,auftrag:'Lehmag ETH',artikel:'',menge:0,datum:'',status:'offen',notiz:''},
+  {id:4,auftrag:'Thjnk',artikel:'',menge:0,datum:'',status:'offen',notiz:''},
+  {id:5,auftrag:'Altos',artikel:'',menge:0,datum:'',status:'offen',notiz:''},
+  {id:6,auftrag:'TYFYLT — Chimpy Event',artikel:'',menge:0,datum:'',status:'offen',notiz:''},
+  {id:7,auftrag:'Yael Collab — Konstrukt Labs',artikel:'',menge:0,datum:'',status:'offen',notiz:''},
+  {id:8,auftrag:'Lehmag ETH',artikel:'',menge:0,datum:'',status:'offen',notiz:''},
+  {id:9,auftrag:'Sophie Beugen — Racing Garage 94',artikel:'Merch',menge:0,datum:'',status:'offen',notiz:''},
+  {id:10,auftrag:'Josy — Memory Bon',artikel:'',menge:0,datum:'2025-08-31',status:'offen',notiz:'Ende August 2025'},
+  {id:11,auftrag:'Tomodomo Project',artikel:'',menge:0,datum:'2025-08-31',status:'offen',notiz:'Ende August 2025'},
+  {id:12,auftrag:'Lenon — Do It',artikel:'',menge:0,datum:'2025-08-06',status:'offen',notiz:''},
+  {id:13,auftrag:'Vermicelleria',artikel:'',menge:0,datum:'2025-09-30',status:'offen',notiz:'Samples yellow, End Sept'},
+  {id:14,auftrag:'Thilo — Mora Island',artikel:'',menge:0,datum:'2025-08-01',status:'offen',notiz:'Begin August'},
+  {id:15,auftrag:'Schauspiel Haus',artikel:'',menge:0,datum:'2025-08-16',status:'offen',notiz:'16.08.2025'},
+  {id:16,auftrag:'LatenserWaser',artikel:'',menge:0,datum:'2025-08-11',status:'offen',notiz:'Ende Aug. Mail Stanley Stella'},
+  {id:17,auftrag:'Kinder Transfer Momentum',artikel:'',menge:0,datum:'',status:'offen',notiz:'Transfers'},
+  {id:18,auftrag:'Elias Foster',artikel:'',menge:0,datum:'',status:'offen',notiz:'Transfers Hardchor Stickers'},
+  {id:19,auftrag:'Altos — Paloma',artikel:'',menge:0,datum:'',status:'offen',notiz:''},
 ]
 };
-let nid={t:141,m:6,r:7,a:16};
+let nid={t:164,m:8,r:20,a:16};
 let tab='textilien',editId=null,search='',fA='',fB='';
 
-// ── STOCK CHECK for reservations ──────────────────────────────────────────
+// STOCK CHECK
 function checkStock(res){
-  if(!res.artikel||res.menge<=0)return null;
-  const q=res.artikel.toLowerCase();
+  if(!res.artikel||res.menge<=0) return null;
+  const words=res.artikel.toLowerCase().split(/[\s,+&\/]+/).filter(w=>w.length>2);
   const matches=data.textilien.filter(i=>{
     const name=(i.ss+' '+i.farbe+' '+i.cat).toLowerCase();
-    return q.split(/[\s,+&]+/).some(w=>w.length>2&&name.includes(w));
+    return words.some(w=>name.includes(w));
   });
   const total=matches.reduce((a,i)=>a+i.bestand,0);
-  if(!matches.length)return{ok:null,msg:'Artikel nicht im Lager gefunden'};
-  if(total>=res.menge)return{ok:true,msg:`✓ Genug am Lager: ${total} Stk verfügbar`};
-  if(total>0)return{ok:'partial',msg:`⚠ Nur ${total}/${res.menge} Stk am Lager`};
-  return{ok:false,msg:`✗ Nicht am Lager — ${res.menge} Stk müssen bestellt werden`};
+  if(!matches.length) return {ok:null,cls:'',msg:'Artikel nicht gefunden — manuell prüfen'};
+  if(total>=res.menge) return {ok:true,cls:'',msg:'✓ Genug Lager: '+total+' Stk verfügbar'};
+  if(total>0) return {ok:'partial',cls:'partial',msg:'⚠ Nur '+total+'/'+res.menge+' Stk am Lager'};
+  return {ok:false,cls:'warn',msg:'✗ Nicht am Lager — '+res.menge+' Stk bestellen'};
 }
 
-// ── STATS ─────────────────────────────────────────────────────────────────
+// STATS
 function renderStats(){
-  const t=data.textilien,m=data.material,r=data.reservationen,a=data.accessoires;
+  const t=data.textilien,m=data.material,a=data.accessoires;
   const tLow=t.filter(i=>i.bestand<i.min).length;
   const mLow=m.filter(i=>i.bestand<i.min).length;
-  const aLow=a.filter(i=>i.bestand<i.min).length;
-  const rOffen=r.filter(i=>i.status==='offen').length;
-  document.getElementById('stats').innerHTML=`
-    <div class="sc"><div class="sn">${t.reduce((a,i)=>a+i.bestand,0)}</div><div class="sl">Textilien</div></div>
-    <div class="sc"><div class="sn">${a.reduce((s,i)=>s+i.bestand,0)}</div><div class="sl">Bags/Acc</div></div>
-    <div class="sc"><div class="sn ${rOffen?'sorange':''}">${rOffen}</div><div class="sl">Aufträge</div></div>
-    <div class="sc"><div class="sn ${(tLow+mLow+aLow)?'warn':''}">${tLow+mLow+aLow}</div><div class="sl">Nachbest.</div></div>`;
-  const lows=[...t.filter(i=>i.bestand<i.min).map(i=>`${i.ss} ${i.farbe} ${i.groesse}`),...m.filter(i=>i.bestand<i.min).map(i=>i.name)];
+  const rOffen=data.reservationen.filter(i=>i.status==='offen').length;
+  document.getElementById('stats').innerHTML=
+    '<div class="sc"><div class="sn">'+t.reduce((s,i)=>s+i.bestand,0)+'</div><div class="sl">Textilien</div></div>'+
+    '<div class="sc"><div class="sn">'+a.reduce((s,i)=>s+i.bestand,0)+'</div><div class="sl">Bags</div></div>'+
+    '<div class="sc"><div class="sn '+(rOffen?'sorange':'')+'">'+rOffen+'</div><div class="sl">Aufträge</div></div>'+
+    '<div class="sc"><div class="sn '+((tLow+mLow)?'warn':'')+'">'+( tLow+mLow)+'</div><div class="sl">Nachbest.</div></div>';
+  const lows=[...t.filter(i=>i.bestand<i.min).map(i=>i.ss+' '+i.farbe+' '+i.groesse),...m.filter(i=>i.bestand<i.min).map(i=>i.name)];
   const al=document.getElementById('alertBar');
-  if(lows.length){al.innerHTML='⚠ &nbsp;Nachbestellen: '+lows.join(' · ');al.classList.add('show')}
+  if(lows.length){al.innerHTML='⚠ Nachbestellen: '+lows.join(' · ');al.classList.add('show')}
   else al.classList.remove('show');
 }
 
-// ── FILTERS ───────────────────────────────────────────────────────────────
+// FILTERS
 function unique(arr,key){return[...new Set(arr.map(i=>i[key]).filter(Boolean))].sort()}
 function getFiltered(){
   let items=[...data[tab]];
-  if(search)items=items.filter(i=>JSON.stringify(i).toLowerCase().includes(search.toLowerCase()));
+  if(search) items=items.filter(i=>JSON.stringify(i).toLowerCase().includes(search.toLowerCase()));
   if(tab==='textilien'){if(fA)items=items.filter(i=>i.farbe===fA);if(fB)items=items.filter(i=>i.groesse===fB)}
   else if(tab==='material'){if(fA)items=items.filter(i=>i.typ===fA)}
   else if(tab==='accessoires'){if(fA)items=items.filter(i=>i.typ===fA)}
   return items;
 }
 
-// ── TAB CONTENT ───────────────────────────────────────────────────────────
+// TAB CONTENT
 function renderTabContent(){
   const tc=document.getElementById('tabContent');
   if(tab==='reservationen'){tc.innerHTML=renderResTab();return}
-  tc.innerHTML=`
-    <div class="excel-bar">
-      <label class="btn" for="xlImport">⬆ Excel Import</label>
-      <input type="file" id="xlImport" accept=".xlsx,.xls,.csv">
-      <button class="btn" onclick="exportExcel()">⬇ Excel Export</button>
-    </div>
-    <div class="toolbar">
-      <input type="text" id="srch" placeholder="Suchen …" value="${search}">
-      <select id="fA"></select>
-      ${tab!=='material'?'<select id="fB"></select>':''}
-      <button class="btn btn-fill" id="addBtn">+ Neu</button>
-    </div>
-    <div class="gw"><div class="grid" id="grid"></div></div>`;
-  document.getElementById('xlImport').addEventListener('change',importExcel);
-  document.getElementById('srch').addEventListener('input',e=>{search=e.target.value;renderGrid()});
-  document.getElementById('fA').addEventListener('change',e=>{fA=e.target.value;renderGrid()});
-  const fb=document.getElementById('fB');
-  if(fb)fb.addEventListener('change',e=>{fB=e.target.value;renderGrid()});
+  tc.innerHTML=
+    '<div class="excel-bar">'+
+    '<label class="btn" for="xlImp">⬆ Excel Import</label>'+
+    '<input type="file" id="xlImp" accept=".xlsx,.xls,.csv">'+
+    '<button class="btn" onclick="exportExcel()">⬇ Excel Export</button>'+
+    '</div>'+
+    '<div class="toolbar">'+
+    '<input type="text" id="srch" placeholder="Suchen …" value="'+search+'">'+
+    '<select id="fA"></select>'+
+    (tab!=='material'?'<select id="fB"></select>':'')+
+    '<button class="btn btn-fill" id="addBtn">+ Neu</button>'+
+    '</div>'+
+    '<div class="gw"><div class="grid" id="grid"></div></div>';
+  document.getElementById('xlImp').addEventListener('change',importExcel);
+  document.getElementById('srch').addEventListener('input',function(e){search=e.target.value;renderGrid()});
+  document.getElementById('fA').addEventListener('change',function(e){fA=e.target.value;renderGrid()});
+  var fb=document.getElementById('fB');
+  if(fb) fb.addEventListener('change',function(e){fB=e.target.value;renderGrid()});
   document.getElementById('addBtn').addEventListener('click',openAdd);
   renderFilters();renderGrid();
 }
 
 function renderFilters(){
-  const fa=document.getElementById('fA'),fb=document.getElementById('fB');
-  if(!fa)return;
+  var fa=document.getElementById('fA'),fb=document.getElementById('fB');
+  if(!fa) return;
   if(tab==='textilien'){
-    fa.innerHTML=`<option value="">Alle Farben</option>`+unique(data.textilien,'farbe').map(v=>`<option ${fA===v?'selected':''}>${v}</option>`).join('');
-    if(fb)fb.innerHTML=`<option value="">Alle Größen</option>`+['XXS','XS','S','M','L','XL','XXL','3XL','onesize','3-4J','5-6J','7-8J','9-11J','12-18M','18-24M'].map(v=>`<option ${fB===v?'selected':''}>${v}</option>`).join('');
-  }else if(tab==='material'){
-    fa.innerHTML=`<option value="">Alle Typen</option>`+unique(data.material,'typ').map(v=>`<option ${fA===v?'selected':''}>${v}</option>`).join('');
-  }else if(tab==='accessoires'){
-    fa.innerHTML=`<option value="">Alle Typen</option>`+unique(data.accessoires,'typ').map(v=>`<option ${fA===v?'selected':''}>${v}</option>`).join('');
+    fa.innerHTML='<option value="">Alle Farben</option>'+unique(data.textilien,'farbe').map(function(v){return'<option'+(fA===v?' selected':'')+'>'+v+'</option>'}).join('');
+    if(fb) fb.innerHTML='<option value="">Alle Grössen</option>'+['XXS','XS','S','M','L','XL','XXL','3XL','onesize','3-4J','5-6J','7-8J','9-11J','12-18M','18-24M'].map(function(v){return'<option'+(fB===v?' selected':'')+'>'+v+'</option>'}).join('');
+  } else if(tab==='material'){
+    fa.innerHTML='<option value="">Alle Typen</option>'+unique(data.material,'typ').map(function(v){return'<option'+(fA===v?' selected':'')+'>'+v+'</option>'}).join('');
+  } else if(tab==='accessoires'){
+    fa.innerHTML='<option value="">Alle Typen</option>'+unique(data.accessoires,'typ').map(function(v){return'<option'+(fA===v?' selected':'')+'>'+v+'</option>'}).join('');
   }
 }
 
 function renderGrid(){
-  const items=getFiltered();
-  const g=document.getElementById('grid');
-  if(!g)return;
+  var items=getFiltered();
+  var g=document.getElementById('grid');
+  if(!g) return;
   if(!items.length){g.innerHTML='<div class="empty">Keine Einträge.</div>';return}
-  g.innerHTML=items.map(item=>{
-    const pct=Math.min(100,Math.round(item.bestand/Math.max(item.min*2,1)*100));
-    const low=item.bestand<item.min;
-    const fill=low?'#b83232':'#2a5e42';
-    const cls=low?'sr':'sg';
+  g.innerHTML=items.map(function(item){
+    var pct=Math.min(100,Math.round(item.bestand/Math.max(item.min*2,1)*100));
+    var low=item.bestand<item.min;
+    var fill=low?'#b83232':'#2a5e42';
+    var cls=low?'sr':'sg';
     if(tab==='textilien'){
-      const imgH=item.img?`<img src="${item.img}" alt="" onerror="this.style.display='none'">`:svgFor(item);
-      return `<div class="card" onclick="openEdit(${item.id})">
-        <div class="card-img">${imgH}</div>
-        <div class="ctype">${item.cat}</div>
-        <div class="cname">${item.ss}</div>
-        ${item.sku?`<div class="csku">${item.sku}</div>`:''}
-        ${item.lagerort?`<div class="cloc">📍 ${item.lagerort}</div>`:''}
-        <div class="ctags">
-          <span class="tag"><span class="cdot" style="background:${clr(item.farbe)}"></span>${item.farbe}</span>
-          <span class="tag tag-s">${item.groesse}</span>
-          ${item.sample?'<span class="tag tag-sample">Sample</span>':''}
-        </div>
-        ${item.notiz?`<div style="font-size:10px;color:var(--gD);margin-bottom:5px;font-style:italic">${item.notiz}</div>`:''}
-        <div class="cstock"><div><span class="snum ${cls}">${item.bestand}</span><span class="sunit">Stk</span></div>${low?'<span class="lbadge">Nachbest.</span>':''}</div>
-        <div class="sbar"><div class="sfill" style="width:${pct}%;background:${fill}"></div></div>
-      </div>`;
-    }else if(tab==='accessoires'){
-      return `<div class="card" onclick="openEditAcc(${item.id})">
-        <div class="card-img">${SVG.totebag()}</div>
-        <div class="ctype">${item.typ}</div>
-        <div class="cname">${item.name}</div>
-        ${item.lagerort?`<div class="cloc">📍 ${item.lagerort}</div>`:''}
-        <div class="cstock"><div><span class="snum ${cls}">${item.bestand}</span><span class="sunit">Stk</span></div>${low?'<span class="lbadge">Nachbest.</span>':''}</div>
-        <div class="sbar"><div class="sfill" style="width:${pct}%;background:${fill}"></div></div>
-      </div>`;
-    }else{
-      const imgH=item.img?`<img src="${item.img}" alt="" onerror="this.style.display='none'">`:((item.typ==='Verdünner'||item.typ==='Reiniger'||item.typ==='Emulsion')?SVG.flasche():SVG.farbdose());
-      return `<div class="card" onclick="openEdit(${item.id})">
-        <div class="card-img">${imgH}</div>
-        <div class="ctype">${item.typ}</div>
-        <div class="cname">${item.name}</div>
-        <div class="csku">${item.hersteller||'—'}</div>
-        ${item.lagerort?`<div class="cloc">📍 ${item.lagerort}</div>`:''}
-        <div class="ctags"><span class="tag">${item.einheit}</span></div>
-        <div class="cstock"><div><span class="snum ${cls}">${item.bestand}</span><span class="sunit">${item.einheit}</span></div>${low?'<span class="lbadge">Nachbest.</span>':''}</div>
-        <div class="sbar"><div class="sfill" style="width:${pct}%;background:${fill}"></div></div>
-      </div>`;
+      var imgH=item.img?'<img src="'+item.img+'" alt="" onerror="this.style.display=\'none\'">':svgFor(item);
+      return '<div class="card" onclick="openEdit('+item.id+')">'
+        +'<div class="card-img">'+imgH+'</div>'
+        +'<div class="ctype">'+item.cat+'</div>'
+        +'<div class="cname">'+item.ss+'</div>'
+        +(item.sku?'<div class="csku">'+item.sku+'</div>':'')
+        +(item.lagerort?'<div class="cloc">📍 '+item.lagerort+'</div>':'')
+        +(item.notiz?'<div class="cnotiz">'+item.notiz+'</div>':'')
+        +'<div class="ctags">'
+        +'<span class="tag"><span class="cdot" style="background:'+clr(item.farbe)+'"></span>'+item.farbe+'</span>'
+        +'<span class="tag tag-s">'+item.groesse+'</span>'
+        +(item.sample?'<span class="tag tag-sample">Sample</span>':'')
+        +(item.notiz&&item.notiz.includes('Archiv')?'<span class="tag tag-archiv">Archiv</span>':'')
+        +'</div>'
+        +'<div class="cstock"><div><span class="snum '+cls+'">'+item.bestand+'</span><span class="sunit">Stk</span></div>'+(low?'<span class="lbadge">Nachbest.</span>':'')+'</div>'
+        +'<div class="sbar"><div class="sfill" style="width:'+pct+'%;background:'+fill+'"></div></div>'
+        +'</div>';
+    } else if(tab==='accessoires'){
+      return '<div class="card" onclick="openEditAcc('+item.id+')">'
+        +'<div class="card-img">'+SVG.totebag()+'</div>'
+        +'<div class="ctype">'+item.typ+'</div>'
+        +'<div class="cname">'+item.name+'</div>'
+        +(item.lagerort?'<div class="cloc">📍 '+item.lagerort+'</div>':'')
+        +'<div class="cstock"><div><span class="snum '+cls+'">'+item.bestand+'</span><span class="sunit">Stk</span></div>'+(low?'<span class="lbadge">Nachbest.</span>':'')+'</div>'
+        +'<div class="sbar"><div class="sfill" style="width:'+pct+'%;background:'+fill+'"></div></div>'
+        +'</div>';
+    } else {
+      var imgH2=item.img?'<img src="'+item.img+'" alt="">':((item.typ==='Verdünner'||item.typ==='Reiniger'||item.typ==='Emulsion')?SVG.flasche():SVG.farbdose());
+      return '<div class="card" onclick="openEdit('+item.id+')">'
+        +'<div class="card-img">'+imgH2+'</div>'
+        +'<div class="ctype">'+item.typ+'</div>'
+        +'<div class="cname">'+item.name+'</div>'
+        +'<div class="csku">'+(item.hersteller||'—')+'</div>'
+        +(item.lagerort?'<div class="cloc">📍 '+item.lagerort+'</div>':'')
+        +'<div class="ctags"><span class="tag">'+item.einheit+'</span></div>'
+        +'<div class="cstock"><div><span class="snum '+cls+'">'+item.bestand+'</span><span class="sunit">'+item.einheit+'</span></div>'+(low?'<span class="lbadge">Nachbest.</span>':'')+'</div>'
+        +'<div class="sbar"><div class="sfill" style="width:'+pct+'%;background:'+fill+'"></div></div>'
+        +'</div>';
     }
   }).join('');
 }
 
-// ── RESERVATIONEN TAB ─────────────────────────────────────────────────────
+// AUFTRÄGE TAB
 function renderResTab(){
-  const offen=data.reservationen.filter(r=>r.status==='offen');
-  const erledigt=data.reservationen.filter(r=>r.status==='erledigt');
-  let html=`<div class="toolbar-res"><button class="btn btn-fill" onclick="openAddRes()">+ Neuer Auftrag</button></div>`;
-  html+=`<div class="sec-hdr">Offene Aufträge (${offen.length})</div><div class="res-list">`;
-  if(!offen.length)html+=`<div class="res-empty">Keine offenen Aufträge.</div>`;
-  offen.forEach(r=>{
-    const st=checkStock(r);
-    let stockHtml='';
-    if(st){
-      const cls=st.ok===true?'ok':st.ok==='partial'?'partial':'warn';
-      stockHtml=`<div class="res-stock ${st.ok===true?'':st.ok==='partial'?'partial':'warn'}">${st.msg}</div>`;
-    }
-    html+=`<div class="res-card">
-      <div class="res-head">
-        <div>
-          <div class="res-auftrag">${r.auftrag}</div>
-          ${r.artikel?`<div class="res-detail">${r.artikel}${r.menge?' · '+r.menge+' Stk':''}</div>`:''}
-          ${r.notiz?`<div class="res-detail" style="font-style:italic">${r.notiz}</div>`:''}
-          ${r.datum?`<div class="res-date">📅 ${fmtDate(r.datum)}</div>`:''}
-        </div>
-        <div class="res-actions">
-          <button class="btn btn-sm" onclick="openEditRes(${r.id})">✏</button>
-          <button class="btn btn-sm btn-green" onclick="erledigtRes(${r.id})">✓</button>
-        </div>
-      </div>
-      ${stockHtml}
-    </div>`;
+  var offen=data.reservationen.filter(function(r){return r.status==='offen'});
+  var erledigt=data.reservationen.filter(function(r){return r.status==='erledigt'});
+  var html='<div class="toolbar-res"><button class="btn btn-fill" onclick="openAddRes()">+ Neuer Auftrag</button></div>';
+  html+='<div class="sec-hdr">Offene Aufträge ('+offen.length+')</div><div class="res-list">';
+  if(!offen.length) html+='<div class="res-empty">Keine offenen Aufträge.</div>';
+  offen.forEach(function(r){
+    var st=checkStock(r);
+    var stockHtml='';
+    if(st) stockHtml='<div class="res-stock '+st.cls+'">'+st.msg+'</div>';
+    html+='<div class="res-card">'
+      +'<div class="res-head"><div>'
+      +'<div class="res-auftrag">'+r.auftrag+'</div>'
+      +(r.artikel?'<div class="res-detail">'+r.artikel+(r.menge?' · '+r.menge+' Stk':'')+'</div>':'')
+      +(r.notiz?'<div class="res-detail" style="font-style:italic">'+r.notiz+'</div>':'')
+      +(r.datum?'<div class="res-date">📅 '+fmtDate(r.datum)+'</div>':'')
+      +'</div>'
+      +'<div class="res-actions">'
+      +'<button class="btn btn-sm" onclick="openEditRes('+r.id+')">✏</button>'
+      +'<button class="btn btn-sm btn-green" onclick="erledigtRes('+r.id+')">✓</button>'
+      +'</div></div>'+stockHtml+'</div>';
   });
-  html+=`</div>`;
+  html+='</div>';
   if(erledigt.length){
-    html+=`<div class="sec-hdr">Erledigt (${erledigt.length})</div><div class="res-list">`;
-    erledigt.slice(-5).reverse().forEach(r=>{
-      html+=`<div class="res-card" style="opacity:.45">
-        <div class="res-head">
-          <div><div class="res-auftrag" style="text-decoration:line-through">${r.auftrag}</div><div class="res-detail">✓ erledigt</div></div>
-          <div class="res-actions"><button class="btn btn-sm btn-danger" onclick="deleteRes(${r.id})">✕</button></div>
-        </div>
-      </div>`;
+    html+='<div class="sec-hdr">Erledigt ('+erledigt.length+')</div><div class="res-list">';
+    erledigt.slice(-5).reverse().forEach(function(r){
+      html+='<div class="res-card" style="opacity:.4">'
+        +'<div class="res-head"><div>'
+        +'<div class="res-auftrag" style="text-decoration:line-through">'+r.auftrag+'</div>'
+        +'<div class="res-detail">✓ erledigt</div>'
+        +'</div><div class="res-actions"><button class="btn btn-sm btn-danger" onclick="deleteRes('+r.id+')">✕</button></div></div></div>';
     });
-    html+=`</div>`;
+    html+='</div>';
   }
   return html;
 }
 
-function fmtDate(d){if(!d)return'—';try{return new Date(d).toLocaleDateString('de-CH',{day:'2-digit',month:'2-digit',year:'numeric'})}catch{return d}}
-function erledigtRes(id){const r=data.reservationen.find(x=>x.id===id);if(r)r.status='erledigt';save();renderAll()}
-function deleteRes(id){if(!confirm('Löschen?'))return;data.reservationen=data.reservationen.filter(x=>x.id!==id);save();renderAll()}
-
+function fmtDate(d){if(!d)return'—';try{return new Date(d).toLocaleDateString('de-CH',{day:'2-digit',month:'2-digit',year:'numeric'})}catch(e){return d}}
+function erledigtRes(id){var r=data.reservationen.find(function(x){return x.id===id});if(r)r.status='erledigt';save();renderAll()}
+function deleteRes(id){if(!confirm('Löschen?'))return;data.reservationen=data.reservationen.filter(function(x){return x.id!==id});save();renderAll()}
 function openAddRes(){editId=null;showResModal()}
 function openEditRes(id){editId=id;showResModal()}
+
 function showResModal(){
   document.getElementById('overlay').classList.add('open');
-  const modal=document.getElementById('modal');
-  const isEdit=editId!==null;
-  const r=isEdit?data.reservationen.find(x=>x.id===editId):null;
-  const artOpts=[...new Set(data.textilien.map(i=>`${i.ss} ${i.farbe} ${i.groesse}`))];
-  modal.innerHTML=`
-    <div class="mhead"><h2>${isEdit?'Auftrag bearbeiten':'Neuer Auftrag'}</h2><button class="mclose" onclick="closeModal()">×</button></div>
-    <div class="mbody">
-      <div class="ff"><label>Kunde / Auftraggeber</label><input id="r_a" value="${r?r.auftrag:''}" placeholder="z.B. Ravi — Chimpy Festival"></div>
-      <div class="ff"><label>Artikel / Produkt</label>
-        <select id="r_art"><option value="">— wählen —</option>${artOpts.map(a=>`<option ${r&&r.artikel===a?'selected':''}>${a}</option>`).join('')}<option value="__c">Anderer Artikel …</option></select>
-        <div id="r_cw" style="margin-top:5px;${r&&r.artikel&&!artOpts.includes(r.artikel)?'':'display:none'}"><input id="r_c" value="${r&&r.artikel&&!artOpts.includes(r.artikel)?r.artikel:''}" placeholder="Artikel beschreiben"></div>
-      </div>
-      <div class="f2">
-        <div class="ff"><label>Menge (Stk)</label><input id="r_m" type="number" value="${r?r.menge:0}" min="0"></div>
-        <div class="ff"><label>Deadline</label><input id="r_d" type="date" value="${r?r.datum:''}"></div>
-      </div>
-      <div class="ff"><label>Notiz / Druckart</label><textarea id="r_n">${r?r.notiz:''}</textarea></div>
-      ${isEdit?`<button class="btn btn-danger" style="width:100%;margin-top:6px" onclick="deleteRes(${editId});closeModal()">Auftrag löschen</button>`:''}
-    </div>
-    <div class="mfoot">
-      <button class="btn" onclick="closeModal()">Abbrechen</button>
-      <button class="btn btn-fill" onclick="saveRes()">Speichern</button>
-    </div>`;
-  document.getElementById('r_art').addEventListener('change',e=>{
-    document.getElementById('r_cw').style.display=e.target.value==='__c'?'':'none';
-  });
+  var modal=document.getElementById('modal');
+  var isEdit=editId!==null;
+  var r=isEdit?data.reservationen.find(function(x){return x.id===editId}):null;
+  var artOpts=[...new Set(data.textilien.map(function(i){return i.ss+' '+i.farbe+' '+i.groesse}))];
+  modal.innerHTML=
+    '<div class="mhead"><h2>'+(isEdit?'Auftrag bearbeiten':'Neuer Auftrag')+'</h2><button class="mclose" onclick="closeModal()">×</button></div>'
+    +'<div class="mbody">'
+    +'<div class="ff"><label>Kunde / Auftraggeber</label><input id="r_a" value="'+(r?r.auftrag:'')+'" placeholder="z.B. Ravi — Chimpy Festival"></div>'
+    +'<div class="ff"><label>Artikel / Produkt</label>'
+    +'<input id="r_art" value="'+(r?r.artikel:'')+'" placeholder="z.B. Creator 2.0 Schwarz M"></div>'
+    +'<div class="f2">'
+    +'<div class="ff"><label>Menge (Stk)</label><input id="r_m" type="number" value="'+(r?r.menge:0)+'" min="0"></div>'
+    +'<div class="ff"><label>Deadline</label><input id="r_d" type="date" value="'+(r?r.datum:'')+'"></div>'
+    +'</div>'
+    +'<div class="ff"><label>Notiz / Druckart</label><textarea id="r_n">'+(r?r.notiz:'')+'</textarea></div>'
+    +(isEdit?'<button class="btn btn-danger" style="width:100%;margin-top:6px" onclick="deleteRes('+editId+');closeModal()">Auftrag löschen</button>':'')
+    +'</div>'
+    +'<div class="mfoot"><button class="btn" onclick="closeModal()">Abbrechen</button><button class="btn btn-fill" onclick="saveRes()">Speichern</button></div>';
 }
+
 function saveRes(){
-  const isEdit=editId!==null;
-  let art=document.getElementById('r_art').value;
-  if(art==='__c'){const c=document.getElementById('r_c');art=c?c.value||'Unbekannt':'Unbekannt';}
-  const obj={
+  var isEdit=editId!==null;
+  var obj={
     id:isEdit?editId:nid.r++,
-    auftrag:document.getElementById('r_a').value||'Auftrag',
-    artikel:art,menge:parseInt(document.getElementById('r_m').value)||0,
-    datum:document.getElementById('r_d').value,
-    status:isEdit?data.reservationen.find(x=>x.id===editId).status:'offen',
-    notiz:document.getElementById('r_n').value,
+    auftrag:gv('r_a')||'Auftrag',
+    artikel:gv('r_art'),
+    menge:parseInt(gv('r_m'))||0,
+    datum:gv('r_d'),
+    status:isEdit?data.reservationen.find(function(x){return x.id===editId}).status:'offen',
+    notiz:gv('r_n')
   };
-  if(isEdit){const i=data.reservationen.findIndex(x=>x.id===editId);data.reservationen[i]=obj}
+  if(isEdit){var i=data.reservationen.findIndex(function(x){return x.id===editId});data.reservationen[i]=obj}
   else data.reservationen.push(obj);
   save();closeModal();renderAll();
 }
 
-// ── ITEM MODAL ─────────────────────────────────────────────────────────────
+// ITEM MODAL
 function openAdd(){editId=null;showItemModal()}
 function openEdit(id){editId=id;showItemModal()}
 function openEditAcc(id){editId=id;showAccModal()}
 function closeModal(){document.getElementById('overlay').classList.remove('open')}
+var CLRKEYS=Object.keys(CLRS);
 
-const CLRKEYS=Object.keys(CLRS);
 function showItemModal(){
   document.getElementById('overlay').classList.add('open');
-  const modal=document.getElementById('modal');
-  const isEdit=editId!==null;
-  const item=isEdit?data[tab].find(i=>i.id===editId):null;
+  var modal=document.getElementById('modal');
+  var isEdit=editId!==null;
+  var item=isEdit?data[tab].find(function(i){return i.id===editId}):null;
   if(tab==='textilien'){
-    modal.innerHTML=`
-      <div class="mhead"><h2>${isEdit?'Bestand bearbeiten':'Neuer Artikel'}</h2><button class="mclose" onclick="closeModal()">×</button></div>
-      <div class="mbody">
-        ${!isEdit?`<div class="ff"><label>Stanley/Stella Modell</label><div class="ss-grid">${SS.map(p=>`<div class="ssi" id="ssi_${p.sku}" onclick="pickSS('${p.name}','${p.sku}','${p.cat}','${p.sizes.join(',')}')"><div class="ssi-name">${p.name}</div><div class="ssi-sku">${p.sku}</div><div class="ssi-sub">${p.gsm}</div></div>`).join('')}</div><hr class="divider"></div>`:''}
-        <div class="f2">
-          <div class="ff"><label>Modell</label><input id="m_ss" value="${item?item.ss:''}" placeholder="Creator 2.0"></div>
-          <div class="ff"><label>SKU</label><input id="m_sku" value="${item?item.sku:''}" placeholder="STTU755" style="font-family:monospace;font-size:13px"></div>
-        </div>
-        <div class="ff"><label>Kategorie</label><input id="m_cat" value="${item?item.cat:''}" placeholder="T-Shirt Unisex"></div>
-        <div class="f2">
-          <div class="ff"><label>Farbe</label>
-            <select id="m_f" onchange="syncDots()">${CLRKEYS.map(c=>`<option ${item&&item.farbe===c?'selected':''}>${c}</option>`).join('')}<option value="__c">Andere…</option></select>
-            <div class="cdots">${CLRKEYS.map(c=>`<div class="cpick ${item&&item.farbe===c?'sel':''}" style="background:${clr(c)}" title="${c}" onclick="pickClr('${c}')"></div>`).join('')}</div>
-          </div>
-          <div class="ff"><label>Größe</label><select id="m_gr">${['XXS','XS','S','M','L','XL','XXL','3XL','onesize','3-4J','5-6J','7-8J','9-11J','12-18M','18-24M'].map(s=>`<option ${item&&item.groesse===s?'selected':''}>${s}</option>`).join('')}</select></div>
-        </div>
-        <div class="ff"><label>Lagerort</label><input id="m_loc" value="${item?item.lagerort:''}" placeholder="z.B. Regal A1, Ming José, Box 1"></div>
-        <div class="f2">
-          <div class="ff"><label>Bestand (Stk)</label><input id="m_b" type="number" value="${item?item.bestand:0}" min="0"></div>
-          <div class="ff"><label>Mindestbestand</label><input id="m_min" type="number" value="${item?item.min:3}" min="0"></div>
-        </div>
-        <div class="ff"><label>Foto-URL (optional)</label><input id="m_img" value="${item?item.img:''}" placeholder="https://…" type="url"></div>
-        <div class="ff"><label>Notiz</label><textarea id="m_not">${item?item.notiz:''}</textarea></div>
-        <div class="ff"><label><input type="checkbox" id="m_smp" ${item&&item.sample?'checked':''}> Sample</label></div>
-        ${isEdit?`<button class="btn btn-danger" style="width:100%;margin-top:6px" onclick="deleteItem()">Artikel löschen</button>`:''}
-      </div>
-      <div class="mfoot">
-        <button class="btn" onclick="closeModal()">Abbrechen</button>
-        <button class="btn btn-fill" onclick="saveItem()">Speichern</button>
-      </div>`;
-  }else{
-    modal.innerHTML=`
-      <div class="mhead"><h2>${isEdit?'Material bearbeiten':'Neues Material'}</h2><button class="mclose" onclick="closeModal()">×</button></div>
-      <div class="mbody">
-        <div class="ff"><label>Bezeichnung</label><input id="m_ss" value="${item?item.name:''}" placeholder="z.B. Plastisol Weiß"></div>
-        <div class="f2">
-          <div class="ff"><label>Typ</label><select id="m_cat">${['Siebdruckfarbe','Verdünner','Reiniger','Emulsion','Klischee','Sieb','Sonstiges'].map(s=>`<option ${item&&item.typ===s?'selected':''}>${s}</option>`).join('')}</select></div>
-          <div class="ff"><label>Einheit</label><select id="m_gr">${['kg','l','Stück','ml'].map(s=>`<option ${item&&item.einheit===s?'selected':''}>${s}</option>`).join('')}</select></div>
-        </div>
-        <div class="ff"><label>Hersteller</label><input id="m_f" value="${item?item.hersteller:''}" placeholder="z.B. Murakami"></div>
-        <div class="ff"><label>Lagerort</label><input id="m_loc" value="${item?item.lagerort:''}" placeholder="z.B. Schrank G1"></div>
-        <div class="f2">
-          <div class="ff"><label>Bestand</label><input id="m_b" type="number" step="0.1" value="${item?item.bestand:0}"></div>
-          <div class="ff"><label>Mindestbestand</label><input id="m_min" type="number" step="0.1" value="${item?item.min:1}"></div>
-        </div>
-        <div class="ff"><label>Foto-URL</label><input id="m_img" value="${item?item.img:''}" placeholder="https://…" type="url"></div>
-        <div class="ff"><label>Notiz</label><textarea id="m_not">${item?item.notiz:''}</textarea></div>
-        ${isEdit?`<button class="btn btn-danger" style="width:100%;margin-top:6px" onclick="deleteItem()">Löschen</button>`:''}
-      </div>
-      <div class="mfoot">
-        <button class="btn" onclick="closeModal()">Abbrechen</button>
-        <button class="btn btn-fill" onclick="saveItem()">Speichern</button>
-      </div>`;
+    modal.innerHTML=
+      '<div class="mhead"><h2>'+(isEdit?'Bestand bearbeiten':'Neuer Artikel')+'</h2><button class="mclose" onclick="closeModal()">×</button></div>'
+      +'<div class="mbody">'
+      +(!isEdit?'<div class="ff"><label>Stanley/Stella Modell</label><div class="ss-grid">'+SS.map(function(p){return'<div class="ssi" id="ssi_'+p.sku+'" onclick="pickSS(\''+p.name+'\',\''+p.sku+'\',\''+p.cat+'\',\''+p.sizes.join(',')+'\')"><div class="ssi-name">'+p.name+'</div><div class="ssi-sku">'+p.sku+'</div><div class="ssi-sub">'+p.gsm+'</div></div>'}).join('')+'</div><hr class="divider"></div>':'')
+      +'<div class="f2"><div class="ff"><label>Modell</label><input id="m_ss" value="'+(item?item.ss:'')+'" placeholder="Creator 2.0"></div>'
+      +'<div class="ff"><label>SKU</label><input id="m_sku" value="'+(item?item.sku:'')+'" placeholder="STTU755" style="font-family:monospace;font-size:13px"></div></div>'
+      +'<div class="ff"><label>Kategorie</label><input id="m_cat" value="'+(item?item.cat:'')+'" placeholder="T-Shirt Unisex"></div>'
+      +'<div class="f2"><div class="ff"><label>Farbe</label>'
+      +'<select id="m_f" onchange="syncDots()">'+CLRKEYS.map(function(c){return'<option'+(item&&item.farbe===c?' selected':'')+'>'+c+'</option>'}).join('')+'<option value="__c">Andere…</option></select>'
+      +'<div class="cdots">'+CLRKEYS.map(function(c){return'<div class="cpick'+(item&&item.farbe===c?' sel':'')+'" style="background:'+clr(c)+'" title="'+c+'" onclick="pickClr(\''+c+'\')"></div>'}).join('')+'</div>'
+      +'</div>'
+      +'<div class="ff"><label>Grösse</label><select id="m_gr">'+['XXS','XS','S','M','L','XL','XXL','3XL','onesize','3-4J','5-6J','7-8J','9-11J','12-18M','18-24M'].map(function(s){return'<option'+(item&&item.groesse===s?' selected':'')+'>'+s+'</option>'}).join('')+'</select></div></div>'
+      +'<div class="ff"><label>Lagerort</label><input id="m_loc" value="'+(item?item.lagerort:'')+'" placeholder="z.B. M, Box 1, Ming José"></div>'
+      +'<div class="f2"><div class="ff"><label>Bestand (Stk)</label><input id="m_b" type="number" value="'+(item?item.bestand:0)+'" min="0"></div>'
+      +'<div class="ff"><label>Mindestbestand</label><input id="m_min" type="number" value="'+(item?item.min:3)+'" min="0"></div></div>'
+      +'<div class="ff"><label>Foto-URL (optional)</label><input id="m_img" value="'+(item&&item.img?item.img:'')+'" placeholder="https://…" type="url"></div>'
+      +'<div class="ff"><label>Notiz</label><textarea id="m_not">'+(item?item.notiz:'')+'</textarea></div>'
+      +'<div class="ff"><label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="m_smp"'+(item&&item.sample?' checked':'')+' style="width:auto;height:auto"> Sample</label></div>'
+      +(isEdit?'<button class="btn btn-danger" style="width:100%;margin-top:6px" onclick="deleteItem()">Artikel löschen</button>':'')
+      +'</div>'
+      +'<div class="mfoot"><button class="btn" onclick="closeModal()">Abbrechen</button><button class="btn btn-fill" onclick="saveItem()">Speichern</button></div>';
+  } else {
+    modal.innerHTML=
+      '<div class="mhead"><h2>'+(isEdit?'Material bearbeiten':'Neues Material')+'</h2><button class="mclose" onclick="closeModal()">×</button></div>'
+      +'<div class="mbody">'
+      +'<div class="ff"><label>Bezeichnung</label><input id="m_ss" value="'+(item?item.name:'')+'" placeholder="z.B. Plastisol Weiß"></div>'
+      +'<div class="f2"><div class="ff"><label>Typ</label><select id="m_cat">'+['Siebdruckfarbe','Verdünner','Reiniger','Emulsion','Klischee','Sieb','Sonstiges'].map(function(s){return'<option'+(item&&item.typ===s?' selected':'')+'>'+s+'</option>'}).join('')+'</select></div>'
+      +'<div class="ff"><label>Einheit</label><select id="m_gr">'+['kg','l','Stück','ml'].map(function(s){return'<option'+(item&&item.einheit===s?' selected':'')+'>'+s+'</option>'}).join('')+'</select></div></div>'
+      +'<div class="ff"><label>Hersteller</label><input id="m_f" value="'+(item?item.hersteller:'')+'" placeholder="z.B. Murakami"></div>'
+      +'<div class="ff"><label>Lagerort</label><input id="m_loc" value="'+(item?item.lagerort:'')+'" placeholder="z.B. Schrank G1"></div>'
+      +'<div class="f2"><div class="ff"><label>Bestand</label><input id="m_b" type="number" step="0.1" value="'+(item?item.bestand:0)+'"></div>'
+      +'<div class="ff"><label>Mindestbestand</label><input id="m_min" type="number" step="0.1" value="'+(item?item.min:1)+'"></div></div>'
+      +'<div class="ff"><label>Notiz</label><textarea id="m_not">'+(item?item.notiz:'')+'</textarea></div>'
+      +(isEdit?'<button class="btn btn-danger" style="width:100%;margin-top:6px" onclick="deleteItem()">Löschen</button>':'')
+      +'</div>'
+      +'<div class="mfoot"><button class="btn" onclick="closeModal()">Abbrechen</button><button class="btn btn-fill" onclick="saveItem()">Speichern</button></div>';
   }
 }
 
 function showAccModal(){
   document.getElementById('overlay').classList.add('open');
-  const modal=document.getElementById('modal');
-  const isEdit=editId!==null;
-  const item=isEdit?data.accessoires.find(i=>i.id===editId):null;
-  modal.innerHTML=`
-    <div class="mhead"><h2>${isEdit?'Bearbeiten':'Neuer Artikel'}</h2><button class="mclose" onclick="closeModal()">×</button></div>
-    <div class="mbody">
-      <div class="ff"><label>Name</label><input id="m_ss" value="${item?item.name:''}" placeholder="z.B. Light Tote Bag Sky Blue"></div>
-      <div class="ff"><label>Typ</label><select id="m_cat">${['Tote Bag','Shopping Bag','Accessoire','Sonstiges'].map(s=>`<option ${item&&item.typ===s?'selected':''}>${s}</option>`).join('')}</select></div>
-      <div class="ff"><label>Lagerort</label><input id="m_loc" value="${item?item.lagerort:''}" placeholder="z.B. Regal B1"></div>
-      <div class="f2">
-        <div class="ff"><label>Bestand (Stk)</label><input id="m_b" type="number" value="${item?item.bestand:0}" min="0"></div>
-        <div class="ff"><label>Mindestbestand</label><input id="m_min" type="number" value="${item?item.min:3}" min="0"></div>
-      </div>
-      <div class="ff"><label>Notiz</label><textarea id="m_not">${item?item.notiz:''}</textarea></div>
-      ${isEdit?`<button class="btn btn-danger" style="width:100%;margin-top:6px" onclick="deleteItem()">Löschen</button>`:''}
-    </div>
-    <div class="mfoot">
-      <button class="btn" onclick="closeModal()">Abbrechen</button>
-      <button class="btn btn-fill" onclick="saveAcc()">Speichern</button>
-    </div>`;
-}
-
-function saveAcc(){
-  const isEdit=editId!==null;
-  const obj={
-    id:isEdit?editId:nid.a++,
-    name:gv('m_ss')||'Unbekannt',typ:gv('m_cat'),lagerort:gv('m_loc'),
-    bestand:parseFloat(gv('m_b'))||0,min:parseFloat(gv('m_min'))||3,
-    img:'',notiz:gv('m_not'),
-  };
-  if(isEdit){const i=data.accessoires.findIndex(x=>x.id===editId);data.accessoires[i]=obj}
-  else data.accessoires.push(obj);
-  save();closeModal();renderAll();
+  var modal=document.getElementById('modal');
+  var isEdit=editId!==null;
+  var item=isEdit?data.accessoires.find(function(i){return i.id===editId}):null;
+  modal.innerHTML=
+    '<div class="mhead"><h2>'+(isEdit?'Bearbeiten':'Neuer Artikel')+'</h2><button class="mclose" onclick="closeModal()">×</button></div>'
+    +'<div class="mbody">'
+    +'<div class="ff"><label>Name</label><input id="m_ss" value="'+(item?item.name:'')+'" placeholder="z.B. Light Tote Bag Sky Blue"></div>'
+    +'<div class="ff"><label>Typ</label><select id="m_cat">'+['Tote Bag','Shopping Bag','Accessoire','Sonstiges'].map(function(s){return'<option'+(item&&item.typ===s?' selected':'')+'>'+s+'</option>'}).join('')+'</select></div>'
+    +'<div class="ff"><label>Lagerort</label><input id="m_loc" value="'+(item?item.lagerort:'')+'" placeholder="z.B. Regal B1"></div>'
+    +'<div class="f2"><div class="ff"><label>Bestand (Stk)</label><input id="m_b" type="number" value="'+(item?item.bestand:0)+'" min="0"></div>'
+    +'<div class="ff"><label>Mindestbestand</label><input id="m_min" type="number" value="'+(item?item.min:3)+'" min="0"></div></div>'
+    +'<div class="ff"><label>Notiz</label><textarea id="m_not">'+(item?item.notiz:'')+'</textarea></div>'
+    +(isEdit?'<button class="btn btn-danger" style="width:100%;margin-top:6px" onclick="deleteItem()">Löschen</button>':'')
+    +'</div>'
+    +'<div class="mfoot"><button class="btn" onclick="closeModal()">Abbrechen</button><button class="btn btn-fill" onclick="saveAcc()">Speichern</button></div>';
 }
 
 function pickSS(name,sku,cat,sizes){
-  document.querySelectorAll('.ssi').forEach(x=>x.classList.remove('sel'));
-  const el=document.getElementById('ssi_'+sku);if(el)el.classList.add('sel');
-  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v};
+  document.querySelectorAll('.ssi').forEach(function(x){x.classList.remove('sel')});
+  var el=document.getElementById('ssi_'+sku);if(el)el.classList.add('sel');
+  var set=function(id,v){var e=document.getElementById(id);if(e)e.value=v};
   set('m_ss',name);set('m_sku',sku);set('m_cat',cat);
-  const gr=document.getElementById('m_gr');
-  if(gr)gr.innerHTML=sizes.split(',').map(s=>`<option>${s}</option>`).join('');
+  var gr=document.getElementById('m_gr');
+  if(gr)gr.innerHTML=sizes.split(',').map(function(s){return'<option>'+s+'</option>'}).join('');
 }
 function pickClr(c){
-  const sel=document.getElementById('m_f');
-  if(sel){for(let i=0;i<sel.options.length;i++){if(sel.options[i].value===c){sel.selectedIndex=i;break}}}
-  document.querySelectorAll('.cpick').forEach(d=>d.classList.toggle('sel',d.title===c));
+  var sel=document.getElementById('m_f');
+  if(sel){for(var i=0;i<sel.options.length;i++){if(sel.options[i].value===c){sel.selectedIndex=i;break}}}
+  document.querySelectorAll('.cpick').forEach(function(d){d.classList.toggle('sel',d.title===c)});
 }
 function syncDots(){
-  const v=document.getElementById('m_f')?.value;
-  document.querySelectorAll('.cpick').forEach(d=>d.classList.toggle('sel',d.title===v));
+  var v=document.getElementById('m_f');if(!v)return;
+  document.querySelectorAll('.cpick').forEach(function(d){d.classList.toggle('sel',d.title===v.value)});
 }
-const gv=id=>{const e=document.getElementById(id);return e?e.value:''};
+function gv(id){var e=document.getElementById(id);return e?e.value:''}
 
 function saveItem(){
-  const isEdit=editId!==null;
+  var isEdit=editId!==null;
   if(tab==='textilien'){
-    let farbe=gv('m_f');if(farbe==='__c')farbe=prompt('Farbe:')||'Unbekannt';
-    const smp=document.getElementById('m_smp');
-    const obj={id:isEdit?editId:nid.t++,ss:gv('m_ss')||'?',sku:gv('m_sku'),cat:gv('m_cat')||'T-Shirt',
-      farbe,groesse:gv('m_gr'),lagerort:gv('m_loc'),
+    var farbe=gv('m_f');if(farbe==='__c')farbe=prompt('Farbe:')||'Unbekannt';
+    var smp=document.getElementById('m_smp');
+    var obj={id:isEdit?editId:nid.t++,ss:gv('m_ss')||'?',sku:gv('m_sku'),cat:gv('m_cat')||'T-Shirt',
+      farbe:farbe,groesse:gv('m_gr'),lagerort:gv('m_loc'),
       bestand:parseFloat(gv('m_b'))||0,min:parseFloat(gv('m_min'))||3,
       img:gv('m_img').trim(),notiz:gv('m_not'),sample:smp&&smp.checked?1:0};
-    if(isEdit){const i=data.textilien.findIndex(x=>x.id===editId);data.textilien[i]=obj}
+    if(isEdit){var i=data.textilien.findIndex(function(x){return x.id===editId});data.textilien[i]=obj}
     else data.textilien.push(obj);
-  }else{
-    const obj={id:isEdit?editId:nid.m++,name:gv('m_ss')||'?',typ:gv('m_cat'),hersteller:gv('m_f'),
+  } else {
+    var obj2={id:isEdit?editId:nid.m++,name:gv('m_ss')||'?',typ:gv('m_cat'),hersteller:gv('m_f'),
       einheit:gv('m_gr'),lagerort:gv('m_loc'),
       bestand:parseFloat(gv('m_b'))||0,min:parseFloat(gv('m_min'))||1,
-      img:gv('m_img').trim(),notiz:gv('m_not')};
-    if(isEdit){const i=data.material.findIndex(x=>x.id===editId);data.material[i]=obj}
-    else data.material.push(obj);
+      img:'',notiz:gv('m_not')};
+    if(isEdit){var j=data.material.findIndex(function(x){return x.id===editId});data.material[j]=obj2}
+    else data.material.push(obj2);
   }
+  save();closeModal();renderAll();
+}
+function saveAcc(){
+  var isEdit=editId!==null;
+  var obj={id:isEdit?editId:nid.a++,name:gv('m_ss')||'?',typ:gv('m_cat'),lagerort:gv('m_loc'),
+    bestand:parseFloat(gv('m_b'))||0,min:parseFloat(gv('m_min'))||3,notiz:gv('m_not')};
+  if(isEdit){var i=data.accessoires.findIndex(function(x){return x.id===editId});data.accessoires[i]=obj}
+  else data.accessoires.push(obj);
   save();closeModal();renderAll();
 }
 function deleteItem(){
   if(!confirm('Löschen?'))return;
-  if(tab==='textilien')data.textilien=data.textilien.filter(i=>i.id!==editId);
-  else if(tab==='material')data.material=data.material.filter(i=>i.id!==editId);
-  else if(tab==='accessoires')data.accessoires=data.accessoires.filter(i=>i.id!==editId);
+  if(tab==='textilien') data.textilien=data.textilien.filter(function(i){return i.id!==editId});
+  else if(tab==='material') data.material=data.material.filter(function(i){return i.id!==editId});
+  else if(tab==='accessoires') data.accessoires=data.accessoires.filter(function(i){return i.id!==editId});
   save();closeModal();renderAll();
 }
 
-// ── EXCEL ─────────────────────────────────────────────────────────────────
+// EXCEL
 function importExcel(e){
-  const file=e.target.files[0];if(!file)return;
-  const reader=new FileReader();
-  reader.onload=ev=>{
+  var file=e.target.files[0];if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(ev){
     try{
-      const wb=XLSX.read(ev.target.result,{type:'array'});
-      const ws=wb.Sheets[wb.SheetNames[0]];
-      const rows=XLSX.utils.sheet_to_json(ws,{defval:''});
+      var wb=XLSX.read(ev.target.result,{type:'array'});
+      var ws=wb.Sheets[wb.SheetNames[0]];
+      var rows=XLSX.utils.sheet_to_json(ws,{defval:''});
       if(!rows.length){alert('Keine Daten.');return}
-      let imp=0;
-      rows.forEach(row=>{
-        const k=Object.keys(row);
-        const get=ns=>{for(const n of ns){const f=k.find(x=>x.toLowerCase()===n);if(f&&row[f]!==''&&row[f]!==undefined)return String(row[f]);}return ''};
+      var imp=0;
+      rows.forEach(function(row){
+        var k=Object.keys(row);
+        var get=function(ns){for(var n of ns){var f=k.find(function(x){return x.toLowerCase()===n});if(f&&row[f]!==''&&row[f]!==undefined)return String(row[f]);}return ''};
         if(tab==='textilien'){
-          const b=parseFloat(get(['bestand','menge','stock','qty','anzahl']))||0;
+          var b=parseFloat(get(['bestand','menge','stock','qty','anzahl']))||0;
           if(b===0)return;
-          data.textilien.push({id:nid.t++,
-            ss:get(['modell','produkt','name','ss','model'])||'Import',
-            sku:get(['sku','artikelnummer']),cat:get(['kategorie','category','typ'])||'T-Shirt',
-            farbe:get(['farbe','color','colour']),groesse:get(['grösse','groesse','größe','size','gr']),
-            lagerort:get(['lagerort','ort','regal','place','location']),
-            bestand:b,min:parseFloat(get(['mindest','min','minimum']))||3,
-            img:get(['bild','foto','image','img']).trim(),notiz:get(['notiz','note','notes','bemerkung']),sample:0});imp++;
-        }else{
-          data.material.push({id:nid.m++,
-            name:get(['name','bezeichnung','produkt'])||'Import',
-            typ:get(['typ','type','kategorie'])||'Sonstiges',
-            hersteller:get(['hersteller','brand','marke']),
-            einheit:get(['einheit','unit'])||'kg',
-            lagerort:get(['lagerort','ort']),
-            bestand:parseFloat(get(['bestand','menge','stock','qty']))||0,
-            min:parseFloat(get(['mindest','min']))||1,
+          data.textilien.push({id:nid.t++,ss:get(['modell','produkt','name','ss'])||'Import',sku:get(['sku','artikelnummer']),
+            cat:get(['kategorie','category','typ'])||'T-Shirt',farbe:get(['farbe','color','colour']),
+            groesse:get(['groesse','grösse','größe','size','gr']),lagerort:get(['lagerort','ort','place']),
+            bestand:b,min:parseFloat(get(['mindest','min']))||3,img:'',notiz:get(['notiz','note']),sample:0});imp++;
+        } else {
+          data.material.push({id:nid.m++,name:get(['name','bezeichnung','produkt'])||'Import',
+            typ:get(['typ','type','kategorie'])||'Sonstiges',hersteller:get(['hersteller','brand']),
+            einheit:get(['einheit','unit'])||'kg',lagerort:get(['lagerort','ort']),
+            bestand:parseFloat(get(['bestand','menge','stock','qty']))||0,min:parseFloat(get(['mindest','min']))||1,
             img:'',notiz:get(['notiz','note'])});imp++;
         }
       });
-      save();renderAll();alert(`✓ ${imp} Artikel importiert!`);
+      save();renderAll();alert('✓ '+imp+' Artikel importiert!');
     }catch(err){alert('Fehler: '+err.message)}
     e.target.value='';
   };
   reader.readAsArrayBuffer(file);
 }
-
 function exportExcel(){
-  const wb=XLSX.utils.book_new();
-  const tRows=data.textilien.map(i=>({'Modell':i.ss,'SKU':i.sku,'Kategorie':i.cat,'Farbe':i.farbe,'Grösse':i.groesse,'Lagerort':i.lagerort,'Bestand':i.bestand,'Mindestbestand':i.min,'Sample':i.sample?'Ja':'','Notiz':i.notiz}));
+  var wb=XLSX.utils.book_new();
+  var tRows=data.textilien.map(function(i){return{'Modell':i.ss,'SKU':i.sku,'Kategorie':i.cat,'Farbe':i.farbe,'Grösse':i.groesse,'Lagerort':i.lagerort,'Bestand':i.bestand,'Mindestbestand':i.min,'Sample':i.sample?'Ja':'','Notiz':i.notiz}});
   XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(tRows),'Textilien');
-  const aRows=data.accessoires.map(i=>({'Name':i.name,'Typ':i.typ,'Lagerort':i.lagerort,'Bestand':i.bestand,'Mindestbestand':i.min,'Notiz':i.notiz}));
+  var aRows=data.accessoires.map(function(i){return{'Name':i.name,'Typ':i.typ,'Lagerort':i.lagerort,'Bestand':i.bestand,'Mindestbestand':i.min,'Notiz':i.notiz}});
   XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(aRows),'Bags & Accessoires');
-  const mRows=data.material.map(i=>({'Name':i.name,'Typ':i.typ,'Hersteller':i.hersteller,'Einheit':i.einheit,'Lagerort':i.lagerort,'Bestand':i.bestand,'Mindestbestand':i.min,'Notiz':i.notiz}));
+  var mRows=data.material.map(function(i){return{'Name':i.name,'Typ':i.typ,'Hersteller':i.hersteller,'Einheit':i.einheit,'Lagerort':i.lagerort,'Bestand':i.bestand,'Mindestbestand':i.min,'Notiz':i.notiz}});
   XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(mRows),'Material');
-  const rRows=data.reservationen.map(r=>({'Auftrag':r.auftrag,'Artikel':r.artikel,'Menge':r.menge,'Deadline':r.datum,'Status':r.status,'Notiz':r.notiz}));
+  var rRows=data.reservationen.map(function(r){return{'Auftrag':r.auftrag,'Artikel':r.artikel,'Menge':r.menge,'Deadline':r.datum,'Status':r.status,'Notiz':r.notiz}});
   XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rRows),'Aufträge');
-  XLSX.writeFile(wb,`StudiodeMacedo_Lager_${new Date().toISOString().slice(0,10)}.xlsx`);
+  XLSX.writeFile(wb,'StudiodeMacedo_Lager_'+new Date().toISOString().slice(0,10)+'.xlsx');
 }
 
-// ── EVENTS ────────────────────────────────────────────────────────────────
-document.querySelectorAll('.nt').forEach(t=>t.addEventListener('click',()=>{
-  document.querySelectorAll('.nt').forEach(x=>x.classList.remove('active'));
-  t.classList.add('active');tab=t.dataset.tab;fA='';fB='';search='';renderAll();
-}));
-document.getElementById('overlay').addEventListener('click',e=>{if(e.target===document.getElementById('overlay'))closeModal()});
+function renderAll(){renderStats();renderTabContent()}
 
+document.querySelectorAll('.nt').forEach(function(t){
+  t.addEventListener('click',function(){
+    document.querySelectorAll('.nt').forEach(function(x){x.classList.remove('active')});
+    t.classList.add('active');tab=t.dataset.tab;fA='';fB='';search='';renderAll();
+  });
+});
+document.getElementById('overlay').addEventListener('click',function(e){if(e.target===document.getElementById('overlay'))closeModal()});
 document.getElementById('hdrDate').textContent=new Date().toLocaleDateString('de-CH',{day:'2-digit',month:'2-digit',year:'numeric'});
 load();renderAll();
 </script>
