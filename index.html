@@ -1,1 +1,712 @@
-# demacedo-lager
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Studio de Macedo — Lager</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --black:#111111;
+  --white:#ffffff;
+  --offwhite:#f8f8f6;
+  --gray-light:#f0f0ed;
+  --gray-mid:#dededa;
+  --gray-dark:#888880;
+  --red:#b83232;
+  --green:#2a5e42;
+  --font:'Helvetica Neue',Helvetica,Arial,sans-serif;
+}
+html{background:var(--white);color:var(--black);font-family:var(--font);font-size:14px;line-height:1.5}
+body{min-height:100vh}
+
+/* ── HEADER ── */
+.site-header{
+  position:sticky;top:0;z-index:100;
+  background:var(--white);
+  border-bottom:1.5px solid var(--black);
+  padding:0 16px;
+  display:flex;align-items:center;justify-content:space-between;
+  height:52px;
+}
+.logo{font-size:13px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase}
+.logo span{font-weight:300}
+.header-date{font-size:11px;color:var(--gray-dark);letter-spacing:0.06em}
+
+/* ── STATS BAR ── */
+.statsbar{
+  display:flex;border-bottom:1px solid var(--gray-mid);
+  background:var(--offwhite);
+}
+.stat-cell{
+  flex:1;padding:10px 14px;border-right:1px solid var(--gray-mid);
+  min-width:0;
+}
+.stat-cell:last-child{border-right:none}
+.stat-num{font-size:22px;font-weight:300;line-height:1}
+.stat-lbl{font-size:10px;color:var(--gray-dark);text-transform:uppercase;letter-spacing:0.07em;margin-top:3px}
+.stat-warn{color:var(--red)!important}
+
+/* ── ALERT ── */
+.alert{
+  display:none;
+  margin:10px 14px;
+  padding:9px 12px;
+  border:1px solid var(--black);
+  background:var(--offwhite);
+  font-size:12px;
+  line-height:1.5;
+}
+.alert.show{display:block}
+
+/* ── NAV ── */
+.nav{display:flex;border-bottom:1.5px solid var(--black)}
+.nav-tab{
+  flex:1;text-align:center;
+  padding:11px 8px;
+  font-size:11px;font-weight:400;
+  letter-spacing:0.1em;text-transform:uppercase;
+  cursor:pointer;user-select:none;
+  border-right:1px solid var(--black);
+  border-bottom:3px solid transparent;
+  transition:background 0.1s;
+}
+.nav-tab:last-child{border-right:none}
+.nav-tab.active{border-bottom:3px solid var(--black);font-weight:700}
+.nav-tab:hover:not(.active){background:var(--gray-light)}
+
+/* ── TOOLBAR ── */
+.toolbar{
+  padding:10px 14px;
+  display:flex;gap:7px;flex-wrap:wrap;align-items:center;
+  border-bottom:1px solid var(--gray-mid);
+}
+.toolbar input[type=text]{
+  flex:1;min-width:110px;height:40px;
+  border:1px solid var(--black);
+  padding:0 10px;font-family:var(--font);font-size:16px;
+  background:var(--white);outline:none;border-radius:0;
+  -webkit-appearance:none;
+}
+.toolbar input[type=text]:focus{background:var(--gray-light)}
+.toolbar select{
+  height:40px;border:1px solid var(--black);
+  padding:0 8px;font-family:var(--font);font-size:13px;
+  background:var(--white);cursor:pointer;border-radius:0;outline:none;
+  -webkit-appearance:none;
+}
+.btn{
+  height:42px;padding:0 14px;
+  border:1.5px solid var(--black);
+  font-family:var(--font);font-size:11px;font-weight:700;
+  letter-spacing:0.08em;text-transform:uppercase;
+  background:var(--white);cursor:pointer;
+  transition:background 0.12s,color 0.12s;
+  border-radius:0;white-space:nowrap;
+  -webkit-tap-highlight-color:transparent;
+}
+.btn:hover{background:var(--black);color:var(--white)}
+.btn-fill{background:var(--black);color:var(--white)}
+.btn-fill:hover{background:#333}
+.btn-danger{border-color:var(--red);color:var(--red)}
+.btn-danger:hover{background:var(--red);color:var(--white)}
+
+/* ── GRID ── */
+.grid-wrap{padding:12px 14px}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(155px,1fr));
+  gap:1px;
+  background:var(--black);
+  border:1px solid var(--black);
+}
+.card{
+  background:var(--white);
+  padding:12px;
+  cursor:pointer;
+  transition:background 0.1s;
+  display:flex;flex-direction:column;
+}
+.card:hover{background:var(--gray-light)}
+
+/* product illustration */
+.card-img{
+  width:100%;height:88px;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--offwhite);
+  margin-bottom:9px;
+  overflow:hidden;
+  position:relative;
+}
+.card-img svg{width:72px;height:72px}
+.card-img img{width:100%;height:100%;object-fit:cover}
+.color-overlay{
+  position:absolute;inset:0;
+  mix-blend-mode:multiply;
+  opacity:0.18;
+}
+
+.card-type{font-size:10px;letter-spacing:0.09em;text-transform:uppercase;color:var(--gray-dark);margin-bottom:3px}
+.card-name{font-size:14px;font-weight:700;margin-bottom:2px;line-height:1.2}
+.card-sku{font-size:10px;color:var(--gray-dark);margin-bottom:7px;font-family:monospace;letter-spacing:0.04em}
+.card-tags{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:9px}
+.tag{font-size:10px;padding:2px 7px;border:1px solid var(--black);letter-spacing:0.04em;display:inline-flex;align-items:center;gap:4px}
+.tag-size{border-color:var(--gray-dark);color:var(--gray-dark)}
+.color-dot{display:inline-block;width:9px;height:9px;border-radius:50%;border:1px solid rgba(0,0,0,0.25);flex-shrink:0}
+
+.card-stock{display:flex;align-items:baseline;justify-content:space-between;margin-top:auto}
+.stock-n{font-size:24px;font-weight:300}
+.stock-unit{font-size:11px;color:var(--gray-dark);margin-left:2px}
+.stock-ok{color:var(--green)}
+.stock-low{color:var(--red)}
+.low-badge{font-size:10px;color:var(--red);letter-spacing:0.04em;text-transform:uppercase;font-weight:700}
+.stock-line{height:2px;background:var(--gray-mid);margin-top:7px}
+.stock-fill{height:2px;transition:width 0.3s}
+
+.empty{
+  padding:40px;text-align:center;
+  color:var(--gray-dark);font-size:13px;
+  background:var(--white);
+  grid-column:1/-1;
+}
+
+/* ── MODAL ── */
+.overlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,0.55);
+  z-index:200;
+}
+.overlay.open{display:block}
+.modal{
+  position:fixed;
+  left:0;right:0;bottom:0;
+  background:var(--white);
+  border-top:2px solid var(--black);
+  border-radius:0;
+  max-height:92vh;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+}
+.modal-head{
+  padding:14px 16px 11px;
+  border-bottom:1.5px solid var(--black);
+  display:flex;justify-content:space-between;align-items:center;
+  flex-shrink:0;
+  background:var(--white);
+}
+.modal-head h2{font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase}
+.modal-close{
+  font-size:24px;cursor:pointer;line-height:1;
+  background:none;border:none;font-family:var(--font);
+  color:var(--black);padding:4px 6px;
+}
+.modal-body{
+  padding:14px 16px;
+  overflow-y:auto;
+  flex:1;
+  -webkit-overflow-scrolling:touch;
+}
+.form-field{margin-bottom:13px}
+.form-field label{
+  display:block;font-size:11px;
+  text-transform:uppercase;letter-spacing:0.08em;
+  color:var(--gray-dark);margin-bottom:5px;font-weight:700;
+}
+.form-field input,.form-field select,.form-field textarea{
+  width:100%;border:1px solid var(--black);
+  padding:10px 10px;font-family:var(--font);font-size:16px;
+  background:var(--white);outline:none;border-radius:0;
+  -webkit-appearance:none;appearance:none;
+}
+.form-field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23111' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:30px;}
+.form-field input:focus,.form-field select:focus,.form-field textarea:focus{background:var(--gray-light)}
+.form-field textarea{resize:vertical;height:60px;font-size:15px}
+.form-2col{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.modal-foot{
+  padding:12px 16px;
+  border-top:1px solid var(--gray-mid);
+  display:flex;gap:8px;
+  flex-shrink:0;
+  background:var(--white);
+  padding-bottom:calc(12px + env(safe-area-inset-bottom));
+}
+.modal-foot .btn{flex:1;justify-content:center;height:46px;font-size:13px}
+
+/* ── SS PICKER ── */
+.ss-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:5px;
+  max-height:230px;overflow-y:auto;margin-top:5px;
+}
+.ss-item{
+  padding:7px 8px;border:1px solid var(--gray-mid);
+  font-size:12px;cursor:pointer;transition:all 0.1s;
+  display:flex;flex-direction:column;gap:2px;
+}
+.ss-item:hover,.ss-item.selected{border-color:var(--black);background:var(--gray-light)}
+.ss-name{font-weight:700;font-size:12px}
+.ss-sku{font-size:10px;color:var(--gray-dark);font-family:monospace}
+.ss-gsm{font-size:10px;color:var(--gray-dark)}
+.divider{border:none;border-top:1px solid var(--gray-mid);margin:12px 0}
+.section-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--gray-dark);margin-bottom:5px}
+
+/* ── COLOR PICKER ── */
+.color-picker-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px}
+.cpick{
+  width:24px;height:24px;border-radius:50%;
+  border:2px solid transparent;cursor:pointer;
+  transition:border-color 0.1s;
+}
+.cpick:hover,.cpick.selected{border-color:var(--black)}
+
+@media(max-width:500px){
+  .grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+  .stat-num{font-size:18px}
+  .stat-lbl{font-size:9px}
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="logo">Studio <span>de Macedo</span> — Lager</div>
+  <div class="header-date" id="headerDate"></div>
+</header>
+
+<div class="statsbar" id="statsbar"></div>
+<div class="alert" id="alert"></div>
+
+<div class="nav">
+  <div class="nav-tab active" data-tab="textilien">Textilien</div>
+  <div class="nav-tab" data-tab="material">Farben &amp; Material</div>
+</div>
+
+<div class="toolbar">
+  <input type="text" id="searchInput" placeholder="Suchen …">
+  <select id="filterA"></select>
+  <select id="filterB"></select>
+  <button class="btn btn-fill" id="addBtn">+ Neu</button>
+</div>
+
+<div class="grid-wrap">
+  <div class="grid" id="grid"></div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal" id="modal"></div>
+</div>
+
+<script>
+// ─── SVG ILLUSTRATIONS ────────────────────────────────────────────────────────
+const SVG_TSHIRT = (color='#888') => `<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M20 14 L10 22 L18 26 L18 62 L62 62 L62 26 L70 22 L60 14 C58 20 52 24 40 24 C28 24 22 20 20 14Z" fill="${color}" stroke="#111" stroke-width="1.5" stroke-linejoin="round"/>
+</svg>`;
+
+const SVG_HOODIE = (color='#888') => `<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M20 14 L10 24 L18 28 L18 64 L62 64 L62 28 L70 24 L60 14 C58 20 52 22 40 22 C28 22 22 20 20 14Z" fill="${color}" stroke="#111" stroke-width="1.5" stroke-linejoin="round"/>
+  <path d="M32 14 C32 14 34 28 40 28 C46 28 48 14 48 14" fill="${color}" stroke="#111" stroke-width="1.5" stroke-linejoin="round"/>
+  <circle cx="40" cy="14" r="5" fill="${color}" stroke="#111" stroke-width="1.5"/>
+  <line x1="18" y1="44" x2="62" y2="44" stroke="#111" stroke-width="1"/>
+</svg>`;
+
+const SVG_CREWNECK = (color='#888') => `<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M20 16 L10 26 L18 30 L18 64 L62 64 L62 30 L70 26 L60 16 C58 22 52 24 40 24 C28 24 22 22 20 16Z" fill="${color}" stroke="#111" stroke-width="1.5" stroke-linejoin="round"/>
+  <path d="M33 16 Q40 22 47 16" fill="none" stroke="#111" stroke-width="1.5"/>
+</svg>`;
+
+const SVG_ZIPHOODIE = (color='#888') => `<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M20 14 L10 24 L18 28 L18 64 L62 64 L62 28 L70 24 L60 14 C58 20 52 22 40 22 C28 22 22 20 20 14Z" fill="${color}" stroke="#111" stroke-width="1.5" stroke-linejoin="round"/>
+  <path d="M34 14 C34 14 36 18 40 18 C44 18 46 14 46 14" fill="${color}" stroke="#111" stroke-width="1.5"/>
+  <circle cx="40" cy="14" r="4.5" fill="${color}" stroke="#111" stroke-width="1.5"/>
+  <line x1="40" y1="18" x2="40" y2="64" stroke="#111" stroke-width="1.2"/>
+  <line x1="18" y1="44" x2="62" y2="44" stroke="#111" stroke-width="0.8"/>
+</svg>`;
+
+const SVG_TANKTOP = (color='#888') => `<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M28 12 L18 22 L18 64 L62 64 L62 22 L52 12 Q48 22 40 22 Q32 22 28 12Z" fill="${color}" stroke="#111" stroke-width="1.5" stroke-linejoin="round"/>
+</svg>`;
+
+const SVG_FARBDOSE = () => `<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="22" y="24" width="36" height="38" rx="3" fill="#ddd" stroke="#111" stroke-width="1.5"/>
+  <rect x="22" y="24" width="36" height="10" rx="2" fill="#bbb" stroke="#111" stroke-width="1.5"/>
+  <rect x="30" y="18" width="20" height="8" rx="2" fill="#ccc" stroke="#111" stroke-width="1.2"/>
+  <circle cx="40" cy="48" r="7" fill="white" stroke="#111" stroke-width="1"/>
+  <circle cx="40" cy="48" r="4" fill="#999"/>
+</svg>`;
+
+const SVG_FLASCHE = () => `<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="34" y="14" width="12" height="8" rx="2" fill="#ccc" stroke="#111" stroke-width="1.2"/>
+  <path d="M30 22 Q24 30 24 40 L24 62 Q24 64 26 64 L54 64 Q56 64 56 62 L56 40 Q56 30 50 22Z" fill="#ddd" stroke="#111" stroke-width="1.5"/>
+  <rect x="24" y="38" width="32" height="6" fill="#bbb" stroke="#111" stroke-width="0.8"/>
+</svg>`;
+
+// ─── Color map ────────────────────────────────────────────────────────────────
+const COLORS = {
+  'Schwarz':'#1a1a1a','Black':'#1a1a1a',
+  'Weiß':'#f0f0ec','White':'#f0f0ec','Weiss':'#f0f0ec',
+  'Navy':'#1e2d55','Marineblau':'#1e2d55',
+  'Grau':'#9a9a94','Grey':'#9a9a94','Gray':'#9a9a94',
+  'Hellgrau':'#d0d0cc','Light Grey':'#d0d0cc',
+  'Anthrazit':'#3a3a38','Anthracite':'#3a3a38',
+  'Rot':'#b83232','Red':'#b83232',
+  'Burgund':'#6d1a1a','Burgundy':'#6d1a1a',
+  'Forest':'#2a4430','Waldgrün':'#2a4430','Bottle':'#2a4430',
+  'Beige':'#d4c5a5','Sand':'#d4c5a5','Natural':'#d4c5a5',
+  'Khaki':'#b0a878',
+  'Hellblau':'#a2bfd4','Sky Blue':'#a2bfd4',
+  'Blau':'#2255a4','Blue':'#2255a4',
+  'Camel':'#c09060',
+  'Ecru':'#e8e0cc','Off White':'#e8e0cc',
+  'Dusty':'#c8b8a8','Desert Dust':'#c8b8a8',
+};
+function clr(n){return COLORS[n]||'#aaa'}
+
+// ─── SS Products catalogue ────────────────────────────────────────────────────
+const SS = [
+  {name:'Creator 2.0',    sku:'STTU755', cat:'T-Shirt Unisex',          fit:'Medium Fit',   gsm:'180 GSM', svg:'tshirt',    sizes:['XS','S','M','L','XL','XXL','3XL']},
+  {name:'Rocker',         sku:'STTU758', cat:'T-Shirt Unisex',          fit:'Regular Fit',  gsm:'180 GSM', svg:'tshirt',    sizes:['XS','S','M','L','XL','XXL']},
+  {name:'Blaster 2.0',    sku:'STTU959', cat:'T-Shirt Oversized',       fit:'Oversized',    gsm:'200 GSM', svg:'tshirt',    sizes:['XS','S','M','L','XL','XXL']},
+  {name:'Asher',          sku:'STTU078', cat:'T-Shirt Oversized',       fit:'Oversized',    gsm:'280 GSM', svg:'tshirt',    sizes:['XS','S','M','L','XL','XXL']},
+  {name:'Stella Serena',  sku:'SATW008', cat:'T-Shirt Damen',           fit:'Medium Fit',   gsm:'155 GSM', svg:'tshirt',    sizes:['XS','S','M','L','XL']},
+  {name:'Stella Ella',    sku:'SATW031', cat:'T-Shirt Damen',           fit:'Fitted',       gsm:'180 GSM', svg:'tshirt',    sizes:['XS','S','M','L','XL']},
+  {name:'Stella Nova',    sku:'SATW030', cat:'T-Shirt Damen',           fit:'Relaxed',      gsm:'155 GSM', svg:'tshirt',    sizes:['XS','S','M','L','XL']},
+  {name:'Drummer 2.0',    sku:'STSU168', cat:'Hoodie Unisex',           fit:'Regular Fit',  gsm:'280 GSM', svg:'hoodie',    sizes:['XS','S','M','L','XL','XXL']},
+  {name:'Slammer 2.0',    sku:'STSU211', cat:'Hoodie Oversized',        fit:'Oversized',    gsm:'380 GSM', svg:'hoodie',    sizes:['XS','S','M','L','XL','XXL']},
+  {name:'Connector 2.0',  sku:'STSU207', cat:'Zip-Hoodie Unisex',       fit:'Regular Fit',  gsm:'300 GSM', svg:'ziphoodie', sizes:['XS','S','M','L','XL','XXL']},
+  {name:'Changer 2.0',    sku:'STSU173', cat:'Crewneck Unisex',         fit:'Regular Fit',  gsm:'280 GSM', svg:'crewneck',  sizes:['XS','S','M','L','XL','XXL']},
+  {name:'Stella Ava',     sku:'SATW033', cat:'Tank Top Damen',          fit:'Fitted',       gsm:'180 GSM', svg:'tanktop',   sizes:['XS','S','M','L','XL']},
+];
+function ssByName(n){return SS.find(s=>s.name===n)||null}
+function svgFor(item){
+  const p=ssByName(item.ss);
+  const t=p?p.svg:'tshirt';
+  const c=clr(item.farbe);
+  if(t==='hoodie')   return SVG_HOODIE(c);
+  if(t==='crewneck') return SVG_CREWNECK(c);
+  if(t==='ziphoodie')return SVG_ZIPHOODIE(c);
+  if(t==='tanktop')  return SVG_TANKTOP(c);
+  return SVG_TSHIRT(c);
+}
+
+// ─── localStorage persistence ────────────────────────────────────────────────
+function load(){
+  try{
+    const t=JSON.parse(localStorage.getItem('sdm_textilien'));
+    const m=JSON.parse(localStorage.getItem('sdm_material'));
+    if(t) data.textilien=t;
+    if(m) data.material=m;
+    const nid=JSON.parse(localStorage.getItem('sdm_nextid'));
+    if(nid){nextId.textilien=nid.textilien;nextId.material=nid.material}
+  }catch(e){}
+}
+function save(){
+  try{
+    localStorage.setItem('sdm_textilien',JSON.stringify(data.textilien));
+    localStorage.setItem('sdm_material',JSON.stringify(data.material));
+    localStorage.setItem('sdm_nextid',JSON.stringify(nextId));
+  }catch(e){}
+}
+
+// ─── Data ─────────────────────────────────────────────────────────────────────
+let data = {
+  textilien:[
+    {id:1,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'S',bestand:23,min:8,img:'',notiz:''},
+    {id:2,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'M',bestand:31,min:8,img:'',notiz:''},
+    {id:3,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'L',bestand:6, min:8,img:'',notiz:''},
+    {id:4,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Weiß',   groesse:'M',bestand:18,min:8,img:'',notiz:''},
+    {id:5,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Navy',   groesse:'M',bestand:4, min:6,img:'',notiz:''},
+    {id:6,ss:'Stella Serena',sku:'SATW008',cat:'T-Shirt Damen',farbe:'Schwarz',groesse:'S',bestand:12,min:6,img:'',notiz:''},
+    {id:7,ss:'Drummer 2.0', sku:'STSU168',cat:'Hoodie Unisex', farbe:'Schwarz',groesse:'M',bestand:9, min:4,img:'',notiz:''},
+    {id:8,ss:'Drummer 2.0', sku:'STSU168',cat:'Hoodie Unisex', farbe:'Grau',   groesse:'L',bestand:2, min:4,img:'',notiz:''},
+    {id:9,ss:'Changer 2.0', sku:'STSU173',cat:'Crewneck Unisex',farbe:'Weiß', groesse:'M',bestand:7, min:4,img:'',notiz:''},
+    {id:10,ss:'Blaster 2.0',sku:'STTU959',cat:'T-Shirt Oversized',farbe:'Schwarz',groesse:'L',bestand:5,min:3,img:'',notiz:''},
+  ],
+  material:[
+    {id:1,name:'Plastisol Weiß',   typ:'Siebdruckfarbe',hersteller:'Murakami',einheit:'kg',bestand:4.5,min:2,img:'',notiz:''},
+    {id:2,name:'Plastisol Schwarz',typ:'Siebdruckfarbe',hersteller:'Murakami',einheit:'kg',bestand:3.2,min:2,img:'',notiz:''},
+    {id:3,name:'Plastisol Rot',    typ:'Siebdruckfarbe',hersteller:'Murakami',einheit:'kg',bestand:0.8,min:1,img:'',notiz:''},
+    {id:4,name:'Plastisol Blau',   typ:'Siebdruckfarbe',hersteller:'Murakami',einheit:'kg',bestand:1.1,min:1,img:'',notiz:''},
+    {id:5,name:'Wasserbasis Klar', typ:'Siebdruckfarbe',hersteller:'Permaset',einheit:'l', bestand:2.0,min:1,img:'',notiz:''},
+    {id:6,name:'Verdünner Standard',typ:'Verdünner',    hersteller:'',        einheit:'l', bestand:0.5,min:1,img:'',notiz:''},
+    {id:7,name:'Siebdruckreiniger',typ:'Reiniger',      hersteller:'',        einheit:'l', bestand:3.0,min:1,img:'',notiz:''},
+    {id:8,name:'Fotosieb-Emulsion',typ:'Emulsion',      hersteller:'Murakami',einheit:'l', bestand:0.3,min:0.5,img:'',notiz:''},
+  ]
+};
+let nextId={textilien:11,material:9};
+let tab='textilien',editId=null,search='',fA='',fB='';
+
+// ─── Render stats ─────────────────────────────────────────────────────────────
+function renderStats(){
+  const t=data.textilien,m=data.material;
+  const tLow=t.filter(i=>i.bestand<i.min).length;
+  const mLow=m.filter(i=>i.bestand<i.min).length;
+  document.getElementById('statsbar').innerHTML=`
+    <div class="stat-cell"><div class="stat-num">${t.reduce((a,i)=>a+i.bestand,0)}</div><div class="stat-lbl">Textilien</div></div>
+    <div class="stat-cell"><div class="stat-num">${t.length}</div><div class="stat-lbl">Artikel</div></div>
+    <div class="stat-cell"><div class="stat-num">${m.length}</div><div class="stat-lbl">Material</div></div>
+    <div class="stat-cell"><div class="stat-num ${(tLow+mLow)?'stat-warn':''}">${tLow+mLow}</div><div class="stat-lbl">Nachbestellen</div></div>`;
+  const lows=[...t.filter(i=>i.bestand<i.min).map(i=>`${i.ss} ${i.farbe} ${i.groesse}`),...m.filter(i=>i.bestand<i.min).map(i=>i.name)];
+  const al=document.getElementById('alert');
+  if(lows.length){al.innerHTML='⚠ &nbsp;Nachbestellen: &nbsp;'+lows.join(' &nbsp;·&nbsp; ');al.classList.add('show')}
+  else al.classList.remove('show');
+}
+
+// ─── Filters ──────────────────────────────────────────────────────────────────
+function unique(arr,key){return[...new Set(arr.map(i=>i[key]))].sort()}
+function renderFilters(){
+  const fa=document.getElementById('filterA'),fb=document.getElementById('filterB');
+  if(tab==='textilien'){
+    fa.innerHTML=`<option value="">Alle Farben</option>`+unique(data.textilien,'farbe').map(v=>`<option ${fA===v?'selected':''}>${v}</option>`).join('');
+    fb.innerHTML=`<option value="">Alle Größen</option>`+['XS','S','M','L','XL','XXL','3XL'].map(v=>`<option ${fB===v?'selected':''}>${v}</option>`).join('');
+    fb.style.display='';
+  } else {
+    fa.innerHTML=`<option value="">Alle Typen</option>`+unique(data.material,'typ').map(v=>`<option ${fA===v?'selected':''}>${v}</option>`).join('');
+    fb.style.display='none';
+  }
+}
+function getFiltered(){
+  let items=[...data[tab]];
+  if(search) items=items.filter(i=>JSON.stringify(i).toLowerCase().includes(search.toLowerCase()));
+  if(tab==='textilien'){
+    if(fA) items=items.filter(i=>i.farbe===fA);
+    if(fB) items=items.filter(i=>i.groesse===fB);
+  } else {
+    if(fA) items=items.filter(i=>i.typ===fA);
+  }
+  return items;
+}
+
+// ─── Grid ─────────────────────────────────────────────────────────────────────
+function renderGrid(){
+  const items=getFiltered();
+  const g=document.getElementById('grid');
+  if(!items.length){g.innerHTML='<div class="empty">Keine Einträge gefunden.</div>';return}
+  g.innerHTML=items.map(item=>{
+    const pct=Math.min(100,Math.round(item.bestand/Math.max(item.min*2,1)*100));
+    const fill=item.bestand<item.min?'#b83232':'#2a5e42';
+    const cls=item.bestand<item.min?'stock-low':'stock-ok';
+    if(tab==='textilien'){
+      const imgContent=item.img
+        ?`<img src="${item.img}" alt="${item.ss}" onerror="this.style.display='none'">`
+        :svgFor(item);
+      return `<div class="card" onclick="openEdit(${item.id})">
+        <div class="card-img">${imgContent}</div>
+        <div class="card-type">${item.cat}</div>
+        <div class="card-name">${item.ss}</div>
+        <div class="card-sku">${item.sku}</div>
+        <div class="card-tags">
+          <span class="tag"><span class="color-dot" style="background:${clr(item.farbe)}"></span>${item.farbe}</span>
+          <span class="tag tag-size">${item.groesse}</span>
+        </div>
+        <div class="card-stock">
+          <div><span class="stock-n ${cls}">${item.bestand}</span><span class="stock-unit">Stk</span></div>
+          ${item.bestand<item.min?'<span class="low-badge">Nachbestellen</span>':''}
+        </div>
+        <div class="stock-line"><div class="stock-fill" style="width:${pct}%;background:${fill}"></div></div>
+      </div>`;
+    } else {
+      const imgContent=item.img
+        ?`<img src="${item.img}" alt="${item.name}" onerror="this.style.display='none'">`
+        :(item.typ==='Verdünner'||item.typ==='Reiniger'||item.typ==='Emulsion'?SVG_FLASCHE():SVG_FARBDOSE());
+      return `<div class="card" onclick="openEdit(${item.id})">
+        <div class="card-img">${imgContent}</div>
+        <div class="card-type">${item.typ}</div>
+        <div class="card-name">${item.name}</div>
+        <div class="card-sku">${item.hersteller||'—'}</div>
+        <div class="card-tags"><span class="tag">${item.einheit}</span></div>
+        <div class="card-stock">
+          <div><span class="stock-n ${cls}">${item.bestand}</span><span class="stock-unit">${item.einheit}</span></div>
+          ${item.bestand<item.min?'<span class="low-badge">Nachbestellen</span>':''}
+        </div>
+        <div class="stock-line"><div class="stock-fill" style="width:${pct}%;background:${fill}"></div></div>
+      </div>`;
+    }
+  }).join('');
+}
+
+function render(){renderStats();renderFilters();renderGrid()}
+
+// ─── Modal ────────────────────────────────────────────────────────────────────
+function openAdd(){editId=null;showModal()}
+function openEdit(id){editId=id;showModal()}
+function closeModal(){document.getElementById('overlay').classList.remove('open')}
+
+const COLOR_OPTIONS=Object.keys(COLORS).filter((_,i)=>i%2===0);
+
+function showModal(){
+  document.getElementById('overlay').classList.add('open');
+  const modal=document.getElementById('modal');
+  const isEdit=editId!==null;
+  const item=isEdit?data[tab].find(i=>i.id===editId):null;
+
+  if(tab==='textilien'){
+    modal.innerHTML=`
+      <div class="modal-head">
+        <h2>${isEdit?'Bestand bearbeiten':'Neuer Textil-Artikel'}</h2>
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body">
+        ${!isEdit?`<div class="form-field">
+          <label>Stanley/Stella Modell wählen</label>
+          <div class="ss-grid">${SS.map(p=>`
+            <div class="ss-item" id="ss_${p.sku}" onclick="pickSS('${p.name}','${p.sku}','${p.cat}','${p.sizes.join(',')}')">
+              <div class="ss-name">${p.name}</div>
+              <div class="ss-sku">${p.sku}</div>
+              <div class="ss-gsm">${p.gsm} · ${p.fit}</div>
+            </div>`).join('')}
+          </div>
+          <hr class="divider">
+        </div>`:''}
+        <div class="form-2col">
+          <div class="form-field"><label>Modell</label><input id="m_ss" value="${item?item.ss:''}" placeholder="Creator 2.0"></div>
+          <div class="form-field"><label>SKU</label><input id="m_sku" value="${item?item.sku:''}" placeholder="STTU755" style="font-family:monospace;font-size:12px"></div>
+        </div>
+        <div class="form-field"><label>Kategorie</label><input id="m_cat" value="${item?item.cat:''}" placeholder="T-Shirt Unisex"></div>
+        <div class="form-2col">
+          <div class="form-field"><label>Farbe</label>
+            <select id="m_farbe" onchange="syncColorDots()">${COLOR_OPTIONS.map(c=>`<option ${item&&item.farbe===c?'selected':''}>${c}</option>`).join('')}<option value="__custom">Andere …</option></select>
+            <div class="color-picker-row" id="colorDots">${COLOR_OPTIONS.map(c=>`<div class="cpick ${item&&item.farbe===c?'selected':''}" style="background:${clr(c)};border-color:${clr(c)==='#f0f0ec'?'#aaa':'transparent'}" title="${c}" onclick="pickColor('${c}')"></div>`).join('')}</div>
+          </div>
+          <div class="form-field"><label>Größe</label>
+            <select id="m_groesse">${['XS','S','M','L','XL','XXL','3XL'].map(s=>`<option ${item&&item.groesse===s?'selected':''}>${s}</option>`).join('')}</select>
+          </div>
+        </div>
+        <div class="form-2col">
+          <div class="form-field"><label>Bestand (Stück)</label><input id="m_bestand" type="number" value="${item?item.bestand:0}" min="0"></div>
+          <div class="form-field"><label>Mindestbestand</label><input id="m_min" type="number" value="${item?item.min:5}" min="0"></div>
+        </div>
+        <div class="form-field"><label>Foto-URL (optional)</label><input id="m_img" value="${item?item.img:''}" placeholder="https://…"></div>
+        <div class="form-field"><label>Notiz</label><textarea id="m_notiz">${item?item.notiz:''}</textarea></div>
+        ${isEdit?`<button class="btn btn-danger" style="width:100%;margin-top:6px" onclick="deleteItem()">Artikel löschen</button>`:''}
+      </div>
+      <div class="modal-foot">
+        <button class="btn" onclick="closeModal()">Abbrechen</button>
+        <button class="btn btn-fill" onclick="saveItem()">Speichern</button>
+      </div>`;
+  } else {
+    modal.innerHTML=`
+      <div class="modal-head">
+        <h2>${isEdit?'Material bearbeiten':'Neues Material'}</h2>
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-field"><label>Bezeichnung</label><input id="m_name" value="${item?item.name:''}" placeholder="z.B. Plastisol Weiß"></div>
+        <div class="form-2col">
+          <div class="form-field"><label>Typ</label>
+            <select id="m_typ">${['Siebdruckfarbe','Verdünner','Reiniger','Emulsion','Klischee','Sieb','Sonstiges'].map(s=>`<option ${item&&item.typ===s?'selected':''}>${s}</option>`).join('')}</select>
+          </div>
+          <div class="form-field"><label>Einheit</label>
+            <select id="m_einheit">${['kg','l','Stück','ml'].map(s=>`<option ${item&&item.einheit===s?'selected':''}>${s}</option>`).join('')}</select>
+          </div>
+        </div>
+        <div class="form-field"><label>Hersteller</label><input id="m_hersteller" value="${item?item.hersteller:''}" placeholder="z.B. Murakami"></div>
+        <div class="form-2col">
+          <div class="form-field"><label>Bestand</label><input id="m_bestand" type="number" step="0.1" value="${item?item.bestand:0}"></div>
+          <div class="form-field"><label>Mindestbestand</label><input id="m_min" type="number" step="0.1" value="${item?item.min:1}"></div>
+        </div>
+        <div class="form-field"><label>Foto-URL (optional)</label><input id="m_img" value="${item?item.img:''}" placeholder="https://…"></div>
+        <div class="form-field"><label>Notiz</label><textarea id="m_notiz">${item?item.notiz:''}</textarea></div>
+        ${isEdit?`<button class="btn btn-danger" style="width:100%;margin-top:6px" onclick="deleteItem()">Artikel löschen</button>`:''}
+      </div>
+      <div class="modal-foot">
+        <button class="btn" onclick="closeModal()">Abbrechen</button>
+        <button class="btn btn-fill" onclick="saveItem()">Speichern</button>
+      </div>`;
+  }
+}
+
+function pickSS(name,sku,cat,sizes){
+  document.querySelectorAll('.ss-item').forEach(x=>x.classList.remove('selected'));
+  const el=document.getElementById('ss_'+sku);
+  if(el) el.classList.add('selected');
+  const mss=document.getElementById('m_ss');
+  const msku=document.getElementById('m_sku');
+  const mcat=document.getElementById('m_cat');
+  const mg=document.getElementById('m_groesse');
+  if(mss) mss.value=name;
+  if(msku) msku.value=sku;
+  if(mcat) mcat.value=cat;
+  if(mg){mg.innerHTML=sizes.split(',').map(s=>`<option>${s}</option>`).join('')}
+}
+
+function pickColor(c){
+  const sel=document.getElementById('m_farbe');
+  if(sel){
+    for(let i=0;i<sel.options.length;i++){if(sel.options[i].value===c){sel.selectedIndex=i;break}}
+  }
+  document.querySelectorAll('.cpick').forEach(d=>{d.classList.toggle('selected',d.title===c)});
+}
+
+function syncColorDots(){
+  const sel=document.getElementById('m_farbe');
+  if(!sel) return;
+  const v=sel.value;
+  document.querySelectorAll('.cpick').forEach(d=>d.classList.toggle('selected',d.title===v));
+}
+
+function saveItem(){
+  const isEdit=editId!==null;
+  if(tab==='textilien'){
+    const farbe=document.getElementById('m_farbe').value==='__custom'
+      ?(prompt('Farbe eingeben:')||'Unbekannt')
+      :document.getElementById('m_farbe').value;
+    const obj={
+      id:isEdit?editId:nextId.textilien++,
+      ss:document.getElementById('m_ss').value||'Unbekannt',
+      sku:document.getElementById('m_sku').value||'',
+      cat:document.getElementById('m_cat').value||'T-Shirt',
+      farbe,
+      groesse:document.getElementById('m_groesse').value,
+      bestand:parseFloat(document.getElementById('m_bestand').value)||0,
+      min:parseFloat(document.getElementById('m_min').value)||5,
+      img:document.getElementById('m_img').value.trim(),
+      notiz:document.getElementById('m_notiz').value,
+    };
+    if(isEdit){const i=data.textilien.findIndex(x=>x.id===editId);data.textilien[i]=obj}
+    else data.textilien.push(obj);
+  } else {
+    const obj={
+      id:isEdit?editId:nextId.material++,
+      name:document.getElementById('m_name').value||'Unbekannt',
+      typ:document.getElementById('m_typ').value,
+      hersteller:document.getElementById('m_hersteller').value,
+      einheit:document.getElementById('m_einheit').value,
+      bestand:parseFloat(document.getElementById('m_bestand').value)||0,
+      min:parseFloat(document.getElementById('m_min').value)||1,
+      img:document.getElementById('m_img').value.trim(),
+      notiz:document.getElementById('m_notiz').value,
+    };
+    if(isEdit){const i=data.material.findIndex(x=>x.id===editId);data.material[i]=obj}
+    else data.material.push(obj);
+  }
+  save();closeModal();render();
+}
+
+function deleteItem(){
+  if(!confirm('Artikel wirklich löschen?')) return;
+  if(tab==='textilien') data.textilien=data.textilien.filter(i=>i.id!==editId);
+  else data.material=data.material.filter(i=>i.id!==editId);
+  save();closeModal();render();
+}
+
+// ─── Events ───────────────────────────────────────────────────────────────────
+document.querySelectorAll('.nav-tab').forEach(t=>t.addEventListener('click',()=>{
+  document.querySelectorAll('.nav-tab').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');tab=t.dataset.tab;fA='';fB='';search='';
+  document.getElementById('filterA').value='';
+  document.getElementById('filterB').value='';
+  document.getElementById('searchInput').value='';
+  render();
+}));
+document.getElementById('searchInput').addEventListener('input',e=>{search=e.target.value;renderGrid()});
+document.getElementById('filterA').addEventListener('change',e=>{fA=e.target.value;renderGrid()});
+document.getElementById('filterB').addEventListener('change',e=>{fB=e.target.value;renderGrid()});
+document.getElementById('addBtn').addEventListener('click',openAdd);
+document.getElementById('overlay').addEventListener('click',e=>{if(e.target===document.getElementById('overlay'))closeModal()});
+
+// ─── Init ────────────────────────────────────────────────────────────────────
+document.getElementById('headerDate').textContent=new Date().toLocaleDateString('de-CH',{day:'2-digit',month:'2-digit',year:'numeric'});
+load();
+render();
+</script>
+</body>
+</html>
