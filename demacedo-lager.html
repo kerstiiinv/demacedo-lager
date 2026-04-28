@@ -4,339 +4,241 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Studio de Macedo — Lager</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,900<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Playfair+Display:ital,wght@0,900;1,900&display=swap" rel="stylesheet">family=DM+Sans:wght@300;400;500;600;700<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Playfair+Display:ital,wght@0,900;1,900&display=swap" rel="stylesheet">display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,900&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --cream:#f0ece0;
-  --orange:#e8512a;
-  --brown:#1a0f00;
-  --brown-mid:#3d2000;
-  --tan:#d4c9a8;
-  --tan2:#e8dfc8;
-  --white:#faf8f2;
-  --font-body:'DM Sans','Helvetica Neue',Arial,sans-serif;
-  --font-display:'Playfair Display',serif;
-  --radius:16px;
-  --radius-sm:10px;
+  --cream:#f0ece0;--orange:#e8512a;--brown:#1a0f00;--brown2:#3d2000;
+  --tan:#d4c9a8;--tan2:#e8dfc8;--white:#faf8f2;
+  --green:#2a6b45;--red:#c0392b;--yellow:#d4a017;--blue:#1e4a8a;
+  --font:'DM Sans','Helvetica Neue',sans-serif;
+  --display:'Playfair Display',serif;
+  --r:16px;--r2:10px;--r3:24px;
 }
-html,body{background:var(--cream);color:var(--brown);font-family:var(--font-body);font-size:14px;line-height:1.5;min-height:100vh}
+html,body{background:var(--cream);color:var(--brown);font-family:var(--font);font-size:14px;line-height:1.5;min-height:100vh}
 
 /* HEADER */
-.hdr{
-  position:sticky;top:0;z-index:100;
-  background:var(--cream);
-  border-bottom:3px solid var(--brown);
-  padding:0 18px;
-  display:flex;align-items:center;justify-content:space-between;
-  height:56px;
-}
-.logo{
-  font-family:var(--font-display);
-  font-size:15px;font-style:italic;
-  color:var(--brown);letter-spacing:-.02em;
-}
-.hdr-right{
-  display:flex;align-items:center;gap:10px;
-  font-family:var(--font-body);font-size:12px;color:var(--brown-mid);
-}
-.palm{font-size:18px;line-height:1}
+.hdr{position:sticky;top:0;z-index:200;background:var(--cream);border-bottom:3px solid var(--brown);padding:0 16px;display:flex;align-items:center;justify-content:space-between;height:54px}
+.logo{font-family:var(--display);font-size:15px;font-style:italic;color:var(--brown)}
+.hdr-r{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--brown2)}
+.stripe{height:4px;background:var(--orange)}
 
-/* ORANGE STRIPE */
-.stripe{height:5px;background:var(--orange)}
+/* ALERT BANNER */
+.alert-banner{display:none;background:var(--orange);color:var(--white);padding:10px 16px;font-size:13px;font-weight:600;cursor:pointer;line-height:1.4}
+.alert-banner.show{display:block}
+.alert-banner .ab-title{font-weight:700;margin-bottom:3px}
+.alert-items{display:flex;flex-direction:column;gap:2px}
+.alert-item{font-size:12px;opacity:.9}
 
 /* NAV */
-.nav{
-  display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;
-  scrollbar-width:none;border-bottom:2px solid var(--brown);
-  background:var(--cream);
-}
+.nav{display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-bottom:2px solid var(--brown);background:var(--cream);position:sticky;top:54px;z-index:190}
 .nav::-webkit-scrollbar{display:none}
-.nt{
-  flex-shrink:0;padding:11px 16px;
-  font-family:var(--font-body);font-size:11px;font-weight:700;
-  letter-spacing:.08em;text-transform:uppercase;
-  cursor:pointer;border-right:2px solid var(--brown);
-  border-bottom:4px solid transparent;
-  white-space:nowrap;-webkit-tap-highlight-color:transparent;
-  transition:background .15s;
-}
+.nt{flex-shrink:0;padding:10px 14px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;border-right:2px solid var(--brown);border-bottom:4px solid transparent;white-space:nowrap;-webkit-tap-highlight-color:transparent;transition:background .12s;position:relative}
 .nt:last-child{border-right:none}
 .nt.active{border-bottom:4px solid var(--orange);color:var(--orange)}
 .nt:hover:not(.active){background:var(--tan2)}
-
-/* DASHBOARD */
-.dash{padding:16px}
-.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
-.dash-card{
-  background:var(--white);border:2px solid var(--brown);
-  border-radius:var(--radius);padding:16px;
-}
-.dash-card.full{grid-column:1/-1}
-.dash-card.orange{background:var(--orange);border-color:var(--orange);color:var(--white)}
-.dash-title{
-  font-size:10px;font-weight:700;letter-spacing:.1em;
-  text-transform:uppercase;opacity:.6;margin-bottom:10px;
-}
-.dash-num{font-family:var(--font-display);font-size:38px;font-weight:900;line-height:1}
-.dash-sub{font-size:11px;opacity:.6;margin-top:4px}
-.dash-list{list-style:none}
-.dash-list li{
-  padding:8px 0;border-bottom:1px solid var(--tan);
-  font-size:12px;display:flex;justify-content:space-between;align-items:center;
-}
-.dash-list li:last-child{border-bottom:none}
-.dash-list .di{opacity:.6;font-size:11px}
-.dash-list .dv{font-weight:700}
-.dr{color:var(--orange);font-size:10px;font-weight:700;text-transform:uppercase}
-.do{color:#c27820;font-size:10px;font-weight:700}
-.dg{color:#2a5e42;font-size:10px;font-weight:700}
-.dash-bar-item{margin-bottom:9px}
-.dash-bar-label{display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px}
-.dash-bar-track{height:5px;background:var(--tan);border-radius:3px}
-.dash-bar-fill{height:5px;border-radius:3px;background:var(--orange)}
-.auftrag-row{
-  display:flex;justify-content:space-between;align-items:center;
-  padding:10px 0;border-bottom:1px solid var(--tan);gap:8px;
-}
-.auftrag-row:last-child{border-bottom:none}
-.ar-name{font-size:12px;font-weight:700}
-.ar-detail{font-size:11px;opacity:.6}
-.ar-chf{font-size:13px;font-weight:700;color:var(--orange)}
-.ar-badge{
-  font-size:10px;padding:3px 9px;border-radius:20px;
-  border:1.5px solid currentColor;font-weight:700;
-}
-.ar-offen{color:#c27820}.ar-bezahlt{color:#2a5e42}
+.nt .badge{position:absolute;top:6px;right:6px;background:var(--orange);color:var(--white);border-radius:20px;font-size:9px;font-weight:700;padding:1px 5px;min-width:16px;text-align:center}
 
 /* TOOLBAR */
-.toolbar{
-  padding:10px 16px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;
-  border-bottom:2px solid var(--brown);background:var(--cream);
-}
-.toolbar input[type=text]{
-  flex:1;min-width:100px;height:42px;
-  border:2px solid var(--brown);border-radius:var(--radius-sm);
-  padding:0 12px;font-family:var(--font-body);font-size:15px;
-  background:var(--white);outline:none;color:var(--brown);
-}
-.toolbar input[type=text]:focus{border-color:var(--orange);background:var(--white)}
-.toolbar select{
-  height:42px;border:2px solid var(--brown);border-radius:var(--radius-sm);
-  padding:0 28px 0 10px;font-family:var(--font-body);font-size:13px;
-  background:var(--white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%231a0f00' stroke-width='1.8' fill='none'/%3E%3C/svg%3E") no-repeat right 10px center;
-  cursor:pointer;outline:none;color:var(--brown);-webkit-appearance:none;
-}
-.btn{
-  height:42px;padding:0 16px;
-  border:2px solid var(--brown);border-radius:var(--radius-sm);
-  font-family:var(--font-body);font-size:11px;font-weight:700;
-  letter-spacing:.07em;text-transform:uppercase;
-  background:var(--white);cursor:pointer;color:var(--brown);
-  transition:all .15s;white-space:nowrap;
-  -webkit-tap-highlight-color:transparent;
-  display:inline-flex;align-items:center;gap:6px;
-}
+.toolbar{padding:10px 16px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;border-bottom:1px solid var(--tan)}
+.toolbar input[type=text]{flex:1;min-width:100px;height:42px;border:2px solid var(--brown);border-radius:var(--r2);padding:0 12px;font-family:var(--font);font-size:15px;background:var(--white);outline:none;color:var(--brown)}
+.toolbar input[type=text]:focus{border-color:var(--orange)}
+.toolbar select{height:42px;border:2px solid var(--brown);border-radius:var(--r2);padding:0 28px 0 10px;font-family:var(--font);font-size:13px;background:var(--white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%231a0f00' stroke-width='1.8' fill='none'/%3E%3C/svg%3E") no-repeat right 10px center;cursor:pointer;outline:none;color:var(--brown);-webkit-appearance:none}
+.btn{height:42px;padding:0 16px;border:2px solid var(--brown);border-radius:var(--r2);font-family:var(--font);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:var(--white);cursor:pointer;color:var(--brown);transition:all .14s;white-space:nowrap;-webkit-tap-highlight-color:transparent;display:inline-flex;align-items:center;gap:6px}
 .btn:hover,.btn:active{background:var(--brown);color:var(--cream)}
-.btn-fill{background:var(--brown);color:var(--cream)}
-.btn-fill:hover{background:var(--brown-mid)}
-.btn-orange{background:var(--orange);color:var(--white);border-color:var(--orange)}
-.btn-orange:hover{background:#c43d1a}
-.btn-danger{border-color:var(--orange);color:var(--orange)}
-.btn-danger:hover{background:var(--orange);color:var(--white)}
-.btn-green{border-color:#2a5e42;color:#2a5e42}
-.btn-green:hover{background:#2a5e42;color:var(--white)}
+.btn-fill{background:var(--brown);color:var(--cream)}.btn-fill:hover{background:var(--brown2)}
+.btn-orange{background:var(--orange);color:var(--white);border-color:var(--orange)}.btn-orange:hover{background:#c43d1a;border-color:#c43d1a}
+.btn-green{background:var(--green);color:var(--white);border-color:var(--green)}.btn-green:hover{opacity:.85}
+.btn-danger{border-color:var(--red);color:var(--red)}.btn-danger:hover{background:var(--red);color:var(--white)}
+.btn-ghost{border-color:var(--tan);color:var(--brown2)}.btn-ghost:hover{background:var(--tan2);border-color:var(--brown)}
 .btn-sm{height:34px;font-size:10px;padding:0 12px;border-radius:8px}
-.excel-bar{
-  padding:8px 16px;display:flex;gap:8px;flex-wrap:wrap;
-  border-bottom:1px solid var(--tan);background:var(--tan2);
-}
+.btn-xs{height:28px;font-size:9px;padding:0 8px;border-radius:6px;letter-spacing:.04em}
+.excel-bar{padding:7px 16px;display:flex;gap:7px;flex-wrap:wrap;border-bottom:1px solid var(--tan);background:var(--tan2)}
 .excel-bar label.btn{cursor:pointer}
 input[type=file]{display:none}
-
-/* VIEW TOGGLE */
-.view-toggle{display:flex;border:2px solid var(--brown);border-radius:var(--radius-sm);overflow:hidden;height:42px}
-.vt-btn{width:42px;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;border-right:1px solid var(--brown);transition:background .1s;-webkit-tap-highlight-color:transparent}
+.view-toggle{display:flex;border:2px solid var(--brown);border-radius:var(--r2);overflow:hidden;height:42px}
+.vt-btn{width:42px;display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;border-right:1px solid var(--brown);transition:background .1s;-webkit-tap-highlight-color:transparent}
 .vt-btn:last-child{border-right:none}
 .vt-btn.active{background:var(--brown);color:var(--cream)}
 
+/* DASHBOARD */
+.dash{padding:14px}
+.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.dc{background:var(--white);border:2px solid var(--brown);border-radius:var(--r);padding:14px}
+.dc.full{grid-column:1/-1}
+.dc.orange{background:var(--orange);border-color:var(--orange);color:var(--white)}
+.dc-title{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;opacity:.55;margin-bottom:8px}
+.dc-num{font-size:24px;font-weight:700;line-height:1}
+.dc-sub{font-size:11px;opacity:.55;margin-top:3px}
+.dash-list{list-style:none}
+.dash-list li{padding:7px 0;border-bottom:1px solid var(--tan);font-size:12px;display:flex;justify-content:space-between;align-items:center}
+.dash-list li:last-child{border-bottom:none}
+.di{opacity:.5;font-size:11px}
+.dr{color:var(--red);font-size:10px;font-weight:700;text-transform:uppercase}
+.do{color:var(--yellow);font-size:10px;font-weight:700}
+.dg{color:var(--green);font-size:10px;font-weight:700}
+.dash-bar-item{margin-bottom:8px}
+.dash-bar-label{display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px}
+.dash-bar-track{height:5px;background:var(--tan);border-radius:3px}
+.dash-bar-fill{height:5px;border-radius:3px;background:var(--orange)}
+
+/* TIMELINE */
+.timeline-wrap{padding:14px}
+.tl-section{margin-bottom:18px}
+.tl-section-title{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--brown2);opacity:.6;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--tan)}
+.tl-item{
+  display:flex;gap:12px;align-items:flex-start;
+  background:var(--white);border:2px solid var(--brown);border-radius:var(--r);
+  padding:12px 14px;margin-bottom:8px;cursor:pointer;
+  transition:all .14s;position:relative;overflow:hidden;
+}
+.tl-item:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(26,15,0,.1)}
+.tl-item.urgent{border-color:var(--red);border-width:2.5px}
+.tl-item.warning{border-color:var(--yellow)}
+.tl-item.safe{border-color:var(--green)}
+.tl-item.done{opacity:.5;background:var(--tan2)}
+.tl-stripe{width:5px;border-radius:3px;flex-shrink:0;align-self:stretch;min-height:40px}
+.tl-stripe.urgent{background:var(--red)}
+.tl-stripe.warning{background:var(--yellow)}
+.tl-stripe.safe{background:var(--green)}
+.tl-stripe.done{background:var(--tan)}
+.tl-stripe.nodl{background:var(--brown);opacity:.2}
+.tl-body{flex:1;min-width:0}
+.tl-name{font-size:13px;font-weight:700;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tl-detail{font-size:11px;opacity:.6;margin-bottom:4px}
+.tl-tags{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.tl-tag{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:600;border:1.5px solid currentColor}
+.tl-tag.red{color:var(--red);border-color:var(--red)}
+.tl-tag.orange{color:var(--orange);border-color:var(--orange)}
+.tl-tag.green{color:var(--green);border-color:var(--green)}
+.tl-tag.blue{color:var(--blue);border-color:var(--blue)}
+.tl-tag.grey{color:var(--brown2);border-color:var(--tan);opacity:.7}
+.countdown{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  flex-shrink:0;width:52px;
+}
+.countdown-num{font-size:22px;font-weight:700;line-height:1}
+.countdown-lbl{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;opacity:.6}
+.countdown.urgent .countdown-num{color:var(--red)}
+.countdown.warning .countdown-num{color:var(--yellow)}
+.countdown.safe .countdown-num{color:var(--green)}
+.tl-actions{display:flex;gap:5px;flex-shrink:0;flex-direction:column;align-items:flex-end}
+
+/* AUFTRÄGE */
+.res-wrap{padding:0 16px 16px}
+.res-card{
+  background:var(--white);border:2px solid var(--brown);border-radius:var(--r);
+  padding:14px;margin-bottom:10px;transition:all .14s;
+}
+.res-card:hover{box-shadow:0 2px 10px rgba(26,15,0,.08)}
+.res-card.urgent{border-color:var(--red)}
+.res-card.warning{border-color:var(--yellow)}
+.res-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px}
+.res-name{font-size:14px;font-weight:700;margin-bottom:2px}
+.res-detail{font-size:12px;opacity:.6;margin-bottom:2px}
+.res-chf{font-size:13px;font-weight:700;color:var(--orange)}
+.res-date{font-size:11px;font-weight:600;margin-top:4px}
+.res-actions{display:flex;gap:5px;flex-wrap:wrap}
+.res-stock{margin-top:8px;padding:8px 12px;font-size:12px;border-radius:var(--r2);border:1.5px solid var(--green);background:#f0f8f3;font-weight:500}
+.res-stock.warn{border-color:var(--red);background:#fff0ee}
+.res-stock.partial{border-color:var(--yellow);background:#fffaee}
+.res-reminders{margin-top:8px;display:flex;gap:5px;flex-wrap:wrap}
+.reminder-badge{font-size:10px;padding:3px 9px;border-radius:20px;font-weight:600;background:var(--orange);color:var(--white)}
+.reminder-badge.blue{background:var(--blue)}
+.reminder-badge.red{background:var(--red)}
+.sec-hdr{padding:10px 16px 8px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--brown2);opacity:.6;border-bottom:1px solid var(--tan);background:var(--tan2);margin-bottom:0}
+.toolbar-res{padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px;border-bottom:1px solid var(--tan);flex-wrap:wrap}
+.chf-summary{font-size:12px;font-weight:500}
+
 /* GRID */
-.gw{padding:14px 16px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(152px,1fr));gap:12px}
-.card{
-  background:var(--white);border:2px solid var(--brown);
-  border-radius:var(--radius);padding:13px;
-  cursor:pointer;transition:all .15s;display:flex;flex-direction:column;
-  -webkit-tap-highlight-color:transparent;
-}
-.card:hover,.card:active{background:var(--tan2);transform:translateY(-2px);box-shadow:0 4px 12px rgba(26,15,0,.12)}
-.card-img{
-  width:100%;height:80px;display:flex;align-items:center;justify-content:center;
-  background:var(--tan2);border-radius:var(--radius-sm);margin-bottom:10px;overflow:hidden;
-}
-.card-img svg{width:62px;height:62px}
-.card-img img{width:100%;height:100%;object-fit:cover;border-radius:var(--radius-sm)}
-.ctype{font-size:9px;letter-spacing:.1em;text-transform:uppercase;opacity:.5;margin-bottom:3px}
-.cname{font-size:12px;font-weight:700;margin-bottom:2px;line-height:1.25}
-.csku{font-size:9px;opacity:.4;margin-bottom:3px;font-family:var(--font-body)}
-.cloc{font-size:10px;color:var(--orange);margin-bottom:5px;font-weight:700}
-.cnotiz{font-size:10px;opacity:.5;margin-bottom:5px;font-style:italic;line-height:1.3}
-.ctags{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px}
-.tag{
-  font-size:10px;padding:2px 8px;border:1.5px solid var(--brown);
-  border-radius:20px;display:inline-flex;align-items:center;gap:3px;
-}
-.tag-s{border-color:var(--tan);color:var(--brown-mid)}
+.gw{padding:12px 16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.card{background:var(--white);border:2px solid var(--brown);border-radius:var(--r);padding:12px;cursor:pointer;transition:all .14s;display:flex;flex-direction:column;-webkit-tap-highlight-color:transparent}
+.card:hover,.card:active{background:var(--tan2);transform:translateY(-2px);box-shadow:0 4px 12px rgba(26,15,0,.1)}
+.card-img{width:100%;height:78px;display:flex;align-items:center;justify-content:center;background:var(--tan2);border-radius:var(--r2);margin-bottom:8px;overflow:hidden}
+.card-img svg{width:58px;height:58px}
+.card-img img{width:100%;height:100%;object-fit:cover;border-radius:var(--r2)}
+.ctype{font-size:9px;letter-spacing:.08em;text-transform:uppercase;opacity:.4;margin-bottom:2px}
+.cname{font-size:12px;font-weight:700;margin-bottom:1px;line-height:1.2}
+.csku{font-size:9px;opacity:.35;margin-bottom:2px;font-family:monospace}
+.cloc{font-size:10px;color:var(--orange);margin-bottom:4px;font-weight:600}
+.cnotiz{font-size:10px;opacity:.5;margin-bottom:4px;font-style:italic;line-height:1.3}
+.ctags{display:flex;gap:3px;flex-wrap:wrap;margin-bottom:7px}
+.tag{font-size:10px;padding:2px 7px;border:1.5px solid var(--brown);border-radius:20px;display:inline-flex;align-items:center;gap:3px}
+.tag-s{border-color:var(--tan);color:var(--brown2)}
 .tag-sample{border-color:var(--orange);color:var(--orange);font-size:9px}
-.tag-archiv{border-color:var(--tan);color:var(--brown-mid);font-size:9px;font-style:italic}
-.cdot{display:inline-block;width:9px;height:9px;border-radius:50%;border:1.5px solid rgba(26,15,0,.2);flex-shrink:0}
+.tag-archiv{border-color:var(--tan);color:var(--brown2);font-size:9px;font-style:italic}
+.cdot{display:inline-block;width:9px;height:9px;border-radius:50%;border:1.5px solid rgba(26,15,0,.25);flex-shrink:0}
 .cstock{display:flex;align-items:center;justify-content:space-between;margin-top:auto}
-.snum{font-family:var(--font-display);font-size:26px;font-weight:900;line-height:1}
-.sunit{font-size:10px;opacity:.5;margin-left:2px}
-.sg{color:#2a5e42}.sr{color:var(--orange)}
-.lbadge{
-  font-size:9px;background:var(--orange);color:var(--white);
-  padding:2px 7px;border-radius:20px;font-weight:700;text-transform:uppercase;
-}
-.sbar{height:3px;background:var(--tan);border-radius:2px;margin-top:8px}
+.snum{font-size:20px;font-weight:700;line-height:1}
+.sunit{font-size:10px;opacity:.4;margin-left:2px}
+.sg{color:var(--green)}.sr{color:var(--red)}
+.lbadge{font-size:9px;background:var(--red);color:var(--white);padding:2px 7px;border-radius:20px;font-weight:700}
+.sbar{height:3px;background:var(--tan);border-radius:2px;margin-top:7px}
 .sfill{height:3px;border-radius:2px}
 .stock-btns{display:flex;gap:4px;margin-top:8px}
-.stock-btn{
-  flex:1;height:30px;border:1.5px solid var(--brown);border-radius:8px;
-  background:var(--cream);font-size:16px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;font-weight:700;
-  color:var(--brown);-webkit-tap-highlight-color:transparent;
-}
+.stock-btn{flex:1;height:30px;border:1.5px solid var(--brown);border-radius:8px;background:var(--cream);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--brown);-webkit-tap-highlight-color:transparent}
 .stock-btn:hover,.stock-btn:active{background:var(--brown);color:var(--cream)}
-.empty{
-  padding:40px;text-align:center;opacity:.4;font-size:13px;
-  grid-column:1/-1;
-}
+.empty{padding:40px;text-align:center;opacity:.4;font-size:13px;grid-column:1/-1}
 
 /* LIST VIEW */
-.list-wrap{margin:14px 16px;border:2px solid var(--brown);border-radius:var(--radius);overflow:hidden}
-.list-hdr{
-  display:grid;grid-template-columns:2fr 80px 65px 70px 80px 90px;
-  background:var(--brown);color:var(--cream);
-}
+.list-wrap{margin:12px 16px;border:2px solid var(--brown);border-radius:var(--r);overflow:hidden}
+.list-hdr{display:grid;grid-template-columns:2fr 80px 65px 70px 80px 90px;background:var(--brown);color:var(--cream)}
 .lh{padding:9px 12px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-right:1px solid rgba(255,255,255,.15)}
 .lh:last-child{border-right:none}
-.list-row{
-  display:grid;grid-template-columns:2fr 80px 65px 70px 80px 90px;
-  border-bottom:1px solid var(--tan);cursor:pointer;
-  transition:background .1s;background:var(--white);
-}
+.list-row{display:grid;grid-template-columns:2fr 80px 65px 70px 80px 90px;border-bottom:1px solid var(--tan);cursor:pointer;transition:background .1s;background:var(--white)}
 .list-row:last-child{border-bottom:none}
 .list-row:hover{background:var(--tan2)}
 .lc{padding:10px 12px;font-size:12px;border-right:1px solid var(--tan);display:flex;align-items:center;gap:6px;min-width:0}
 .lc:last-child{border-right:none}
 .lc-name{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .lc-sub{font-size:10px;opacity:.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.lc-stock{font-family:var(--font-display);font-size:16px;font-weight:900}
+.lc-stock{font-size:15px;font-weight:700}
 .lc-pm{display:flex;gap:3px}
-.lc-pm button{
-  width:28px;height:28px;border:1.5px solid var(--brown);border-radius:7px;
-  background:var(--cream);font-size:15px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--brown);
-}
+.lc-pm button{width:28px;height:28px;border:1.5px solid var(--brown);border-radius:7px;background:var(--cream);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--brown)}
 .lc-pm button:hover{background:var(--brown);color:var(--cream)}
 
-/* RESERVATIONEN */
-.res-list{padding:0 16px 16px}
-.res-card{
-  background:var(--white);border:2px solid var(--brown);
-  border-radius:var(--radius);padding:14px;margin-bottom:10px;
-}
-.res-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
-.res-auftrag{font-size:13px;font-weight:700;margin-bottom:3px}
-.res-detail{font-size:12px;opacity:.6}
-.res-date{font-size:11px;color:var(--orange);margin-top:3px;font-weight:700}
-.res-stock{
-  margin-top:10px;padding:8px 12px;font-size:12px;
-  border-radius:var(--radius-sm);border:1.5px solid #2a5e42;background:#f0f8f3;
-}
-.res-stock.warn{border-color:var(--orange);background:#fff3ee}
-.res-stock.partial{border-color:#c27820;background:#fffaee}
-.res-actions{display:flex;gap:5px;flex-shrink:0}
-.res-empty{padding:30px;text-align:center;opacity:.4;font-size:13px}
-.sec-hdr{
-  padding:10px 16px 8px;font-size:10px;font-weight:700;
-  letter-spacing:.1em;text-transform:uppercase;opacity:.5;
-  border-bottom:1px solid var(--tan);background:var(--tan2);
-}
-.toolbar-res{
-  padding:12px 16px;display:flex;justify-content:space-between;align-items:center;
-  gap:10px;border-bottom:1px solid var(--tan);flex-wrap:wrap;
-  background:var(--cream);
-}
-.chf-summary{font-size:12px}
-.chf-summary strong{font-weight:700}
-
 /* MODAL */
-.overlay{display:none;position:fixed;inset:0;background:rgba(26,15,0,.5);z-index:200;backdrop-filter:blur(2px)}
+.overlay{display:none;position:fixed;inset:0;background:rgba(26,15,0,.5);z-index:300;backdrop-filter:blur(2px)}
 .overlay.open{display:block}
-.modal{
-  position:fixed;left:0;right:0;bottom:0;
-  background:var(--cream);border-top:3px solid var(--brown);
-  border-radius:var(--radius) var(--radius) 0 0;
-  max-height:93vh;display:flex;flex-direction:column;overflow:hidden;
-}
-.mhead{
-  padding:14px 18px 11px;border-bottom:2px solid var(--brown);
-  display:flex;justify-content:space-between;align-items:center;
-  flex-shrink:0;background:var(--cream);
-}
+.modal{position:fixed;left:0;right:0;bottom:0;background:var(--cream);border-top:3px solid var(--brown);border-radius:var(--r3) var(--r3) 0 0;max-height:93vh;display:flex;flex-direction:column;overflow:hidden}
+.mhead{padding:14px 18px 11px;border-bottom:2px solid var(--brown);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;background:var(--cream)}
 .mhead h2{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
-.mclose{
-  font-size:22px;cursor:pointer;background:none;border:none;
-  color:var(--brown);padding:4px 6px;line-height:1;font-family:var(--font-body);
-}
+.mclose{font-size:22px;cursor:pointer;background:none;border:none;color:var(--brown);padding:4px 8px;line-height:1;font-family:var(--font)}
 .mbody{padding:14px 18px;overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch}
-.mfoot{
-  padding:12px 18px;border-top:1px solid var(--tan);display:flex;gap:8px;
-  flex-shrink:0;background:var(--cream);
-  padding-bottom:calc(12px + env(safe-area-inset-bottom));
-}
+.mfoot{padding:11px 18px;border-top:1px solid var(--tan);display:flex;gap:8px;flex-shrink:0;background:var(--cream);padding-bottom:calc(11px + env(safe-area-inset-bottom))}
 .mfoot .btn{flex:1;height:48px;font-size:13px}
 .ff{margin-bottom:12px}
-.ff label{
-  display:block;font-size:10px;font-weight:700;
-  text-transform:uppercase;letter-spacing:.08em;opacity:.5;margin-bottom:5px;
-}
-.ff input,.ff select,.ff textarea{
-  width:100%;border:2px solid var(--brown);border-radius:var(--radius-sm);
-  padding:10px 12px;font-family:var(--font-body);font-size:16px;
-  background:var(--white);outline:none;color:var(--brown);-webkit-appearance:none;
-}
-.ff select{
-  background:var(--white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%231a0f00' stroke-width='1.8' fill='none'/%3E%3C/svg%3E") no-repeat right 12px center;
-  padding-right:32px;
-}
+.ff label{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;opacity:.5;margin-bottom:5px}
+.ff input,.ff select,.ff textarea{width:100%;border:2px solid var(--brown);border-radius:var(--r2);padding:10px 12px;font-family:var(--font);font-size:16px;background:var(--white);outline:none;color:var(--brown);-webkit-appearance:none}
+.ff select{background:var(--white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%231a0f00' stroke-width='1.8' fill='none'/%3E%3C/svg%3E") no-repeat right 12px center;padding-right:32px}
 .ff input:focus,.ff select:focus,.ff textarea:focus{border-color:var(--orange)}
-.ff textarea{resize:vertical;height:56px;font-size:14px}
+.ff textarea{resize:vertical;height:54px;font-size:14px}
 .f2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.divider{border:none;border-top:2px solid var(--tan);margin:12px 0}
-.ss-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;max-height:190px;overflow-y:auto;margin-top:6px}
-.ssi{
-  padding:8px 10px;border:2px solid var(--tan);border-radius:var(--radius-sm);
-  cursor:pointer;transition:all .1s;
-}
+.divider{border:none;border-top:2px solid var(--tan);margin:11px 0}
+.ss-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;max-height:180px;overflow-y:auto;margin-top:5px}
+.ssi{padding:8px 10px;border:2px solid var(--tan);border-radius:var(--r2);cursor:pointer;transition:all .1s}
 .ssi:hover,.ssi.sel{border-color:var(--orange);background:var(--tan2)}
-.ssi-name{font-weight:700;font-size:11px}
-.ssi-sku{font-size:10px;opacity:.5;font-family:var(--font-body)}
-.ssi-sub{font-size:10px;opacity:.5}
+.ssi-name{font-weight:700;font-size:11px}.ssi-sku{font-size:10px;opacity:.4;font-family:monospace}.ssi-sub{font-size:10px;opacity:.4}
 .cdots{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
 .cpick{width:24px;height:24px;border-radius:50%;border:2px solid transparent;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .1s}
 .cpick.sel{border-color:var(--brown);transform:scale(1.2)}
+.chk-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--tan)}
+.chk-row:last-child{border-bottom:none}
+.chk-row label{font-size:13px;font-weight:500;cursor:pointer;flex:1}
+.chk-row input[type=checkbox]{width:20px;height:20px;accent-color:var(--orange);cursor:pointer;flex-shrink:0}
 
-/* PRINT */
-@media print{
-  .hdr,.stripe,.nav,.toolbar,.excel-bar,.stock-btns,.res-actions,.toolbar-res,.view-toggle,.btn{display:none!important}
-  body{background:white}
-  .card{border:1px solid #ccc;break-inside:avoid;border-radius:0}
-  .grid{gap:0;background:#ccc}
-}
+/* STATUS TOGGLE */
+.status-pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.status-pill{font-size:11px;padding:5px 12px;border-radius:20px;border:2px solid currentColor;cursor:pointer;font-weight:600;transition:all .12s;-webkit-tap-highlight-color:transparent}
+.status-pill.active-offen{background:var(--yellow);color:var(--brown);border-color:var(--yellow)}
+.status-pill.active-bezahlt{background:var(--green);color:var(--white);border-color:var(--green)}
+.status-pill.active-erledigt{background:var(--brown);color:var(--cream);border-color:var(--brown)}
+.status-pill:not([class*=active]){color:var(--brown2);border-color:var(--tan)}
+.status-pill:not([class*=active]):hover{border-color:var(--brown);background:var(--tan2)}
+
+@media print{.hdr,.stripe,.nav,.toolbar,.excel-bar,.stock-btns,.res-actions,.toolbar-res,.view-toggle,.btn,.alert-banner{display:none!important}body{background:white}.card{border:1px solid #ccc;break-inside:avoid;border-radius:0}.grid{gap:0}}
 </style>
 </head>
 <body>
@@ -344,19 +246,22 @@ input[type=file]{display:none}
 <div class="stripe"></div>
 <header class="hdr">
   <div class="logo">Studio de Macedo</div>
-  <div class="hdr-right">
-    <span class="palm">🌴</span>
-    <span id="hdrDate"></span>
-  </div>
+  <div class="hdr-r"><span style="font-size:18px">🌴</span><span id="hdrDate"></span></div>
 </header>
 <div class="stripe"></div>
 
+<div class="alert-banner" id="alertBanner" onclick="switchTab('reservationen')">
+  <div class="ab-title" id="alertTitle"></div>
+  <div class="alert-items" id="alertItems"></div>
+</div>
+
 <div class="nav">
   <div class="nt active" data-tab="dashboard">Dashboard</div>
+  <div class="nt" data-tab="timeline">Timeline</div>
+  <div class="nt" data-tab="reservationen">Aufträge</div>
   <div class="nt" data-tab="textilien">Textilien</div>
   <div class="nt" data-tab="accessoires">Bags</div>
   <div class="nt" data-tab="material">Farben</div>
-  <div class="nt" data-tab="reservationen">Aufträge</div>
 </div>
 
 <div id="tabContent"></div>
@@ -364,15 +269,15 @@ input[type=file]{display:none}
 
 <script>
 var SVG={
-  tshirt:function(c){return '<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 15L9 24L18 28L18 63L62 63L62 28L71 24L60 15C57 21 51 25 40 25C29 25 23 21 20 15Z" fill="'+c+'" stroke="#1a0f00" stroke-width="2" stroke-linejoin="round"/></svg>'},
-  hoodie:function(c){return '<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 14L9 25L18 29L18 64L62 64L62 29L71 25L60 14C57 20 51 23 40 23C29 23 23 20 20 14Z" fill="'+c+'" stroke="#1a0f00" stroke-width="2" stroke-linejoin="round"/><path d="M31 14C31 14 34 27 40 27C46 27 49 14 49 14" fill="'+c+'" stroke="#1a0f00" stroke-width="1.8"/><circle cx="40" cy="14" r="5.5" fill="'+c+'" stroke="#1a0f00" stroke-width="1.8"/></svg>'},
-  crewneck:function(c){return '<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 16L9 27L18 31L18 64L62 64L62 31L71 27L60 16C57 22 51 25 40 25C29 25 23 22 20 16Z" fill="'+c+'" stroke="#1a0f00" stroke-width="2" stroke-linejoin="round"/><path d="M32 16Q40 23 48 16" fill="none" stroke="#1a0f00" stroke-width="1.8"/></svg>'},
-  longsleeve:function(c){return '<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 18L6 30L14 34L14 63L66 63L66 34L74 30L60 18C57 23 51 26 40 26C29 26 23 23 20 18Z" fill="'+c+'" stroke="#1a0f00" stroke-width="2" stroke-linejoin="round"/></svg>'},
-  jacke:function(c){return '<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 14L8 26L18 30L18 65L62 65L62 30L72 26L60 14C57 20 51 22 40 22C29 22 23 20 20 14Z" fill="'+c+'" stroke="#1a0f00" stroke-width="2" stroke-linejoin="round"/><line x1="40" y1="22" x2="40" y2="65" stroke="#1a0f00" stroke-width="1.5"/></svg>'},
-  weste:function(c){return '<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M25 14L14 26L24 30L24 65L56 65L56 30L66 26L55 14C52 20 47 23 40 23C33 23 28 20 25 14Z" fill="'+c+'" stroke="#1a0f00" stroke-width="2" stroke-linejoin="round"/><line x1="40" y1="23" x2="40" y2="65" stroke="#1a0f00" stroke-width="1.5"/></svg>'},
-  totebag:function(){return '<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 30L15 65L65 65L62 30Z" fill="#d4c9a8" stroke="#1a0f00" stroke-width="1.8"/><path d="M30 30C30 22 34 16 40 16C46 16 50 22 50 30" fill="none" stroke="#1a0f00" stroke-width="2" stroke-linecap="round"/></svg>'},
-  farbdose:function(){return '<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="20" y="26" width="40" height="36" rx="5" fill="#e8dfc8" stroke="#1a0f00" stroke-width="1.8"/><rect x="20" y="26" width="40" height="10" rx="4" fill="#d4c9a8" stroke="#1a0f00" stroke-width="1.8"/><rect x="28" y="17" width="24" height="10" rx="3" fill="#e8dfc8" stroke="#1a0f00" stroke-width="1.5"/></svg>'},
-  flasche:function(){return '<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="33" y="12" width="14" height="10" rx="3" fill="#d4c9a8" stroke="#1a0f00" stroke-width="1.5"/><path d="M29 22Q23 30 23 41L23 63Q23 66 26 66L54 66Q57 66 57 63L57 41Q57 30 51 22Z" fill="#e8dfc8" stroke="#1a0f00" stroke-width="1.8"/></svg>'},
+  tshirt:function(c){return '<svg viewBox="0 0 80 80" fill="none"><path d="M20 15L9 24L18 28L18 63L62 63L62 28L71 24L60 15C57 21 51 25 40 25C29 25 23 21 20 15Z" fill="'+c+'" stroke="#1a0f00" stroke-width="2" stroke-linejoin="round"/></svg>'},
+  hoodie:function(c){return '<svg viewBox="0 0 80 80" fill="none"><path d="M20 14L9 25L18 29L18 64L62 64L62 29L71 25L60 14C57 20 51 23 40 23C29 23 23 20 20 14Z" fill="'+c+'" stroke="#1a0f00" stroke-width="2" stroke-linejoin="round"/><path d="M31 14C34 27 40 27 46 27C49 14 49 14 49 14" fill="'+c+'" stroke="#1a0f00" stroke-width="1.8"/><circle cx="40" cy="14" r="5.5" fill="'+c+'" stroke="#1a0f00" stroke-width="1.8"/></svg>'},
+  crewneck:function(c){return '<svg viewBox="0 0 80 80" fill="none"><path d="M20 16L9 27L18 31L18 64L62 64L62 31L71 27L60 16C57 22 51 25 40 25C29 25 23 22 20 16Z" fill="'+c+'" stroke="#1a0f00" stroke-width="2" stroke-linejoin="round"/><path d="M32 16Q40 23 48 16" fill="none" stroke="#1a0f00" stroke-width="1.8"/></svg>'},
+  longsleeve:function(c){return '<svg viewBox="0 0 80 80" fill="none"><path d="M20 18L6 30L14 34L14 63L66 63L66 34L74 30L60 18C57 23 51 26 40 26C29 26 23 23 20 18Z" fill="'+c+'" stroke="#1a0f00" stroke-width="2" stroke-linejoin="round"/></svg>'},
+  jacke:function(c){return '<svg viewBox="0 0 80 80" fill="none"><path d="M20 14L8 26L18 30L18 65L62 65L62 30L72 26L60 14C57 20 51 22 40 22C29 22 23 20 20 14Z" fill="'+c+'" stroke="#1a0f00" stroke-width="2" stroke-linejoin="round"/><line x1="40" y1="22" x2="40" y2="65" stroke="#1a0f00" stroke-width="1.5"/></svg>'},
+  weste:function(c){return '<svg viewBox="0 0 80 80" fill="none"><path d="M25 14L14 26L24 30L24 65L56 65L56 30L66 26L55 14C52 20 47 23 40 23C33 23 28 20 25 14Z" fill="'+c+'" stroke="#1a0f00" stroke-width="2" stroke-linejoin="round"/><line x1="40" y1="23" x2="40" y2="65" stroke="#1a0f00" stroke-width="1.5"/></svg>'},
+  totebag:function(){return '<svg viewBox="0 0 80 80" fill="none"><path d="M18 30L15 65L65 65L62 30Z" fill="#d4c9a8" stroke="#1a0f00" stroke-width="1.8"/><path d="M30 30C30 22 34 16 40 16C46 16 50 22 50 30" fill="none" stroke="#1a0f00" stroke-width="2" stroke-linecap="round"/></svg>'},
+  farbdose:function(){return '<svg viewBox="0 0 80 80" fill="none"><rect x="20" y="26" width="40" height="36" rx="5" fill="#e8dfc8" stroke="#1a0f00" stroke-width="1.8"/><rect x="20" y="26" width="40" height="10" rx="4" fill="#d4c9a8" stroke="#1a0f00" stroke-width="1.8"/><rect x="28" y="17" width="24" height="10" rx="3" fill="#e8dfc8" stroke="#1a0f00" stroke-width="1.5"/></svg>'},
+  flasche:function(){return '<svg viewBox="0 0 80 80" fill="none"><rect x="33" y="12" width="14" height="10" rx="3" fill="#d4c9a8" stroke="#1a0f00" stroke-width="1.5"/><path d="M29 22Q23 30 23 41L23 63Q23 66 26 66L54 66Q57 66 57 63L57 41Q57 30 51 22Z" fill="#e8dfc8" stroke="#1a0f00" stroke-width="1.8"/></svg>'},
 };
 var CLRS={'Schwarz':'#1a1a1a','Weiß':'#f5f2ea','Weiss':'#f5f2ea','Off White':'#e8e2d4','Natural Raw':'#d4c8a8','Cotton Pink':'#e8b4b8','Navy':'#1e2d55','Grau':'#9a9a94','Dark Heather Grey':'#6a6a64','Light Heather Grey':'#c0c0ba','Cool Heather Grey':'#b0b0aa','Heritage Brown':'#7a5a3a','Glazed Green':'#6a8a5a','Black Rock':'#2a2a2a','Fiesta':'#e87060','Serene Blue':'#7aa4c4','Caribbean Blue':'#4090c4','Vulcano Stone':'#8a8078','Lemon':'#e8d860','Beige':'#d4c5a5','Red Brown':'#8a3a2a','Desert Dust':'#c8b89a','Pink':'#e090a0','Forest':'#2a4430','Yellow':'#f0d040','Stargazer':'#3a3a5a','French Navy':'#1a2050','Schwarz (LW)':'#2a2a2a'};
 function clr(n){return CLRS[n]||'#c8b89a'}
@@ -401,24 +306,21 @@ var SS=[
   {name:'Connector 2.0',sku:'STSU207',cat:'Zip-Hoodie',gsm:'300 GSM',sizes:['XS','S','M','L','XL','XXL']},
 ];
 
+// STORAGE
 function load(){
   try{
-    var keys={t:'textilien',m:'material',r:'reservationen',a:'accessoires'};
-    ['t','m','r','a'].forEach(function(k){
-      var v=JSON.parse(localStorage.getItem('sdm4_'+k));
-      if(v&&v.length>0) data[keys[k]]=v;
-    });
-    var n=JSON.parse(localStorage.getItem('sdm4_nid'));
-    if(n) Object.assign(nid,n);
+    var k={t:'textilien',m:'material',r:'reservationen',a:'accessoires'};
+    ['t','m','r','a'].forEach(function(x){var v=JSON.parse(localStorage.getItem('sdm5_'+x));if(v&&v.length>0)data[k[x]]=v});
+    var n=JSON.parse(localStorage.getItem('sdm5_nid'));if(n)Object.assign(nid,n);
   }catch(e){}
 }
 function save(){
   try{
-    localStorage.setItem('sdm4_t',JSON.stringify(data.textilien));
-    localStorage.setItem('sdm4_m',JSON.stringify(data.material));
-    localStorage.setItem('sdm4_r',JSON.stringify(data.reservationen));
-    localStorage.setItem('sdm4_a',JSON.stringify(data.accessoires));
-    localStorage.setItem('sdm4_nid',JSON.stringify(nid));
+    localStorage.setItem('sdm5_t',JSON.stringify(data.textilien));
+    localStorage.setItem('sdm5_m',JSON.stringify(data.material));
+    localStorage.setItem('sdm5_r',JSON.stringify(data.reservationen));
+    localStorage.setItem('sdm5_a',JSON.stringify(data.accessoires));
+    localStorage.setItem('sdm5_nid',JSON.stringify(nid));
   }catch(e){}
 }
 
@@ -448,10 +350,10 @@ textilien:[
   {id:22,ss:'Blaster',sku:'',cat:'T-Shirt Oversized',farbe:'Schwarz',groesse:'onesize',lagerort:'Box 1',bestand:1,min:1,img:'',notiz:'',sample:0},
   {id:23,ss:'Stella Collider',sku:'',cat:'T-Shirt Damen',farbe:'Schwarz',groesse:'XS',lagerort:'',bestand:1,min:1,img:'',notiz:'',sample:0},
   {id:24,ss:'Stella Nova',sku:'SATW030',cat:'T-Shirt Damen',farbe:'Schwarz',groesse:'onesize',lagerort:'M',bestand:1,min:1,img:'',notiz:'bei Sarah Schott',sample:1},
-  {id:25,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Schwarz (LW)',groesse:'XS',lagerort:'',bestand:1,min:1,img:'',notiz:'',sample:0},
-  {id:26,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Schwarz (LW)',groesse:'M',lagerort:'',bestand:1,min:1,img:'',notiz:'',sample:0},
-  {id:27,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Schwarz (LW)',groesse:'L',lagerort:'',bestand:5,min:1,img:'',notiz:'',sample:0},
-  {id:28,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Schwarz (LW)',groesse:'XL',lagerort:'',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:25,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Schwarz',groesse:'XS',lagerort:'',bestand:1,min:1,img:'',notiz:'LW',sample:0},
+  {id:26,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Schwarz',groesse:'M',lagerort:'',bestand:1,min:1,img:'',notiz:'LW',sample:0},
+  {id:27,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Schwarz',groesse:'L',lagerort:'',bestand:5,min:1,img:'',notiz:'LW',sample:0},
+  {id:28,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Schwarz',groesse:'XL',lagerort:'',bestand:1,min:1,img:'',notiz:'LW',sample:0},
   {id:29,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Weiß',groesse:'S',lagerort:'',bestand:4,min:3,img:'',notiz:'',sample:0},
   {id:30,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Weiß',groesse:'M',lagerort:'',bestand:9,min:3,img:'',notiz:'',sample:0},
   {id:31,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Weiß',groesse:'L',lagerort:'',bestand:9,min:3,img:'',notiz:'',sample:0},
@@ -468,8 +370,8 @@ textilien:[
   {id:42,ss:'Stella Muser',sku:'SAWU034',cat:'Sweatshirt Damen',farbe:'Off White',groesse:'M',lagerort:'M',bestand:4,min:2,img:'',notiz:'',sample:1},
   {id:43,ss:'Stella Muser',sku:'SAWU034',cat:'Sweatshirt Damen',farbe:'Off White',groesse:'L',lagerort:'M',bestand:3,min:2,img:'',notiz:'',sample:1},
   {id:44,ss:'Stella Muser',sku:'SAWU034',cat:'Sweatshirt Damen',farbe:'Weiß',groesse:'onesize',lagerort:'M',bestand:1,min:1,img:'',notiz:'',sample:1},
-  {id:45,ss:'Creator LS 2.0',sku:'',cat:'Longsleeve Unisex',farbe:'Weiß',groesse:'S',lagerort:'Box 2',bestand:1,min:2,img:'',notiz:'',sample:1},
-  {id:46,ss:'Creator LS 2.0',sku:'',cat:'Longsleeve Unisex',farbe:'Weiß',groesse:'M',lagerort:'Box 2',bestand:1,min:2,img:'',notiz:'',sample:1},
+  {id:45,ss:'Creator LS 2.0',sku:'',cat:'Longsleeve Unisex',farbe:'Weiß',groesse:'S',lagerort:'Box 2',bestand:1,min:1,img:'',notiz:'',sample:1},
+  {id:46,ss:'Creator LS 2.0',sku:'',cat:'Longsleeve Unisex',farbe:'Weiß',groesse:'M',lagerort:'Box 2',bestand:1,min:1,img:'',notiz:'',sample:1},
   {id:47,ss:'Breezer',sku:'',cat:'Jacke',farbe:'Weiß',groesse:'S',lagerort:'Box 1',bestand:2,min:1,img:'',notiz:'',sample:1},
   {id:48,ss:'Breezer',sku:'',cat:'Jacke',farbe:'Weiß',groesse:'M',lagerort:'Box 1',bestand:3,min:1,img:'',notiz:'',sample:1},
   {id:49,ss:'Breezer',sku:'',cat:'Jacke',farbe:'Weiß',groesse:'L',lagerort:'Box 1',bestand:4,min:1,img:'',notiz:'',sample:1},
@@ -571,22 +473,17 @@ textilien:[
   {id:145,ss:'Creator LS 2.0',sku:'',cat:'Longsleeve Unisex',farbe:'Schwarz',groesse:'L',lagerort:'Archiv',bestand:1,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
   {id:146,ss:'Creator LS 2.0',sku:'',cat:'Longsleeve Unisex',farbe:'Schwarz',groesse:'XL',lagerort:'Archiv',bestand:1,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
   {id:147,ss:'Shifts Dry',sku:'',cat:'Longsleeve Unisex',farbe:'Schwarz',groesse:'onesize',lagerort:'Archiv',bestand:1,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
-  {id:148,ss:'Hoodie Cruiser 2.0',sku:'',cat:'Hoodie Unisex',farbe:'Cool Heather Grey',groesse:'M',lagerort:'Archiv',bestand:1,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
-  {id:149,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Desert Dust',groesse:'S',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
-  {id:150,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Desert Dust',groesse:'M',lagerort:'Ming José',bestand:3,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
-  {id:151,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Desert Dust',groesse:'L',lagerort:'Ming José',bestand:3,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
-  {id:152,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Desert Dust',groesse:'XL',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
-  {id:153,ss:'Roller Xmas',sku:'',cat:'Sweatshirt Unisex',farbe:'Forest',groesse:'XS',lagerort:'Ming José',bestand:5,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
-  {id:154,ss:'Roller Xmas',sku:'',cat:'Sweatshirt Unisex',farbe:'Forest',groesse:'S',lagerort:'Ming José',bestand:5,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
-  {id:155,ss:'Roller Xmas',sku:'',cat:'Sweatshirt Unisex',farbe:'Forest',groesse:'M',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
-  {id:156,ss:'Roller Xmas',sku:'',cat:'Sweatshirt Unisex',farbe:'Forest',groesse:'L',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
-  {id:157,ss:'Roller Xmas',sku:'',cat:'Sweatshirt Unisex',farbe:'Forest',groesse:'XL',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
-  {id:158,ss:'Roller Green',sku:'',cat:'Sweatshirt Unisex',farbe:'Forest',groesse:'S',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
-  {id:159,ss:'Roller Green',sku:'',cat:'Sweatshirt Unisex',farbe:'Forest',groesse:'M',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
-  {id:160,ss:'Roller Green',sku:'',cat:'Sweatshirt Unisex',farbe:'Forest',groesse:'L',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
-  {id:161,ss:'Roller Green',sku:'',cat:'Sweatshirt Unisex',farbe:'Forest',groesse:'XL',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
-  {id:162,ss:'Shopper',sku:'',cat:'Bag',farbe:'Yellow',groesse:'onesize',lagerort:'Ming José',bestand:4,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
-  {id:163,ss:'Shopper',sku:'',cat:'Bag',farbe:'Pink',groesse:'onesize',lagerort:'Ming José',bestand:7,min:1,img:'',notiz:'Archiv Feb 2025',sample:0}
+  {id:148,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Desert Dust',groesse:'S',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
+  {id:149,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Desert Dust',groesse:'M',lagerort:'Ming José',bestand:3,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
+  {id:150,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Desert Dust',groesse:'L',lagerort:'Ming José',bestand:3,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
+  {id:151,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Desert Dust',groesse:'XL',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
+  {id:152,ss:'Roller Xmas',sku:'',cat:'Sweatshirt Unisex',farbe:'Forest',groesse:'XS',lagerort:'Ming José',bestand:5,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
+  {id:153,ss:'Roller Xmas',sku:'',cat:'Sweatshirt Unisex',farbe:'Forest',groesse:'S',lagerort:'Ming José',bestand:5,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
+  {id:154,ss:'Roller Xmas',sku:'',cat:'Sweatshirt Unisex',farbe:'Forest',groesse:'M',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
+  {id:155,ss:'Roller Xmas',sku:'',cat:'Sweatshirt Unisex',farbe:'Forest',groesse:'L',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
+  {id:156,ss:'Roller Xmas',sku:'',cat:'Sweatshirt Unisex',farbe:'Forest',groesse:'XL',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'Archiv Feb 2025',sample:0},
+  {id:157,ss:'Shopper',sku:'',cat:'Bag',farbe:'Yellow',groesse:'onesize',lagerort:'Ming José',bestand:4,min:1,img:'',notiz:'',sample:0},
+  {id:158,ss:'Shopper',sku:'',cat:'Bag',farbe:'Pink',groesse:'onesize',lagerort:'Ming José',bestand:7,min:1,img:'',notiz:'',sample:0}
 ],
 accessoires:[
   {id:1,name:'Light Tote Bag Sky Blue',typ:'Tote Bag',lagerort:'',bestand:5,min:3,notiz:''},
@@ -615,37 +512,100 @@ material:[
   {id:7,name:'Fotosieb-Emulsion',typ:'Emulsion',hersteller:'Murakami',einheit:'l',lagerort:'',bestand:0,min:0.5,notiz:''},
 ],
 reservationen:[
-  {id:1,auftrag:'Ravi — Chimpy Festival',artikel:'Hoodie + T-Shirt',menge:100,datum:'2025-08-06',status:'offen',notiz:'50x Hoodies, 50x T-Shirts',chf:0},
-  {id:2,auftrag:'Nina Loosli',artikel:'Stella Muser & Sparker',menge:0,datum:'',status:'offen',notiz:'',chf:0},
-  {id:3,auftrag:'TCF — Asdin',artikel:'Creator 2.0 + Mini Creator',menge:0,datum:'',status:'offen',notiz:'',chf:0},
-  {id:4,auftrag:'Thjnk',artikel:'',menge:0,datum:'',status:'offen',notiz:'',chf:0},
-  {id:5,auftrag:'Altos',artikel:'',menge:0,datum:'',status:'offen',notiz:'',chf:0},
-  {id:6,auftrag:'TYFYLT — Chimpy Event',artikel:'',menge:0,datum:'',status:'offen',notiz:'',chf:0},
-  {id:7,auftrag:'Yael — Konstrukt Labs',artikel:'',menge:0,datum:'',status:'offen',notiz:'',chf:0},
-  {id:8,auftrag:'Lehmag ETH',artikel:'',menge:0,datum:'',status:'offen',notiz:'',chf:0},
-  {id:9,auftrag:'Sophie Beugen — Racing Garage 94',artikel:'Merch',menge:0,datum:'',status:'offen',notiz:'',chf:0},
-  {id:10,auftrag:'Josy — Memory Bon',artikel:'',menge:0,datum:'2025-08-31',status:'offen',notiz:'Ende August',chf:0},
-  {id:11,auftrag:'Tomodomo Project',artikel:'',menge:0,datum:'2025-08-31',status:'offen',notiz:'Ende August',chf:0},
-  {id:12,auftrag:'Lenon — Do It',artikel:'',menge:0,datum:'2025-08-06',status:'offen',notiz:'',chf:0},
-  {id:13,auftrag:'Vermicelleria',artikel:'',menge:0,datum:'2025-09-30',status:'offen',notiz:'Samples yellow',chf:0},
-  {id:14,auftrag:'Thilo — Mora Island',artikel:'',menge:0,datum:'2025-08-01',status:'offen',notiz:'Begin August',chf:0},
-  {id:15,auftrag:'Schauspiel Haus',artikel:'',menge:0,datum:'2025-08-16',status:'offen',notiz:'',chf:0},
-  {id:16,auftrag:'LatenserWaser',artikel:'',menge:0,datum:'2025-08-11',status:'offen',notiz:'Mail Stanley Stella',chf:0},
-  {id:17,auftrag:'Kinder Transfer Momentum',artikel:'Transfers',menge:0,datum:'',status:'offen',notiz:'',chf:0},
-  {id:18,auftrag:'Elias Foster',artikel:'Transfers + Stickers',menge:0,datum:'',status:'offen',notiz:'Hardchor',chf:0},
-  {id:19,auftrag:'Altos — Paloma',artikel:'',menge:0,datum:'',status:'offen',notiz:'',chf:0},
+  {id:1,auftrag:'Ravi — Chimpy Festival',artikel:'Hoodie + T-Shirt',menge:100,datum:'2025-08-06',status:'offen',notiz:'50x Hoodies, 50x T-Shirts',chf:0,rechnung:false,druckart:'Siebdruck'},
+  {id:2,auftrag:'Nina Loosli',artikel:'Stella Muser & Sparker',menge:0,datum:'',status:'offen',notiz:'',chf:0,rechnung:false,druckart:''},
+  {id:3,auftrag:'TCF — Asdin',artikel:'Creator 2.0 + Mini Creator',menge:0,datum:'',status:'offen',notiz:'',chf:0,rechnung:false,druckart:''},
+  {id:4,auftrag:'Thjnk',artikel:'',menge:0,datum:'',status:'offen',notiz:'',chf:0,rechnung:false,druckart:''},
+  {id:5,auftrag:'Altos',artikel:'',menge:0,datum:'',status:'offen',notiz:'',chf:0,rechnung:false,druckart:''},
+  {id:6,auftrag:'TYFYLT — Chimpy Event',artikel:'',menge:0,datum:'',status:'offen',notiz:'',chf:0,rechnung:false,druckart:''},
+  {id:7,auftrag:'Yael — Konstrukt Labs',artikel:'',menge:0,datum:'',status:'offen',notiz:'',chf:0,rechnung:false,druckart:''},
+  {id:8,auftrag:'Lehmag ETH',artikel:'',menge:0,datum:'',status:'offen',notiz:'',chf:0,rechnung:false,druckart:''},
+  {id:9,auftrag:'Sophie Beugen — Racing Garage 94',artikel:'Merch',menge:0,datum:'',status:'offen',notiz:'',chf:0,rechnung:false,druckart:''},
+  {id:10,auftrag:'Josy — Memory Bon',artikel:'',menge:0,datum:'2025-08-31',status:'offen',notiz:'Ende August',chf:0,rechnung:false,druckart:''},
+  {id:11,auftrag:'Tomodomo Project',artikel:'',menge:0,datum:'2025-08-31',status:'offen',notiz:'',chf:0,rechnung:false,druckart:''},
+  {id:12,auftrag:'Lenon — Do It',artikel:'',menge:0,datum:'2025-08-06',status:'offen',notiz:'',chf:0,rechnung:false,druckart:''},
+  {id:13,auftrag:'Vermicelleria',artikel:'',menge:0,datum:'2025-09-30',status:'offen',notiz:'Samples yellow',chf:0,rechnung:false,druckart:''},
+  {id:14,auftrag:'Thilo — Mora Island',artikel:'',menge:0,datum:'2025-08-01',status:'offen',notiz:'Begin August',chf:0,rechnung:false,druckart:''},
+  {id:15,auftrag:'Schauspiel Haus',artikel:'',menge:0,datum:'2025-08-16',status:'offen',notiz:'',chf:0,rechnung:false,druckart:''},
+  {id:16,auftrag:'LatenserWaser',artikel:'',menge:0,datum:'2025-08-11',status:'offen',notiz:'Mail Stanley Stella',chf:0,rechnung:false,druckart:''},
+  {id:17,auftrag:'Kinder Transfer Momentum',artikel:'Transfers',menge:0,datum:'',status:'offen',notiz:'',chf:0,rechnung:false,druckart:'DTF'},
+  {id:18,auftrag:'Elias Foster',artikel:'Transfers + Stickers',menge:0,datum:'',status:'offen',notiz:'Hardchor',chf:0,rechnung:false,druckart:'DTF'},
+  {id:19,auftrag:'Altos — Paloma',artikel:'',menge:0,datum:'',status:'offen',notiz:'',chf:0,rechnung:false,druckart:''},
 ]
 };
-var nid={t:164,m:8,r:20,a:16};
+var nid={t:159,m:8,r:20,a:16};
 var tab='dashboard',editId=null,search='',fA='',fB='',viewMode='grid';
 
+// ── HELPERS ───────────────────────────────────────────────────────────────
+function today(){var d=new Date();d.setHours(0,0,0,0);return d}
+function daysLeft(dateStr){
+  if(!dateStr) return null;
+  var dl=new Date(dateStr);dl.setHours(0,0,0,0);
+  return Math.round((dl-today())/(1000*60*60*24));
+}
+function urgency(days){
+  if(days===null) return 'nodl';
+  if(days<0) return 'urgent';
+  if(days<=3) return 'urgent';
+  if(days<=7) return 'warning';
+  return 'safe';
+}
+function fmtDate(d){if(!d)return'—';try{return new Date(d).toLocaleDateString('de-CH',{day:'2-digit',month:'2-digit',year:'numeric'})}catch(e){return d}}
+function gv(id){var e=document.getElementById(id);return e?e.value:''}
+function gb(id){var e=document.getElementById(id);return e?e.checked:false}
+
+// ── REMINDERS ────────────────────────────────────────────────────────────
+function getReminders(){
+  var alerts=[];
+  var offen=data.reservationen.filter(function(r){return r.status==='offen'});
+  // Deadline soon
+  var soon=offen.filter(function(r){var d=daysLeft(r.datum);return d!==null&&d<=7&&d>=0});
+  if(soon.length) alerts.push('⏰ '+soon.length+' Auftrag'+(soon.length>1?'e':'')+' mit Deadline in ≤7 Tagen');
+  // Overdue
+  var overdue=offen.filter(function(r){var d=daysLeft(r.datum);return d!==null&&d<0});
+  if(overdue.length) alerts.push('🚨 '+overdue.length+' Auftrag'+(overdue.length>1?'e':'')+' überfällig!');
+  // Rechnung nicht gestellt
+  var noRechnung=offen.filter(function(r){return r.chf>0&&!r.rechnung});
+  if(noRechnung.length) alerts.push('📄 '+noRechnung.length+' Rechnung'+(noRechnung.length>1?'en':'')+' noch nicht gestellt');
+  // Bezahlung ausstehend
+  var bezAust=data.reservationen.filter(function(r){return r.status==='bezahlt'&&!r.rechnung});
+  if(bezAust.length) alerts.push('💸 '+bezAust.length+' Zahlung'+(bezAust.length>1?'en':'')+' ausstehend');
+  // Stock issues
+  var stockIss=offen.filter(function(r){var st=checkStock(r);return st&&st.ok===false});
+  if(stockIss.length) alerts.push('📦 '+stockIss.length+' Auftrag'+(stockIss.length>1?'e':'')+' — zu wenig Lager');
+  return alerts;
+}
+
+function renderAlertBanner(){
+  var alerts=getReminders();
+  var banner=document.getElementById('alertBanner');
+  var title=document.getElementById('alertTitle');
+  var items=document.getElementById('alertItems');
+  if(!alerts.length){banner.classList.remove('show');return}
+  banner.classList.add('show');
+  title.textContent='⚡ '+alerts.length+' Dinge brauchen deine Aufmerksamkeit';
+  items.innerHTML=alerts.map(function(a){return'<div class="alert-item">'+a+'</div>'}).join('');
+  // Update badge on Aufträge tab
+  var nt=document.querySelector('.nt[data-tab="reservationen"]');
+  if(nt){
+    var b=nt.querySelector('.badge');
+    if(!b){b=document.createElement('span');b.className='badge';nt.appendChild(b)}
+    b.textContent=alerts.length;
+  }
+  var nt2=document.querySelector('.nt[data-tab="timeline"]');
+  if(nt2){
+    var b2=nt2.querySelector('.badge');
+    if(!b2){b2=document.createElement('span');b2.className='badge';nt2.appendChild(b2)}
+    var urgentCount=data.reservationen.filter(function(r){var d=daysLeft(r.datum);return r.status==='offen'&&d!==null&&d<=7}).length;
+    if(urgentCount>0) b2.textContent=urgentCount; else b2.remove&&b2.remove();
+  }
+}
+
+// ── STOCK CHECK ───────────────────────────────────────────────────────────
 function checkStock(res){
   if(!res.artikel||res.menge<=0) return null;
   var words=res.artikel.toLowerCase().split(/[\s,+&\/]+/).filter(function(w){return w.length>2});
-  var matches=data.textilien.filter(function(i){
-    var name=(i.ss+' '+i.farbe+' '+i.cat).toLowerCase();
-    return words.some(function(w){return name.includes(w)});
-  });
+  var matches=data.textilien.filter(function(i){var n=(i.ss+' '+i.farbe+' '+i.cat).toLowerCase();return words.some(function(w){return n.includes(w)})});
   var total=matches.reduce(function(a,i){return a+i.bestand},0);
   if(!matches.length) return {ok:null,cls:'',msg:'Artikel nicht gefunden'};
   if(total>=res.menge) return {ok:true,cls:'',msg:'✓ '+total+' Stk verfügbar'};
@@ -653,71 +613,320 @@ function checkStock(res){
   return {ok:false,cls:'warn',msg:'✗ Nicht am Lager — bestellen!'};
 }
 
+// ── SWITCH TAB ────────────────────────────────────────────────────────────
+function switchTab(t2){
+  document.querySelectorAll('.nt').forEach(function(x){x.classList.remove('active')});
+  var el=document.querySelector('.nt[data-tab="'+t2+'"]');if(el)el.classList.add('active');
+  tab=t2;fA='';fB='';search='';renderTabContent();
+}
+
+// ── DASHBOARD ─────────────────────────────────────────────────────────────
 function renderDashboard(){
   var t=data.textilien,r=data.reservationen;
-  var totalStk=t.reduce(function(a,i){return a+i.bestand},0);
-  var lowItems=t.filter(function(i){return i.bestand<i.min&&i.bestand>0});
-  var emptyItems=t.filter(function(i){return i.bestand===0&&i.min>0});
   var offen=r.filter(function(x){return x.status==='offen'});
   var bezahlt=r.filter(function(x){return x.status==='bezahlt'});
   var totalChf=r.reduce(function(a,x){return a+(x.chf||0)},0);
   var bezahltChf=bezahlt.reduce(function(a,x){return a+(x.chf||0)},0);
   var offenChf=offen.reduce(function(a,x){return a+(x.chf||0)},0);
-  var modelCount={};
-  t.forEach(function(i){modelCount[i.ss]=(modelCount[i.ss]||0)+i.bestand});
-  var topModels=Object.keys(modelCount).map(function(k){return{name:k,n:modelCount[k]}}).sort(function(a,b){return b.n-a.n}).slice(0,5);
-  var maxN=topModels[0]?topModels[0].n:1;
-  var html='<div class="dash">';
-  html+='<div class="dash-grid">';
-  html+='<div class="dash-card"><div class="dash-title">Textilien total</div><div class="dash-num">'+totalStk+'</div><div class="dash-sub">'+t.length+' Artikel im Lager</div></div>';
-  html+='<div class="dash-card orange"><div class="dash-title" style="opacity:.8">Offene Aufträge</div><div class="dash-num">'+offen.length+'</div><div class="dash-sub" style="opacity:.8">'+offen.filter(function(x){return x.datum}).length+' mit Deadline</div></div>';
-  html+='<div class="dash-card"><div class="dash-title">Umsatz Total</div><div class="dash-num" style="font-size:26px">CHF '+totalChf.toLocaleString('de-CH')+'</div><div class="dash-sub">'+bezahlt.length+' bezahlt</div></div>';
-  html+='<div class="dash-card"><div class="dash-title">Ausstehend</div><div class="dash-num" style="font-size:26px;color:'+(offenChf>0?'var(--orange)':'inherit')+'">CHF '+offenChf.toLocaleString('de-CH')+'</div><div class="dash-sub">noch offen</div></div>';
+  var lowItems=t.filter(function(i){return i.bestand<i.min&&i.bestand>0});
+  var emptyItems=t.filter(function(i){return i.bestand===0&&i.min>0});
+  var modelCount={};t.forEach(function(i){modelCount[i.ss]=(modelCount[i.ss]||0)+i.bestand});
+  var topM=Object.keys(modelCount).map(function(k){return{name:k,n:modelCount[k]}}).sort(function(a,b){return b.n-a.n}).slice(0,5);
+  var maxN=topM[0]?topM[0].n:1;
+  var html='<div class="dash"><div class="dash-grid">';
+  html+='<div class="dc"><div class="dc-title">Textilien total</div><div class="dc-num">'+t.reduce(function(a,i){return a+i.bestand},0)+'</div><div class="dc-sub">'+t.length+' Artikel</div></div>';
+  html+='<div class="dc orange"><div class="dc-title" style="opacity:.8">Offene Aufträge</div><div class="dc-num">'+offen.length+'</div><div class="dc-sub" style="opacity:.8">'+offen.filter(function(x){return x.datum}).length+' mit Deadline</div></div>';
+  html+='<div class="dc" onclick="openBrainDump()" style="cursor:pointer;border-color:var(--orange);transition:all .15s"><div style="font-size:28px;margin-bottom:6px">&#x1F9E0;</div><div class="dc-title" style="opacity:1;font-size:13px;font-weight:700">Brain Dump</div><div class="dc-sub" style="margin-top:4px">Kopf leeren - Fokus finden</div></div>';
+  html+='<div class="dc" onclick="openDecision()" style="cursor:pointer;transition:all .15s"><div style="font-size:28px;margin-bottom:6px">&#x2696;&#xFE0F;</div><div class="dc-title" style="opacity:1;font-size:13px;font-weight:700">Entscheidung</div><div class="dc-sub" style="margin-top:4px">Make a Decision</div></div>';
   html+='</div>';
   if(lowItems.length||emptyItems.length){
-    html+='<div class="dash-card full" style="margin-bottom:12px;border-color:var(--orange)"><div class="dash-title" style="color:var(--orange)">⚠ Nachbestellen ('+(lowItems.length+emptyItems.length)+')</div><ul class="dash-list">';
-    emptyItems.slice(0,4).forEach(function(i){html+='<li><span><span class="lc-name">'+i.ss+'</span><br><span class="di">'+i.farbe+' · '+i.groesse+'</span></span><span class="dr">Leer</span></li>'});
-    lowItems.slice(0,4).forEach(function(i){html+='<li><span><span class="lc-name">'+i.ss+'</span><br><span class="di">'+i.farbe+' · '+i.groesse+'</span></span><span class="do">'+i.bestand+'/'+i.min+'</span></li>'});
+    html+='<div class="dc full" style="margin-bottom:12px;border-color:var(--red)"><div class="dc-title" style="color:var(--red);opacity:1">⚠ Nachbestellen ('+(lowItems.length+emptyItems.length)+')</div><ul class="dash-list">';
+    emptyItems.slice(0,3).forEach(function(i){html+='<li><span><b>'+i.ss+'</b><br><span class="di">'+i.farbe+' · '+i.groesse+'</span></span><span class="dr">Leer</span></li>'});
+    lowItems.slice(0,3).forEach(function(i){html+='<li><span><b>'+i.ss+'</b><br><span class="di">'+i.farbe+' · '+i.groesse+'</span></span><span class="do">'+i.bestand+'/'+i.min+'</span></li>'});
     html+='</ul></div>';
   }
   html+='<div class="dash-grid">';
-  html+='<div class="dash-card"><div class="dash-title">Meist am Lager</div>';
-  topModels.forEach(function(m){
-    html+='<div class="dash-bar-item"><div class="dash-bar-label"><span>'+m.name+'</span><span style="font-weight:700">'+m.n+'</span></div><div class="dash-bar-track"><div class="dash-bar-fill" style="width:'+Math.round(m.n/maxN*100)+'%"></div></div></div>';
-  });
+  html+='<div class="dc"><div class="dc-title">Meist am Lager</div>';
+  topM.forEach(function(m){html+='<div class="dash-bar-item"><div class="dash-bar-label"><span>'+m.name+'</span><span style="font-weight:700">'+m.n+'</span></div><div class="dash-bar-track"><div class="dash-bar-fill" style="width:'+Math.round(m.n/maxN*100)+'%"></div></div></div>'});
   html+='</div>';
-  html+='<div class="dash-card"><div class="dash-title" style="display:flex;justify-content:space-between">Nächste Deadlines <span onclick="switchTab(\'reservationen\')" style="cursor:pointer;color:var(--orange)">alle →</span></div>';
+  html+='<div class="dc"><div class="dc-title" style="display:flex;justify-content:space-between">Nächste Deadlines <span onclick="switchTab(\'timeline\')" style="cursor:pointer;color:var(--orange);font-size:10px">Timeline →</span></div>';
   var mitDL=offen.filter(function(x){return x.datum}).sort(function(a,b){return a.datum.localeCompare(b.datum)}).slice(0,5);
-  if(!mitDL.length){html+='<div class="res-empty" style="padding:20px;font-size:12px">Keine Deadlines</div>'}
+  if(!mitDL.length){html+='<div style="padding:20px;text-align:center;opacity:.4;font-size:12px">Keine Deadlines</div>'}
   else{
     html+='<ul class="dash-list">';
     mitDL.forEach(function(r){
-      var st=checkStock(r);
-      html+='<li onclick="switchTab(\'reservationen\')" style="cursor:pointer"><span><span class="lc-name">'+r.auftrag.split('—')[0].trim()+'</span><br><span class="di">'+fmtDate(r.datum)+'</span></span>'+(st?'<span class="'+(st.ok===true?'dg':st.ok==='partial'?'do':'dr')+'">'+( st.ok===true?'✓':st.ok==='partial'?'⚠':'✗')+'</span>':'')+'</li>';
+      var d=daysLeft(r.datum);var u=urgency(d);
+      html+='<li onclick="switchTab(\'timeline\')" style="cursor:pointer"><span><b>'+r.auftrag.split('—')[0].trim()+'</b><br><span class="di">'+fmtDate(r.datum)+'</span></span><span class="'+(u==='urgent'?'dr':u==='warning'?'do':'dg')+'">'+(d<0?'Überfällig':d===0?'Heute':d+' Tage')+'</span></li>';
     });
     html+='</ul>';
   }
-  html+='</div></div>';
-  html+='<div class="dash-card full" style="margin-top:12px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div class="dash-title" style="margin-bottom:0">Aufträge</div><button class="btn btn-sm btn-orange" onclick="switchTab(\'reservationen\')">Alle Aufträge →</button></div>';
-  offen.slice(0,6).forEach(function(r){
-    html+='<div class="auftrag-row"><div><div class="ar-name">'+r.auftrag+'</div><div class="ar-detail">'+(r.artikel||'Artikel ausstehend')+(r.menge?' · '+r.menge+' Stk':'')+'</div></div>'
-      +'<div style="display:flex;align-items:center;gap:8px">'+(r.chf?'<div class="ar-chf">CHF '+r.chf.toLocaleString('de-CH')+'</div>':'')
-      +'<span class="ar-badge ar-offen">offen</span></div></div>';
-  });
-  html+='</div></div>';
+  html+='</div></div></div>';
   return html;
 }
 
-function switchTab(t2){
-  document.querySelectorAll('.nt').forEach(function(x){x.classList.remove('active')});
-  var el=document.querySelector('.nt[data-tab="'+t2+'"]');
-  if(el) el.classList.add('active');
-  tab=t2;fA='';fB='';search='';renderTabContent();
+// ── TIMELINE ──────────────────────────────────────────────────────────────
+function renderTimeline(){
+  var all=data.reservationen.slice();
+  // Separate with and without deadline
+  var withDL=all.filter(function(r){return r.datum}).sort(function(a,b){return a.datum.localeCompare(b.datum)});
+  var noDL=all.filter(function(r){return !r.datum&&r.status==='offen'});
+
+  if(!all.length) return '<div style="padding:40px;text-align:center;opacity:.4">Keine Aufträge</div>';
+
+  // Find date range for the gantt
+  var todayDate=today();
+  var todayStr=todayDate.toISOString().slice(0,10);
+
+  // Compute earliest start (today or earliest deadline -60 days) and latest end
+  var deadlines=withDL.map(function(r){return new Date(r.datum)});
+  var minDate=new Date(Math.min.apply(null,[todayDate].concat(deadlines)));
+  var maxDate=new Date(Math.max.apply(null,[todayDate].concat(deadlines)));
+  // Add padding
+  minDate.setDate(minDate.getDate()-7);
+  maxDate.setDate(maxDate.getDate()+14);
+  var totalDays=Math.round((maxDate-minDate)/(1000*60*60*24));
+
+  function pct(dateStr){
+    if(!dateStr) return null;
+    var d=new Date(dateStr);d.setHours(0,0,0,0);
+    return Math.max(0,Math.min(100,Math.round((d-minDate)/(maxDate-minDate)*100)));
+  }
+  var todayPct=pct(todayStr);
+
+  // Month labels along the top
+  var months=[];
+  var cur=new Date(minDate);cur.setDate(1);
+  while(cur<=maxDate){
+    var p=pct(cur.toISOString().slice(0,10));
+    months.push({label:cur.toLocaleDateString('de-CH',{month:'short',year:'2-digit'}),pct:p});
+    cur.setMonth(cur.getMonth()+1);
+  }
+
+  var html='<div style="padding:14px 16px">';
+
+  // Header title
+  html+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">'
+    +'<div style="font-size:17px;font-weight:700;letter-spacing:-.01em">Auftrags-Timeline</div>'
+    +'<button class="btn btn-sm btn-orange" onclick="openAddRes()">+ Neuer Auftrag</button>'
+    +'</div>';
+
+  // GANTT CHART
+  html+='<div style="background:var(--white);border:2px solid var(--brown);border-radius:var(--r);overflow:hidden;margin-bottom:16px">';
+
+  // Month header row
+  html+='<div style="position:relative;height:32px;background:var(--brown);overflow:hidden">';
+  months.forEach(function(m){
+    html+='<div style="position:absolute;left:'+m.pct+'%;top:0;height:100%;border-left:1px solid rgba(255,255,255,.2);padding:0 8px;display:flex;align-items:center">'
+      +'<span style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--cream);white-space:nowrap">'+m.label+'</span>'
+      +'</div>';
+  });
+  html+='</div>';
+
+  // TODAY line label
+  html+='<div style="position:relative;height:24px;background:var(--tan2);border-bottom:1px solid var(--tan)">';
+  html+='<div style="position:absolute;left:'+todayPct+'%;top:0;bottom:0;width:2px;background:var(--orange);transform:translateX(-50%)"></div>';
+  html+='<div style="position:absolute;left:calc('+todayPct+'% + 4px);top:50%;transform:translateY(-50%);font-size:10px;font-weight:700;color:var(--orange);white-space:nowrap">HEUTE</div>';
+  html+='</div>';
+
+  // Rows for each auftrag with deadline
+  withDL.forEach(function(r){
+    var d=daysLeft(r.datum);
+    var u=urgency(d);
+    var barColor=u==='urgent'?'var(--red)':u==='warning'?'var(--yellow)':'var(--green)';
+    var isDone=r.status!=='offen';
+    if(isDone) barColor='var(--tan)';
+
+    // Bar goes from today (or minDate) to deadline
+    var startPct=Math.min(todayPct, pct(r.datum));
+    var endPct=pct(r.datum);
+    var barLeft=Math.min(startPct,endPct);
+    var barWidth=Math.abs(endPct-startPct);
+    if(barWidth<1) barWidth=1;
+
+    html+='<div style="position:relative;border-bottom:1px solid var(--tan);cursor:pointer;transition:background .12s" onclick="openEditRes('+r.id+')" onmouseover="this.style.background=\'var(--tan2)\'" onmouseout="this.style.background=\'\'">';
+    // Today line
+    html+='<div style="position:absolute;left:'+todayPct+'%;top:0;bottom:0;width:2px;background:var(--orange);opacity:.3;z-index:1;pointer-events:none"></div>';
+    // Bar
+    html+='<div style="position:absolute;left:'+barLeft+'%;width:'+barWidth+'%;top:10px;height:24px;background:'+barColor+';border-radius:20px;opacity:'+(isDone?.4:.85)+';z-index:2;pointer-events:none;display:flex;align-items:center;justify-content:flex-end;padding-right:8px">';
+    if(d!==null&&!isDone){
+      html+='<span style="font-size:10px;font-weight:700;color:'+(u==='urgent'||u==='warning'?'var(--brown)':'var(--white)')+';">'+(d<0?'Überfällig!':d===0?'Heute!':d+' T.')+'</span>';
+    }
+    html+='</div>';
+    // Label
+    html+='<div style="position:relative;z-index:3;padding:8px 12px 8px '+(barLeft>50?'12px':Math.max(12,barLeft*3+12)+'px')+';display:flex;align-items:center;gap:8px;min-height:44px">';
+    html+='<div style="min-width:0">';
+    html+='<div style="font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;'+(isDone?'text-decoration:line-through;opacity:.5':'')+'">'+r.auftrag+'</div>';
+    html+='<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:2px">';
+    if(!isDone){
+      if(r.chf>0&&!r.rechnung) html+='<span style="font-size:9px;background:var(--orange);color:var(--white);padding:1px 6px;border-radius:10px;font-weight:700">📄 Rechnung</span>';
+      var st=r.menge>0?checkStock(r):null;
+      if(st&&st.ok===false) html+='<span style="font-size:9px;background:var(--red);color:var(--white);padding:1px 6px;border-radius:10px;font-weight:700">📦 Lager</span>';
+      if(r.druckart) html+='<span style="font-size:9px;color:var(--brown2);opacity:.6">'+r.druckart+'</span>';
+      if(r.menge) html+='<span style="font-size:9px;color:var(--brown2);opacity:.6">'+r.menge+' Stk</span>';
+    } else {
+      html+='<span style="font-size:9px;color:var(--green);font-weight:700">'+(r.status==='bezahlt'?'✓ Bezahlt':'✓ Erledigt')+(r.chf?' · CHF '+r.chf.toLocaleString('de-CH'):'')+'</span>';
+    }
+    html+='</div></div>';
+    // Undo for done
+    if(isDone) html+='<button class="btn btn-xs btn-ghost" style="margin-left:auto;flex-shrink:0" onclick="event.stopPropagation();undoStatus('+r.id+')">↩</button>';
+    html+='</div></div>';
+  });
+
+  html+='</div>'; // end gantt
+
+  // LEGEND
+  html+='<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;font-size:11px;align-items:center">'
+    +'<div style="display:flex;align-items:center;gap:5px"><div style="width:24px;height:6px;border-radius:3px;background:var(--red)"></div>Überfällig/Heute</div>'
+    +'<div style="display:flex;align-items:center;gap:5px"><div style="width:24px;height:6px;border-radius:3px;background:var(--yellow)"></div>Diese Woche</div>'
+    +'<div style="display:flex;align-items:center;gap:5px"><div style="width:24px;height:6px;border-radius:3px;background:var(--green)"></div>Später</div>'
+    +'<div style="display:flex;align-items:center;gap:5px"><div style="width:24px;height:6px;border-radius:3px;background:var(--tan)"></div>Erledigt</div>'
+    +'<div style="display:flex;align-items:center;gap:5px"><div style="width:3px;height:14px;background:var(--orange)"></div>Heute</div>'
+    +'</div>';
+
+  // WITHOUT DEADLINE — simple list below
+  if(noDL.length){
+    html+='<div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;opacity:.5;margin-bottom:8px">Ohne Deadline ('+noDL.length+')</div>';
+    html+='<div style="display:flex;flex-direction:column;gap:6px">';
+    noDL.forEach(function(r){
+      var st=r.menge>0?checkStock(r):null;
+      html+='<div onclick="openEditRes('+r.id+')" style="background:var(--white);border:2px solid var(--tan);border-radius:var(--r2);padding:10px 14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px;transition:all .12s" onmouseover="this.style.borderColor=\'var(--brown)\'" onmouseout="this.style.borderColor=\'var(--tan)\'">'
+        +'<div><div style="font-size:12px;font-weight:700">'+r.auftrag+'</div>'
+        +(r.artikel?'<div style="font-size:11px;opacity:.5">'+r.artikel+(r.menge?' · '+r.menge+' Stk':'')+'</div>':'')
+        +'</div>'
+        +'<div style="display:flex;gap:5px;flex-shrink:0">'
+        +(r.chf>0&&!r.rechnung?'<span style="font-size:9px;background:var(--orange);color:var(--white);padding:2px 7px;border-radius:10px;font-weight:700">📄</span>':'')
+        +(st&&st.ok===false?'<span style="font-size:9px;background:var(--red);color:var(--white);padding:2px 7px;border-radius:10px;font-weight:700">📦</span>':'')
+        +'</div></div>';
+    });
+    html+='</div>';
+  }
+
+  html+='</div>';
+  return html;
 }
 
+// ── AUFTRÄGE ──────────────────────────────────────────────────────────────
+function renderResTab(){
+  var offen=data.reservationen.filter(function(r){return r.status==='offen'});
+  var bezahlt=data.reservationen.filter(function(r){return r.status==='bezahlt'});
+  var erledigt=data.reservationen.filter(function(r){return r.status==='erledigt'});
+  var totalChf=data.reservationen.reduce(function(a,x){return a+(x.chf||0)},0);
+  var bezahltChf=bezahlt.reduce(function(a,x){return a+(x.chf||0)},0);
+  var html='<div class="toolbar-res"><div class="chf-summary">Total: <b>CHF '+totalChf.toLocaleString('de-CH')+'</b> &nbsp;|&nbsp; Bezahlt: <b style="color:var(--green)">CHF '+bezahltChf.toLocaleString('de-CH')+'</b></div><button class="btn btn-orange" onclick="openAddRes()">+ Neuer Auftrag</button></div>';
+
+  function resSection(title,items){
+    if(!items.length) return '';
+    var h='<div class="sec-hdr">'+title+' ('+items.length+')</div><div class="res-wrap">';
+    items.forEach(function(r){
+      var d=daysLeft(r.datum);var u=urgency(d);
+      var st=r.menge>0?checkStock(r):null;
+      var isDone=r.status!=='offen';
+      h+='<div class="res-card '+(isDone?'':''+u)+'">'
+        +'<div class="res-top"><div>'
+        +'<div class="res-name">'+r.auftrag+'</div>'
+        +(r.artikel?'<div class="res-detail">'+r.artikel+(r.menge?' · '+r.menge+' Stk':'')+'</div>':'')
+        +(r.chf?'<div class="res-chf">CHF '+r.chf.toLocaleString('de-CH')+'</div>':'')
+        +(r.druckart?'<div class="res-detail">🎨 '+r.druckart+'</div>':'')
+        +(r.notiz?'<div class="res-detail" style="font-style:italic">'+r.notiz+'</div>':'')
+        +(r.datum?'<div class="res-date" style="color:'+(u==='urgent'?'var(--red)':u==='warning'?'var(--yellow)':'var(--green)')+'">📅 '+fmtDate(r.datum)+(d!==null?' · '+(d<0?'Überfällig!':d===0?'Heute!':d+' Tage'):'')+'</div>':'')
+        +'</div>'
+        +'<div class="res-actions">'
+        +(isDone?'<button class="btn btn-xs btn-ghost" onclick="undoStatus('+r.id+')">↩</button>':'')
+        +'<button class="btn btn-xs" onclick="openEditRes('+r.id+')">✏</button>'
+        +(r.status==='offen'?'<button class="btn btn-xs btn-green" onclick="setStatus('+r.id+',\'bezahlt\')">CHF ✓</button>':'')
+        +(r.status==='offen'?'<button class="btn btn-xs btn-fill" onclick="setStatus('+r.id+',\'erledigt\')">✓</button>':'')
+        +(r.status==='bezahlt'?'<span style="font-size:11px;color:var(--green);font-weight:700;padding:4px">✓ Bezahlt</span>':'')
+        +'</div></div>'
+        // Rechnung checkbox
+        +'<div class="chk-row" onclick="event.stopPropagation()">'
+        +'<input type="checkbox" id="rech_'+r.id+'" '+(r.rechnung?'checked':'')+' onchange="toggleRechnung('+r.id+',this.checked)">'
+        +'<label for="rech_'+r.id+'">📄 Rechnung gestellt</label>'
+        +'</div>'
+        +(st?'<div class="res-stock '+st.cls+'">'+st.msg+'</div>':'')
+        +'</div>';
+    });
+    h+='</div>';
+    return h;
+  }
+
+  html+=resSection('Offene Aufträge',offen);
+  html+=resSection('Bezahlt',bezahlt);
+  if(erledigt.length) html+=resSection('Erledigt (ohne Zahlung)',erledigt);
+  if(!offen.length&&!bezahlt.length&&!erledigt.length) html+='<div class="res-wrap"><div style="padding:40px;text-align:center;opacity:.4">Keine Aufträge 🌴</div></div>';
+  return html;
+}
+
+function setStatus(id,st){
+  var r=data.reservationen.find(function(x){return x.id===id});
+  if(r) r.status=st;
+  save();renderAll();
+}
+function undoStatus(id){
+  var r=data.reservationen.find(function(x){return x.id===id});
+  if(r){r.status='offen';}
+  save();renderAll();
+}
+function toggleRechnung(id,checked){
+  var r=data.reservationen.find(function(x){return x.id===id});
+  if(r) r.rechnung=checked;
+  save();renderAlertBanner();
+}
+function deleteRes(id){if(!confirm('Löschen?'))return;data.reservationen=data.reservationen.filter(function(x){return x.id!==id});save();renderAll()}
+function openAddRes(){editId=null;showResModal()}
+function openEditRes(id){editId=id;showResModal()}
+function showResModal(){
+  document.getElementById('overlay').classList.add('open');
+  var modal=document.getElementById('modal');
+  var isEdit=editId!==null;
+  var r=isEdit?data.reservationen.find(function(x){return x.id===editId}):null;
+  modal.innerHTML='<div class="mhead"><h2>'+(isEdit?'Auftrag bearbeiten':'Neuer Auftrag')+'</h2><button class="mclose" onclick="closeModal()">×</button></div>'
+    +'<div class="mbody">'
+    +'<div class="ff"><label>Kunde / Auftraggeber</label><input id="r_a" value="'+(r?r.auftrag:'')+'" placeholder="Ravi — Chimpy Festival"></div>'
+    +'<div class="ff"><label>Artikel</label><input id="r_art" value="'+(r?r.artikel:'')+'" placeholder="Creator 2.0 Schwarz M"></div>'
+    +'<div class="f2"><div class="ff"><label>Menge (Stk)</label><input id="r_m" type="number" value="'+(r?r.menge:0)+'" min="0"></div>'
+    +'<div class="ff"><label>CHF Betrag</label><input id="r_chf" type="number" value="'+(r&&r.chf?r.chf:0)+'" min="0" step="10"></div></div>'
+    +'<div class="ff"><label>Druckart</label><select id="r_da"><option value="">—</option>'+['Siebdruck','DTF','Stickerei','Sonstiges'].map(function(s){return'<option'+(r&&r.druckart===s?' selected':'')+'>'+s+'</option>'}).join('')+'</select></div>'
+    +'<div class="ff"><label>Deadline</label><input id="r_d" type="date" value="'+(r?r.datum:'')+'"></div>'
+    +'<div class="ff"><label>Notiz</label><textarea id="r_n">'+(r?r.notiz:'')+'</textarea></div>'
+    +'<div style="display:flex;flex-direction:column;gap:0">'
+    +'<div class="chk-row"><input type="checkbox" id="m_rech"'+(r&&r.rechnung?' checked':'')+' style="accent-color:var(--orange)"><label for="m_rech">📄 Rechnung gestellt</label></div>'
+    +'</div>'
+    // Status pills
+    +'<div class="ff" style="margin-top:12px"><label>Status</label><div class="status-pills">'
+    +'<div class="status-pill'+((!r||r.status==='offen')?' active-offen':'')+'" onclick="selectPill(this,\'offen\')">Offen</div>'
+    +'<div class="status-pill'+(r&&r.status==='bezahlt'?' active-bezahlt':'')+'" onclick="selectPill(this,\'bezahlt\')">Bezahlt ✓</div>'
+    +'<div class="status-pill'+(r&&r.status==='erledigt'?' active-erledigt':'')+'" onclick="selectPill(this,\'erledigt\')">Erledigt</div>'
+    +'</div></div>'
+    +(isEdit?'<button class="btn btn-danger" style="width:100%;margin-top:6px" onclick="deleteRes('+editId+');closeModal()">Auftrag löschen</button>':'')
+    +'</div><div class="mfoot"><button class="btn" onclick="closeModal()">Abbrechen</button><button class="btn btn-orange" onclick="saveRes()">Speichern</button></div>';
+}
+function selectPill(el,val){
+  document.querySelectorAll('.status-pill').forEach(function(p){p.className='status-pill'});
+  el.className='status-pill active-'+val;
+  el.dataset.val=val;
+}
+function getSelectedStatus(){
+  var active=document.querySelector('.status-pill[class*=active]');
+  if(active){if(active.classList.contains('active-bezahlt'))return'bezahlt';if(active.classList.contains('active-erledigt'))return'erledigt';}
+  return'offen';
+}
+function saveRes(){
+  var isEdit=editId!==null;
+  var obj={id:isEdit?editId:nid.r++,auftrag:gv('r_a')||'Auftrag',artikel:gv('r_art'),
+    menge:parseInt(gv('r_m'))||0,chf:parseFloat(gv('r_chf'))||0,
+    druckart:gv('r_da'),datum:gv('r_d'),
+    status:getSelectedStatus(),
+    rechnung:gb('m_rech'),notiz:gv('r_n')};
+  if(isEdit){var i=data.reservationen.findIndex(function(x){return x.id===editId});data.reservationen[i]=obj}
+  else data.reservationen.push(obj);
+  save();closeModal();renderAll();
+}
+
+// ── ITEM TABS ─────────────────────────────────────────────────────────────
 function renderTabContent(){
   var tc=document.getElementById('tabContent');
   if(tab==='dashboard'){tc.innerHTML=renderDashboard();return}
+  if(tab==='timeline'){tc.innerHTML=renderTimeline();return}
   if(tab==='reservationen'){tc.innerHTML=renderResTab();return}
   tc.innerHTML=
     '<div class="excel-bar">'
@@ -730,30 +939,22 @@ function renderTabContent(){
     +'<input type="text" id="srch" placeholder="Suchen …" value="'+search+'">'
     +'<select id="fA"></select>'
     +(tab!=='material'?'<select id="fB"></select>':'')
-    +'<div class="view-toggle">'
-    +'<div class="vt-btn'+(viewMode==='grid'?' active':'')+'" onclick="setView(\'grid\')" title="Kacheln">⊞</div>'
-    +'<div class="vt-btn'+(viewMode==='list'?' active':'')+'" onclick="setView(\'list\')" title="Liste">☰</div>'
-    +'</div>'
+    +'<div class="view-toggle"><div class="vt-btn'+(viewMode==='grid'?' active':'')+'" onclick="setView(\'grid\')">⊞</div><div class="vt-btn'+(viewMode==='list'?' active':'')+'" onclick="setView(\'list\')">☰</div></div>'
     +'<button class="btn btn-fill" id="addBtn">+ Neu</button>'
     +'</div>';
-  if(viewMode==='list') tc.innerHTML+=buildListView();
+  if(viewMode==='list') tc.innerHTML+=buildList();
   else tc.innerHTML+='<div class="gw"><div class="grid" id="grid"></div></div>';
   document.getElementById('xlImp').addEventListener('change',importExcel);
   document.getElementById('srch').addEventListener('input',function(e){search=e.target.value;refreshView()});
   document.getElementById('fA').addEventListener('change',function(e){fA=e.target.value;refreshView()});
-  var fb=document.getElementById('fB');
-  if(fb) fb.addEventListener('change',function(e){fB=e.target.value;refreshView()});
+  var fb=document.getElementById('fB');if(fb)fb.addEventListener('change',function(e){fB=e.target.value;refreshView()});
   document.getElementById('addBtn').addEventListener('click',openAdd);
-  renderFilters();
-  if(viewMode==='grid') renderGrid();
+  renderFilters();if(viewMode==='grid')renderGrid();
 }
 function setView(v){viewMode=v;renderTabContent()}
-function refreshView(){
-  if(viewMode==='list'){var lw=document.getElementById('lw');if(lw)lw.outerHTML=buildListView();renderFilters();}
-  else renderGrid();
-}
+function refreshView(){if(viewMode==='list'){var lw=document.getElementById('lw');if(lw)lw.outerHTML=buildList();}else renderGrid();renderFilters()}
 
-function buildListView(){
+function buildList(){
   var items=getFiltered();
   var html='<div id="lw"><div class="list-wrap">';
   if(tab==='textilien'){
@@ -763,13 +964,10 @@ function buildListView(){
       html+='<div class="list-row" onclick="openEdit('+item.id+')">'
         +'<div class="lc"><div><div class="lc-name">'+item.ss+'</div><div class="lc-sub">'+item.cat+(item.sku?' · '+item.sku:'')+'</div></div></div>'
         +'<div class="lc"><span class="cdot" style="background:'+clr(item.farbe)+';border:1.5px solid rgba(26,15,0,.3)"></span><span style="font-size:11px">'+item.farbe+'</span></div>'
-        +'<div class="lc"><span style="font-size:12px;font-weight:700">'+item.groesse+'</span></div>'
-        +'<div class="lc"><span style="font-size:11px;color:var(--orange);font-weight:700">'+(item.lagerort||'—')+'</span></div>'
+        +'<div class="lc"><b>'+item.groesse+'</b></div>'
+        +'<div class="lc"><span style="font-size:11px;color:var(--orange);font-weight:600">'+(item.lagerort||'—')+'</span></div>'
         +'<div class="lc"><span class="lc-stock '+(low?'sr':'sg')+'">'+item.bestand+'</span>'+(low?'<span class="lbadge" style="margin-left:4px">!</span>':'')+'</div>'
-        +'<div class="lc" onclick="event.stopPropagation()"><div class="lc-pm">'
-        +'<button onclick="chgStock('+item.id+',-1)">−</button>'
-        +'<button onclick="chgStock('+item.id+',1)">+</button>'
-        +'</div></div>'
+        +'<div class="lc" onclick="event.stopPropagation()"><div class="lc-pm"><button onclick="chgStock('+item.id+',-1)">−</button><button onclick="chgStock('+item.id+',1)">+</button></div></div>'
         +'</div>';
     });
   } else if(tab==='accessoires'){
@@ -780,10 +978,7 @@ function buildListView(){
         +'<div class="lc"><div class="lc-name">'+item.name+'</div></div>'
         +'<div class="lc"><div class="lc-sub">'+item.typ+'</div></div>'
         +'<div class="lc"><span class="lc-stock '+(low?'sr':'sg')+'">'+item.bestand+'</span></div>'
-        +'<div class="lc" onclick="event.stopPropagation()"><div class="lc-pm">'
-        +'<button onclick="chgStockA('+item.id+',-1)">−</button>'
-        +'<button onclick="chgStockA('+item.id+',1)">+</button>'
-        +'</div></div>'
+        +'<div class="lc" onclick="event.stopPropagation()"><div class="lc-pm"><button onclick="chgStockA('+item.id+',-1)">−</button><button onclick="chgStockA('+item.id+',1)">+</button></div></div>'
         +'</div>';
     });
   } else {
@@ -795,56 +990,33 @@ function buildListView(){
         +'<div class="lc"><div class="lc-sub">'+item.typ+'</div></div>'
         +'<div class="lc"><div class="lc-sub">'+item.einheit+'</div></div>'
         +'<div class="lc"><span class="lc-stock '+(low?'sr':'sg')+'">'+item.bestand+'</span></div>'
-        +'<div class="lc" onclick="event.stopPropagation()"><div class="lc-pm">'
-        +'<button onclick="chgStock('+item.id+',-1)">−</button>'
-        +'<button onclick="chgStock('+item.id+',1)">+</button>'
-        +'</div></div>'
+        +'<div class="lc" onclick="event.stopPropagation()"><div class="lc-pm"><button onclick="chgStock('+item.id+',-1)">−</button><button onclick="chgStock('+item.id+',1)">+</button></div></div>'
         +'</div>';
     });
   }
-  if(!items.length) html+='<div class="empty">Keine Einträge gefunden.</div>';
+  if(!items.length) html+='<div class="empty">Keine Einträge.</div>';
   html+='</div></div>';
   return html;
 }
 
-function chgStock(id,d){
-  var item=data[tab].find(function(i){return i.id===id});
-  if(!item) return;
-  item.bestand=Math.max(0,item.bestand+d);
-  save();notify();
-  if(viewMode==='list'){var lw=document.getElementById('lw');if(lw)lw.outerHTML=buildListView();}
-  else renderGrid();
-}
-function chgStockA(id,d){
-  var item=data.accessoires.find(function(i){return i.id===id});
-  if(!item) return;
-  item.bestand=Math.max(0,item.bestand+d);
-  save();
-  if(viewMode==='list'){var lw=document.getElementById('lw');if(lw)lw.outerHTML=buildListView();}
-  else renderGrid();
-}
-function notify(){
-  if('Notification' in window&&Notification.permission==='granted'){
-    var low=data.textilien.filter(function(i){return i.bestand<i.min});
-    if(low.length) new Notification('Studio de Macedo 🌴',{body:'⚠ '+low.length+' Artikel nachbestellen!'});
-  }
-}
+function chgStock(id,d){var item=data[tab].find(function(i){return i.id===id});if(!item)return;item.bestand=Math.max(0,item.bestand+d);save();if(viewMode==='list'){var lw=document.getElementById('lw');if(lw)lw.outerHTML=buildList();}else renderGrid();notify()}
+function chgStockA(id,d){var item=data.accessoires.find(function(i){return i.id===id});if(!item)return;item.bestand=Math.max(0,item.bestand+d);save();if(viewMode==='list'){var lw=document.getElementById('lw');if(lw)lw.outerHTML=buildList();}else renderGrid()}
+function notify(){if('Notification'in window&&Notification.permission==='granted'){var low=data.textilien.filter(function(i){return i.bestand<i.min});if(low.length)new Notification('Studio de Macedo 🌴',{body:'⚠ '+low.length+' Artikel nachbestellen!'})}}
 
 function unique(arr,key){return[...new Set(arr.map(function(i){return i[key]}).filter(Boolean))].sort()}
 function getFiltered(){
   var items=[].concat(data[tab]);
-  if(search) items=items.filter(function(i){return JSON.stringify(i).toLowerCase().includes(search.toLowerCase())});
+  if(search)items=items.filter(function(i){return JSON.stringify(i).toLowerCase().includes(search.toLowerCase())});
   if(tab==='textilien'){if(fA)items=items.filter(function(i){return i.farbe===fA});if(fB)items=items.filter(function(i){return i.groesse===fB})}
   else if(tab==='material'){if(fA)items=items.filter(function(i){return i.typ===fA})}
   else if(tab==='accessoires'){if(fA)items=items.filter(function(i){return i.typ===fA})}
   return items;
 }
 function renderFilters(){
-  var fa=document.getElementById('fA'),fb=document.getElementById('fB');
-  if(!fa) return;
+  var fa=document.getElementById('fA'),fb=document.getElementById('fB');if(!fa)return;
   if(tab==='textilien'){
     fa.innerHTML='<option value="">Alle Farben</option>'+unique(data.textilien,'farbe').map(function(v){return'<option'+(fA===v?' selected':'')+'>'+v+'</option>'}).join('');
-    if(fb) fb.innerHTML='<option value="">Alle Grössen</option>'+['XXS','XS','S','M','L','XL','XXL','3XL','onesize','3-4J','5-6J','7-8J','9-11J','12-18M','18-24M'].map(function(v){return'<option'+(fB===v?' selected':'')+'>'+v+'</option>'}).join('');
+    if(fb)fb.innerHTML='<option value="">Alle Grössen</option>'+['XXS','XS','S','M','L','XL','XXL','3XL','onesize','3-4J','5-6J','7-8J','9-11J','12-18M','18-24M'].map(function(v){return'<option'+(fB===v?' selected':'')+'>'+v+'</option>'}).join('');
   } else if(tab==='material'){
     fa.innerHTML='<option value="">Alle Typen</option>'+unique(data.material,'typ').map(function(v){return'<option'+(fA===v?' selected':'')+'>'+v+'</option>'}).join('');
   } else if(tab==='accessoires'){
@@ -852,148 +1024,50 @@ function renderFilters(){
   }
 }
 function renderGrid(){
-  var items=getFiltered();
-  var g=document.getElementById('grid');
-  if(!g) return;
+  var items=getFiltered();var g=document.getElementById('grid');if(!g)return;
   if(!items.length){g.innerHTML='<div class="empty">Keine Einträge.</div>';return}
   g.innerHTML=items.map(function(item){
     var pct=Math.min(100,Math.round(item.bestand/Math.max(item.min*2,1)*100));
-    var low=item.bestand<item.min;
-    var fill=low?'var(--orange)':'#2a5e42';var cls=low?'sr':'sg';
+    var low=item.bestand<item.min;var fill=low?'var(--red)':'var(--green)';var cls=low?'sr':'sg';
     if(tab==='textilien'){
       var imgH=item.img?'<img src="'+item.img+'" alt="" onerror="this.style.display=\'none\'">':svgFor(item);
       return '<div class="card" onclick="openEdit('+item.id+')">'
         +'<div class="card-img">'+imgH+'</div>'
-        +'<div class="ctype">'+item.cat+'</div>'
-        +'<div class="cname">'+item.ss+'</div>'
+        +'<div class="ctype">'+item.cat+'</div><div class="cname">'+item.ss+'</div>'
         +(item.sku?'<div class="csku">'+item.sku+'</div>':'')
         +(item.lagerort?'<div class="cloc">📍 '+item.lagerort+'</div>':'')
         +(item.notiz&&!item.notiz.includes('Archiv')?'<div class="cnotiz">'+item.notiz+'</div>':'')
-        +'<div class="ctags">'
-        +'<span class="tag"><span class="cdot" style="background:'+clr(item.farbe)+'"></span>'+item.farbe+'</span>'
-        +'<span class="tag tag-s">'+item.groesse+'</span>'
-        +(item.sample?'<span class="tag tag-sample">Sample</span>':'')
-        +(item.notiz&&item.notiz.includes('Archiv')?'<span class="tag tag-archiv">Archiv</span>':'')
-        +'</div>'
+        +'<div class="ctags"><span class="tag"><span class="cdot" style="background:'+clr(item.farbe)+'"></span>'+item.farbe+'</span><span class="tag tag-s">'+item.groesse+'</span>'+(item.sample?'<span class="tag tag-sample">Sample</span>':'')+(item.notiz&&item.notiz.includes('Archiv')?'<span class="tag tag-archiv">Archiv</span>':'')+'</div>'
         +'<div class="cstock"><div><span class="snum '+cls+'">'+item.bestand+'</span><span class="sunit">Stk</span></div>'+(low?'<span class="lbadge">!</span>':'')+'</div>'
         +'<div class="sbar"><div class="sfill" style="width:'+pct+'%;background:'+fill+'"></div></div>'
-        +'<div class="stock-btns" onclick="event.stopPropagation()">'
-        +'<button class="stock-btn" onclick="chgStock('+item.id+',-1)">−</button>'
-        +'<button class="stock-btn" onclick="chgStock('+item.id+',1)">+</button>'
-        +'</div></div>';
+        +'<div class="stock-btns" onclick="event.stopPropagation()"><button class="stock-btn" onclick="chgStock('+item.id+',-1)">−</button><button class="stock-btn" onclick="chgStock('+item.id+',1)">+</button></div>'
+        +'</div>';
     } else if(tab==='accessoires'){
       return '<div class="card" onclick="openEditAcc('+item.id+')">'
         +'<div class="card-img">'+SVG.totebag()+'</div>'
-        +'<div class="ctype">'+item.typ+'</div>'
-        +'<div class="cname">'+item.name+'</div>'
+        +'<div class="ctype">'+item.typ+'</div><div class="cname">'+item.name+'</div>'
         +(item.lagerort?'<div class="cloc">📍 '+item.lagerort+'</div>':'')
         +'<div class="cstock"><div><span class="snum '+cls+'">'+item.bestand+'</span><span class="sunit">Stk</span></div>'+(low?'<span class="lbadge">!</span>':'')+'</div>'
         +'<div class="sbar"><div class="sfill" style="width:'+pct+'%;background:'+fill+'"></div></div>'
-        +'<div class="stock-btns" onclick="event.stopPropagation()">'
-        +'<button class="stock-btn" onclick="chgStockA('+item.id+',-1)">−</button>'
-        +'<button class="stock-btn" onclick="chgStockA('+item.id+',1)">+</button>'
-        +'</div></div>';
+        +'<div class="stock-btns" onclick="event.stopPropagation()"><button class="stock-btn" onclick="chgStockA('+item.id+',-1)">−</button><button class="stock-btn" onclick="chgStockA('+item.id+',1)">+</button></div>'
+        +'</div>';
     } else {
       var imgH2=(item.typ==='Verdünner'||item.typ==='Reiniger'||item.typ==='Emulsion')?SVG.flasche():SVG.farbdose();
       return '<div class="card" onclick="openEdit('+item.id+')">'
         +'<div class="card-img">'+imgH2+'</div>'
-        +'<div class="ctype">'+item.typ+'</div>'
-        +'<div class="cname">'+item.name+'</div>'
+        +'<div class="ctype">'+item.typ+'</div><div class="cname">'+item.name+'</div>'
         +'<div class="csku">'+(item.hersteller||'—')+'</div>'
         +(item.lagerort?'<div class="cloc">📍 '+item.lagerort+'</div>':'')
         +'<div class="ctags"><span class="tag">'+item.einheit+'</span></div>'
         +'<div class="cstock"><div><span class="snum '+cls+'">'+item.bestand+'</span><span class="sunit">'+item.einheit+'</span></div>'+(low?'<span class="lbadge">!</span>':'')+'</div>'
         +'<div class="sbar"><div class="sfill" style="width:'+pct+'%;background:'+fill+'"></div></div>'
-        +'<div class="stock-btns" onclick="event.stopPropagation()">'
-        +'<button class="stock-btn" onclick="chgStock('+item.id+',-1)">−</button>'
-        +'<button class="stock-btn" onclick="chgStock('+item.id+',1)">+</button>'
-        +'</div></div>';
+        +'<div class="stock-btns" onclick="event.stopPropagation()"><button class="stock-btn" onclick="chgStock('+item.id+',-1)">−</button><button class="stock-btn" onclick="chgStock('+item.id+',1)">+</button></div>'
+        +'</div>';
     }
   }).join('');
 }
 
-function renderResTab(){
-  var offen=data.reservationen.filter(function(r){return r.status==='offen'});
-  var bezahlt=data.reservationen.filter(function(r){return r.status==='bezahlt'});
-  var erledigt=data.reservationen.filter(function(r){return r.status==='erledigt'});
-  var totalChf=data.reservationen.reduce(function(a,x){return a+(x.chf||0)},0);
-  var bezahltChf=bezahlt.reduce(function(a,x){return a+(x.chf||0)},0);
-  var html='<div class="toolbar-res">'
-    +'<div class="chf-summary">Total: <strong>CHF '+totalChf.toLocaleString('de-CH')+'</strong> &nbsp;|&nbsp; Bezahlt: <strong style="color:#2a5e42">CHF '+bezahltChf.toLocaleString('de-CH')+'</strong></div>'
-    +'<button class="btn btn-orange" onclick="openAddRes()">+ Neuer Auftrag</button>'
-    +'</div>';
-  html+='<div class="sec-hdr">Offene Aufträge ('+offen.length+')</div><div class="res-list">';
-  if(!offen.length) html+='<div class="res-empty">Keine offenen Aufträge — alles erledigt 🌴</div>';
-  offen.forEach(function(r){
-    var st=r.menge>0?checkStock(r):null;
-    html+='<div class="res-card"><div class="res-head"><div>'
-      +'<div class="res-auftrag">'+r.auftrag+'</div>'
-      +(r.artikel?'<div class="res-detail">'+r.artikel+(r.menge?' · '+r.menge+' Stk':'')+'</div>':'')
-      +(r.chf?'<div class="res-detail" style="font-weight:700;color:var(--orange)">CHF '+r.chf.toLocaleString('de-CH')+'</div>':'')
-      +(r.notiz?'<div class="res-detail" style="font-style:italic">'+r.notiz+'</div>':'')
-      +(r.datum?'<div class="res-date">📅 '+fmtDate(r.datum)+'</div>':'')
-      +'</div><div class="res-actions">'
-      +'<button class="btn btn-sm" onclick="openEditRes('+r.id+')">✏</button>'
-      +'<button class="btn btn-sm btn-green" onclick="setStatus('+r.id+',\'bezahlt\')">CHF ✓</button>'
-      +'<button class="btn btn-sm" onclick="setStatus('+r.id+',\'erledigt\')">✓</button>'
-      +'</div></div>'
-      +(st?'<div class="res-stock '+st.cls+'">'+st.msg+'</div>':'')
-      +'</div>';
-  });
-  html+='</div>';
-  if(bezahlt.length){
-    html+='<div class="sec-hdr">Bezahlt ('+bezahlt.length+') — CHF '+bezahltChf.toLocaleString('de-CH')+'</div><div class="res-list">';
-    bezahlt.slice(-5).reverse().forEach(function(r){
-      html+='<div class="res-card" style="opacity:.65"><div class="res-head"><div>'
-        +'<div class="res-auftrag">'+r.auftrag+'</div>'
-        +(r.chf?'<div class="res-detail" style="color:#2a5e42;font-weight:700">CHF '+r.chf.toLocaleString('de-CH')+'</div>':'')
-        +'</div><div class="res-actions"><button class="btn btn-sm btn-danger" onclick="deleteRes('+r.id+')">✕</button></div></div></div>';
-    });
-    html+='</div>';
-  }
-  if(erledigt.length){
-    html+='<div class="sec-hdr">Erledigt ('+erledigt.length+')</div><div class="res-list">';
-    erledigt.slice(-3).reverse().forEach(function(r){
-      html+='<div class="res-card" style="opacity:.4"><div class="res-head"><div>'
-        +'<div class="res-auftrag" style="text-decoration:line-through">'+r.auftrag+'</div>'
-        +'</div><div class="res-actions"><button class="btn btn-sm btn-danger" onclick="deleteRes('+r.id+')">✕</button></div></div></div>';
-    });
-    html+='</div>';
-  }
-  return html;
-}
-
-function fmtDate(d){if(!d)return'—';try{return new Date(d).toLocaleDateString('de-CH',{day:'2-digit',month:'2-digit',year:'numeric'})}catch(e){return d}}
-function setStatus(id,st){var r=data.reservationen.find(function(x){return x.id===id});if(r)r.status=st;save();renderTabContent()}
-function deleteRes(id){if(!confirm('Löschen?'))return;data.reservationen=data.reservationen.filter(function(x){return x.id!==id});save();renderTabContent()}
-function openAddRes(){editId=null;showResModal()}
-function openEditRes(id){editId=id;showResModal()}
-function showResModal(){
-  document.getElementById('overlay').classList.add('open');
-  var modal=document.getElementById('modal');
-  var isEdit=editId!==null;
-  var r=isEdit?data.reservationen.find(function(x){return x.id===editId}):null;
-  modal.innerHTML='<div class="mhead"><h2>'+(isEdit?'Auftrag bearbeiten':'Neuer Auftrag')+'</h2><button class="mclose" onclick="closeModal()">×</button></div>'
-    +'<div class="mbody">'
-    +'<div class="ff"><label>Kunde / Auftraggeber</label><input id="r_a" value="'+(r?r.auftrag:'')+'" placeholder="Ravi — Chimpy Festival"></div>'
-    +'<div class="ff"><label>Artikel / Produkt</label><input id="r_art" value="'+(r?r.artikel:'')+'" placeholder="Creator 2.0 Schwarz M"></div>'
-    +'<div class="f2"><div class="ff"><label>Menge (Stk)</label><input id="r_m" type="number" value="'+(r?r.menge:0)+'" min="0"></div>'
-    +'<div class="ff"><label>Betrag (CHF)</label><input id="r_chf" type="number" value="'+(r&&r.chf?r.chf:0)+'" min="0" step="10"></div></div>'
-    +'<div class="ff"><label>Deadline</label><input id="r_d" type="date" value="'+(r?r.datum:'')+'"></div>'
-    +'<div class="ff"><label>Druckart / Notiz</label><textarea id="r_n">'+(r?r.notiz:'')+'</textarea></div>'
-    +(isEdit?'<button class="btn btn-danger" style="width:100%;margin-top:8px" onclick="deleteRes('+editId+');closeModal()">Auftrag löschen</button>':'')
-    +'</div><div class="mfoot"><button class="btn" onclick="closeModal()">Abbrechen</button><button class="btn btn-orange" onclick="saveRes()">Speichern</button></div>';
-}
-function saveRes(){
-  var isEdit=editId!==null;
-  var obj={id:isEdit?editId:nid.r++,auftrag:gv('r_a')||'Auftrag',artikel:gv('r_art'),
-    menge:parseInt(gv('r_m'))||0,chf:parseFloat(gv('r_chf'))||0,datum:gv('r_d'),
-    status:isEdit?data.reservationen.find(function(x){return x.id===editId}).status:'offen',notiz:gv('r_n')};
-  if(isEdit){var i=data.reservationen.findIndex(function(x){return x.id===editId});data.reservationen[i]=obj}
-  else data.reservationen.push(obj);
-  save();closeModal();renderTabContent();
-}
-
+// ITEM MODALS
 function openAdd(){editId=null;showItemModal()}
 function openEdit(id){editId=id;showItemModal()}
 function openEditAcc(id){editId=id;showAccModal()}
@@ -1001,57 +1075,48 @@ function closeModal(){document.getElementById('overlay').classList.remove('open'
 var CLRKEYS=Object.keys(CLRS);
 function showItemModal(){
   document.getElementById('overlay').classList.add('open');
-  var modal=document.getElementById('modal');
-  var isEdit=editId!==null;
+  var modal=document.getElementById('modal');var isEdit=editId!==null;
   var item=isEdit?data[tab].find(function(i){return i.id===editId}):null;
   if(tab==='textilien'){
     modal.innerHTML='<div class="mhead"><h2>'+(isEdit?'Bestand bearbeiten':'Neuer Artikel')+'</h2><button class="mclose" onclick="closeModal()">×</button></div>'
       +'<div class="mbody">'
       +(!isEdit?'<div class="ff"><label>Stanley/Stella Modell</label><div class="ss-grid">'+SS.map(function(p){return'<div class="ssi" id="ssi_'+p.sku+'" onclick="pickSS(\''+p.name+'\',\''+p.sku+'\',\''+p.cat+'\',\''+p.sizes.join(',')+'\')" ><div class="ssi-name">'+p.name+'</div><div class="ssi-sku">'+p.sku+'</div><div class="ssi-sub">'+p.gsm+'</div></div>'}).join('')+'</div><hr class="divider"></div>':'')
-      +'<div class="f2"><div class="ff"><label>Modell</label><input id="m_ss" value="'+(item?item.ss:'')+'" placeholder="Creator 2.0"></div>'
-      +'<div class="ff"><label>SKU</label><input id="m_sku" value="'+(item?item.sku:'')+'" placeholder="STTU755" style="font-family:var(--font-body);font-size:13px"></div></div>'
+      +'<div class="f2"><div class="ff"><label>Modell</label><input id="m_ss" value="'+(item?item.ss:'')+'" placeholder="Creator 2.0"></div><div class="ff"><label>SKU</label><input id="m_sku" value="'+(item?item.sku:'')+'" placeholder="STTU755" style="font-size:13px"></div></div>'
       +'<div class="ff"><label>Kategorie</label><input id="m_cat" value="'+(item?item.cat:'')+'" placeholder="T-Shirt Unisex"></div>'
-      +'<div class="f2"><div class="ff"><label>Farbe</label>'
-      +'<select id="m_f" onchange="syncDots()">'+CLRKEYS.map(function(c){return'<option'+(item&&item.farbe===c?' selected':'')+'>'+c+'</option>'}).join('')+'<option value="__c">Andere…</option></select>'
-      +'<div class="cdots">'+CLRKEYS.map(function(c){return'<div class="cpick'+(item&&item.farbe===c?' sel':'')+'" style="background:'+clr(c)+'" title="'+c+'" onclick="pickClr(\''+c+'\')"></div>'}).join('')+'</div>'
-      +'</div><div class="ff"><label>Grösse</label><select id="m_gr">'+['XXS','XS','S','M','L','XL','XXL','3XL','onesize','3-4J','5-6J','7-8J','9-11J','12-18M','18-24M'].map(function(s){return'<option'+(item&&item.groesse===s?' selected':'')+'>'+s+'</option>'}).join('')+'</select></div></div>'
+      +'<div class="f2"><div class="ff"><label>Farbe</label><select id="m_f" onchange="syncDots()">'+CLRKEYS.map(function(c){return'<option'+(item&&item.farbe===c?' selected':'')+'>'+c+'</option>'}).join('')+'<option value="__c">Andere…</option></select><div class="cdots">'+CLRKEYS.map(function(c){return'<div class="cpick'+(item&&item.farbe===c?' sel':'')+'" style="background:'+clr(c)+'" title="'+c+'" onclick="pickClr(\''+c+'\')"></div>'}).join('')+'</div></div>'
+      +'<div class="ff"><label>Grösse</label><select id="m_gr">'+['XXS','XS','S','M','L','XL','XXL','3XL','onesize','3-4J','5-6J','7-8J','9-11J','12-18M','18-24M'].map(function(s){return'<option'+(item&&item.groesse===s?' selected':'')+'>'+s+'</option>'}).join('')+'</select></div></div>'
       +'<div class="ff"><label>Lagerort</label><input id="m_loc" value="'+(item?item.lagerort:'')+'" placeholder="M, Box 1, Ming José …"></div>'
-      +'<div class="f2"><div class="ff"><label>Bestand</label><input id="m_b" type="number" value="'+(item?item.bestand:0)+'" min="0"></div>'
-      +'<div class="ff"><label>Mindestbestand</label><input id="m_min" type="number" value="'+(item?item.min:3)+'" min="0"></div></div>'
+      +'<div class="f2"><div class="ff"><label>Bestand</label><input id="m_b" type="number" value="'+(item?item.bestand:0)+'" min="0"></div><div class="ff"><label>Mindestbestand</label><input id="m_min" type="number" value="'+(item?item.min:3)+'" min="0"></div></div>'
       +'<div class="ff"><label>Foto-URL</label><input id="m_img" value="'+(item&&item.img?item.img:'')+'" placeholder="https://…" type="url"></div>'
       +'<div class="ff"><label>Notiz</label><textarea id="m_not">'+(item?item.notiz:'')+'</textarea></div>'
-      +'<div class="ff"><label style="display:flex;align-items:center;gap:8px;opacity:1"><input type="checkbox" id="m_smp"'+(item&&item.sample?' checked':'')+' style="width:auto;height:auto;margin:0;accent-color:var(--orange)"> Sample</label></div>'
-      +(isEdit?'<button class="btn btn-danger" style="width:100%;margin-top:8px" onclick="deleteItem()">Artikel löschen</button>':'')
+      +'<div class="chk-row"><input type="checkbox" id="m_smp"'+(item&&item.sample?' checked':'')+' style="accent-color:var(--orange)"><label for="m_smp">Sample</label></div>'
+      +(isEdit?'<button class="btn btn-danger" style="width:100%;margin-top:10px" onclick="deleteItem()">Artikel löschen</button>':'')
       +'</div><div class="mfoot"><button class="btn" onclick="closeModal()">Abbrechen</button><button class="btn btn-orange" onclick="saveItem()">Speichern</button></div>';
   } else {
     modal.innerHTML='<div class="mhead"><h2>'+(isEdit?'Material bearbeiten':'Neues Material')+'</h2><button class="mclose" onclick="closeModal()">×</button></div>'
       +'<div class="mbody">'
       +'<div class="ff"><label>Bezeichnung</label><input id="m_ss" value="'+(item?item.name:'')+'" placeholder="Plastisol Weiß"></div>'
-      +'<div class="f2"><div class="ff"><label>Typ</label><select id="m_cat">'+['Siebdruckfarbe','Verdünner','Reiniger','Emulsion','Klischee','Sieb','Sonstiges'].map(function(s){return'<option'+(item&&item.typ===s?' selected':'')+'>'+s+'</option>'}).join('')+'</select></div>'
-      +'<div class="ff"><label>Einheit</label><select id="m_gr">'+['kg','l','Stück','ml'].map(function(s){return'<option'+(item&&item.einheit===s?' selected':'')+'>'+s+'</option>'}).join('')+'</select></div></div>'
+      +'<div class="f2"><div class="ff"><label>Typ</label><select id="m_cat">'+['Siebdruckfarbe','Verdünner','Reiniger','Emulsion','Klischee','Sieb','Sonstiges'].map(function(s){return'<option'+(item&&item.typ===s?' selected':'')+'>'+s+'</option>'}).join('')+'</select></div><div class="ff"><label>Einheit</label><select id="m_gr">'+['kg','l','Stück','ml'].map(function(s){return'<option'+(item&&item.einheit===s?' selected':'')+'>'+s+'</option>'}).join('')+'</select></div></div>'
       +'<div class="ff"><label>Hersteller</label><input id="m_f" value="'+(item?item.hersteller:'')+'" placeholder="Murakami"></div>'
       +'<div class="ff"><label>Lagerort</label><input id="m_loc" value="'+(item?item.lagerort:'')+'" placeholder="Schrank G1"></div>'
-      +'<div class="f2"><div class="ff"><label>Bestand</label><input id="m_b" type="number" step="0.1" value="'+(item?item.bestand:0)+'"></div>'
-      +'<div class="ff"><label>Mindestbestand</label><input id="m_min" type="number" step="0.1" value="'+(item?item.min:1)+'"></div></div>'
+      +'<div class="f2"><div class="ff"><label>Bestand</label><input id="m_b" type="number" step="0.1" value="'+(item?item.bestand:0)+'"></div><div class="ff"><label>Mindestbestand</label><input id="m_min" type="number" step="0.1" value="'+(item?item.min:1)+'"></div></div>'
       +'<div class="ff"><label>Notiz</label><textarea id="m_not">'+(item?item.notiz:'')+'</textarea></div>'
-      +(isEdit?'<button class="btn btn-danger" style="width:100%;margin-top:8px" onclick="deleteItem()">Löschen</button>':'')
+      +(isEdit?'<button class="btn btn-danger" style="width:100%;margin-top:10px" onclick="deleteItem()">Löschen</button>':'')
       +'</div><div class="mfoot"><button class="btn" onclick="closeModal()">Abbrechen</button><button class="btn btn-orange" onclick="saveItem()">Speichern</button></div>';
   }
 }
 function showAccModal(){
   document.getElementById('overlay').classList.add('open');
-  var modal=document.getElementById('modal');
-  var isEdit=editId!==null;
+  var modal=document.getElementById('modal');var isEdit=editId!==null;
   var item=isEdit?data.accessoires.find(function(i){return i.id===editId}):null;
   modal.innerHTML='<div class="mhead"><h2>'+(isEdit?'Bearbeiten':'Neuer Artikel')+'</h2><button class="mclose" onclick="closeModal()">×</button></div>'
     +'<div class="mbody">'
     +'<div class="ff"><label>Name</label><input id="m_ss" value="'+(item?item.name:'')+'" placeholder="Light Tote Bag Sky Blue"></div>'
     +'<div class="ff"><label>Typ</label><select id="m_cat">'+['Tote Bag','Shopping Bag','Accessoire','Sonstiges'].map(function(s){return'<option'+(item&&item.typ===s?' selected':'')+'>'+s+'</option>'}).join('')+'</select></div>'
     +'<div class="ff"><label>Lagerort</label><input id="m_loc" value="'+(item?item.lagerort:'')+'" placeholder="Regal B1"></div>'
-    +'<div class="f2"><div class="ff"><label>Bestand</label><input id="m_b" type="number" value="'+(item?item.bestand:0)+'" min="0"></div>'
-    +'<div class="ff"><label>Mindestbestand</label><input id="m_min" type="number" value="'+(item?item.min:3)+'" min="0"></div></div>'
+    +'<div class="f2"><div class="ff"><label>Bestand</label><input id="m_b" type="number" value="'+(item?item.bestand:0)+'" min="0"></div><div class="ff"><label>Mindestbestand</label><input id="m_min" type="number" value="'+(item?item.min:3)+'" min="0"></div></div>'
     +'<div class="ff"><label>Notiz</label><textarea id="m_not">'+(item?item.notiz:'')+'</textarea></div>'
-    +(isEdit?'<button class="btn btn-danger" style="width:100%;margin-top:8px" onclick="deleteItem()">Löschen</button>':'')
+    +(isEdit?'<button class="btn btn-danger" style="width:100%;margin-top:10px" onclick="deleteItem()">Löschen</button>':'')
     +'</div><div class="mfoot"><button class="btn" onclick="closeModal()">Abbrechen</button><button class="btn btn-orange" onclick="saveAcc()">Speichern</button></div>';
 }
 function pickSS(name,sku,cat,sizes){
@@ -1059,42 +1124,40 @@ function pickSS(name,sku,cat,sizes){
   var el=document.getElementById('ssi_'+sku);if(el)el.classList.add('sel');
   var s=function(id,v){var e=document.getElementById(id);if(e)e.value=v};
   s('m_ss',name);s('m_sku',sku);s('m_cat',cat);
-  var gr=document.getElementById('m_gr');
-  if(gr) gr.innerHTML=sizes.split(',').map(function(s){return'<option>'+s+'</option>'}).join('');
+  var gr=document.getElementById('m_gr');if(gr)gr.innerHTML=sizes.split(',').map(function(s){return'<option>'+s+'</option>'}).join('');
 }
 function pickClr(c){
-  var sel=document.getElementById('m_f');
-  if(sel){for(var i=0;i<sel.options.length;i++){if(sel.options[i].value===c){sel.selectedIndex=i;break}}}
+  var sel=document.getElementById('m_f');if(sel){for(var i=0;i<sel.options.length;i++){if(sel.options[i].value===c){sel.selectedIndex=i;break}}}
   document.querySelectorAll('.cpick').forEach(function(d){d.classList.toggle('sel',d.title===c)});
 }
 function syncDots(){var v=document.getElementById('m_f');if(!v)return;document.querySelectorAll('.cpick').forEach(function(d){d.classList.toggle('sel',d.title===v.value)})}
-function gv(id){var e=document.getElementById(id);return e?e.value:''}
 function saveItem(){
   var isEdit=editId!==null;
   if(tab==='textilien'){
     var farbe=gv('m_f');if(farbe==='__c')farbe=prompt('Farbe:')||'Unbekannt';
-    var smp=document.getElementById('m_smp');
-    var obj={id:isEdit?editId:nid.t++,ss:gv('m_ss')||'?',sku:gv('m_sku'),cat:gv('m_cat')||'T-Shirt',farbe:farbe,groesse:gv('m_gr'),lagerort:gv('m_loc'),bestand:parseFloat(gv('m_b'))||0,min:parseFloat(gv('m_min'))||3,img:gv('m_img').trim(),notiz:gv('m_not'),sample:smp&&smp.checked?1:0};
+    var obj={id:isEdit?editId:nid.t++,ss:gv('m_ss')||'?',sku:gv('m_sku'),cat:gv('m_cat')||'T-Shirt',farbe:farbe,groesse:gv('m_gr'),lagerort:gv('m_loc'),bestand:parseFloat(gv('m_b'))||0,min:parseFloat(gv('m_min'))||3,img:gv('m_img').trim(),notiz:gv('m_not'),sample:gb('m_smp')?1:0};
     if(isEdit){var i=data.textilien.findIndex(function(x){return x.id===editId});data.textilien[i]=obj}else data.textilien.push(obj);
   } else {
     var obj2={id:isEdit?editId:nid.m++,name:gv('m_ss')||'?',typ:gv('m_cat'),hersteller:gv('m_f'),einheit:gv('m_gr'),lagerort:gv('m_loc'),bestand:parseFloat(gv('m_b'))||0,min:parseFloat(gv('m_min'))||1,img:'',notiz:gv('m_not')};
     if(isEdit){var j=data.material.findIndex(function(x){return x.id===editId});data.material[j]=obj2}else data.material.push(obj2);
   }
-  save();closeModal();renderTabContent();
+  save();closeModal();renderAll();
 }
 function saveAcc(){
   var isEdit=editId!==null;
   var obj={id:isEdit?editId:nid.a++,name:gv('m_ss')||'?',typ:gv('m_cat'),lagerort:gv('m_loc'),bestand:parseFloat(gv('m_b'))||0,min:parseFloat(gv('m_min'))||3,notiz:gv('m_not')};
   if(isEdit){var i=data.accessoires.findIndex(function(x){return x.id===editId});data.accessoires[i]=obj}else data.accessoires.push(obj);
-  save();closeModal();renderTabContent();
+  save();closeModal();renderAll();
 }
 function deleteItem(){
   if(!confirm('Löschen?'))return;
-  if(tab==='textilien') data.textilien=data.textilien.filter(function(i){return i.id!==editId});
-  else if(tab==='material') data.material=data.material.filter(function(i){return i.id!==editId});
-  else if(tab==='accessoires') data.accessoires=data.accessoires.filter(function(i){return i.id!==editId});
-  save();closeModal();renderTabContent();
+  if(tab==='textilien')data.textilien=data.textilien.filter(function(i){return i.id!==editId});
+  else if(tab==='material')data.material=data.material.filter(function(i){return i.id!==editId});
+  else if(tab==='accessoires')data.accessoires=data.accessoires.filter(function(i){return i.id!==editId});
+  save();closeModal();renderAll();
 }
+
+// EXCEL
 function importExcel(e){
   var file=e.target.files[0];if(!file)return;
   var reader=new FileReader();
@@ -1107,15 +1170,11 @@ function importExcel(e){
       rows.forEach(function(row){
         var k=Object.keys(row);
         var get=function(ns){for(var ni=0;ni<ns.length;ni++){var f=k.find(function(x){return x.toLowerCase()===ns[ni]});if(f&&row[f]!==''&&row[f]!==undefined)return String(row[f]);}return ''};
-        var b=parseFloat(get(['bestand','menge','stock','qty','anzahl']))||0;
-        if(b===0)return;
-        if(tab==='textilien'){
-          data.textilien.push({id:nid.t++,ss:get(['modell','produkt','name','ss'])||'Import',sku:get(['sku']),cat:get(['kategorie','category','typ'])||'T-Shirt',farbe:get(['farbe','color']),groesse:get(['groesse','grösse','größe','size','gr']),lagerort:get(['lagerort','ort','place']),bestand:b,min:parseFloat(get(['mindest','min']))||3,img:'',notiz:get(['notiz','note']),sample:0});imp++;
-        } else {
-          data.material.push({id:nid.m++,name:get(['name','bezeichnung'])||'Import',typ:get(['typ','type'])||'Sonstiges',hersteller:get(['hersteller','brand']),einheit:get(['einheit','unit'])||'kg',lagerort:get(['lagerort','ort']),bestand:b,min:parseFloat(get(['mindest','min']))||1,img:'',notiz:get(['notiz','note'])});imp++;
-        }
+        var b=parseFloat(get(['bestand','menge','stock','qty','anzahl']))||0;if(b===0)return;
+        if(tab==='textilien'){data.textilien.push({id:nid.t++,ss:get(['modell','produkt','name','ss'])||'Import',sku:get(['sku']),cat:get(['kategorie','category','typ'])||'T-Shirt',farbe:get(['farbe','color']),groesse:get(['groesse','grösse','größe','size','gr']),lagerort:get(['lagerort','ort','place']),bestand:b,min:parseFloat(get(['mindest','min']))||3,img:'',notiz:get(['notiz','note']),sample:0});imp++;}
+        else{data.material.push({id:nid.m++,name:get(['name','bezeichnung'])||'Import',typ:get(['typ','type'])||'Sonstiges',hersteller:get(['hersteller','brand']),einheit:get(['einheit','unit'])||'kg',lagerort:get(['lagerort','ort']),bestand:b,min:parseFloat(get(['mindest','min']))||1,img:'',notiz:get(['notiz','note'])});imp++;}
       });
-      save();renderTabContent();alert('✓ '+imp+' Artikel importiert!');
+      save();renderAll();alert('✓ '+imp+' Artikel importiert!');
     }catch(err){alert('Fehler: '+err.message)}
     e.target.value='';
   };
@@ -1126,9 +1185,11 @@ function exportExcel(){
   XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(data.textilien.map(function(i){return{'Modell':i.ss,'SKU':i.sku,'Kategorie':i.cat,'Farbe':i.farbe,'Grösse':i.groesse,'Lagerort':i.lagerort,'Bestand':i.bestand,'Min':i.min,'Sample':i.sample?'Ja':'','Notiz':i.notiz}})),'Textilien');
   XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(data.accessoires.map(function(i){return{'Name':i.name,'Typ':i.typ,'Bestand':i.bestand,'Min':i.min}})),'Bags');
   XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(data.material.map(function(i){return{'Name':i.name,'Typ':i.typ,'Einheit':i.einheit,'Bestand':i.bestand,'Notiz':i.notiz}})),'Material');
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(data.reservationen.map(function(r){return{'Auftrag':r.auftrag,'Artikel':r.artikel,'Menge':r.menge,'CHF':r.chf||0,'Deadline':r.datum,'Status':r.status,'Notiz':r.notiz}})),'Aufträge');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(data.reservationen.map(function(r){return{'Auftrag':r.auftrag,'Artikel':r.artikel,'Menge':r.menge,'CHF':r.chf||0,'Druckart':r.druckart,'Deadline':r.datum,'Status':r.status,'Rechnung':r.rechnung?'Ja':'Nein','Notiz':r.notiz}})),'Aufträge');
   XLSX.writeFile(wb,'StudiodeMacedo_'+new Date().toISOString().slice(0,10)+'.xlsx');
 }
+
+function renderAll(){renderTabContent();renderAlertBanner()}
 
 document.querySelectorAll('.nt').forEach(function(t){
   t.addEventListener('click',function(){
@@ -1138,13 +1199,99 @@ document.querySelectorAll('.nt').forEach(function(t){
 });
 document.getElementById('overlay').addEventListener('click',function(e){if(e.target===document.getElementById('overlay'))closeModal()});
 
-// Date with day name
 var d=new Date();
 var days=['So','Mo','Di','Mi','Do','Fr','Sa'];
 document.getElementById('hdrDate').textContent=days[d.getDay()]+', '+d.toLocaleDateString('de-CH',{day:'2-digit',month:'2-digit',year:'numeric'});
 
-if('Notification' in window&&Notification.permission==='default') Notification.requestPermission();
-load();renderTabContent();
+
+// ── BRAIN DUMP ─────────────────────────────────────────────────────────────
+function openBrainDump(){
+  document.getElementById('overlay').classList.add('open');
+  var modal=document.getElementById('modal');
+  var saved=JSON.parse(localStorage.getItem('sdm_braindump')||'{}');
+  modal.innerHTML=
+    '<div class="mhead"><h2>🧠 Brain Dump</h2><button class="mclose" onclick="closeModal()">x</button></div>'
+    +'<div class="mbody">'
+    +'<div style="background:#e8f0e8;border:2px solid #6a8a5a;border-radius:14px;padding:14px;margin-bottom:12px">'
+    +'<div style="font-size:11px;font-weight:700;letter-spacing:.08em;color:#2a4a2a;margin-bottom:8px">THE SWIRL</div>'
+    +'<div style="display:flex;flex-direction:column;gap:8px">'
+    +['bd_thoughts:Gedanken','bd_tasks:Aufgaben','bd_worries:Sorgen','bd_ideas:Ideen'].map(function(x){var p=x.split(':');return'<div style="display:flex;align-items:center;gap:8px"><span style="font-size:11px;width:65px;opacity:.7;flex-shrink:0">'+p[1]+'</span><input id="'+p[0]+'" value="'+(saved[p[0]]||'')+'" style="flex:1;border:none;border-bottom:1.5px solid #6a8a5a;background:transparent;padding:5px 0;font-family:var(--font);font-size:14px;outline:none;color:var(--brown)"></div>'}).join('')
+    +'</div></div>'
+    +'<div style="background:#dde8f0;border:2px solid #5a7a8a;border-radius:14px;padding:14px;margin-bottom:12px">'
+    +'<div style="font-size:11px;font-weight:700;color:#1a3a4a;margin-bottom:8px">PRIORITY BOX — Pick ONE. Only one.</div>'
+    +'<input id="bd_priority" value="'+(saved.bd_priority||'')+'" placeholder="Das wichtigste Ding heute …" style="width:100%;border:none;border-bottom:2px solid #5a7a8a;background:transparent;padding:6px 0;font-family:var(--font);font-size:15px;font-weight:700;outline:none;color:var(--brown)">'
+    +'</div>'
+    +'<div style="background:#f5eedd;border:2px solid #c8a060;border-radius:14px;padding:14px;margin-bottom:12px">'
+    +'<div style="font-size:11px;font-weight:700;color:#5a3a00;margin-bottom:8px">PARKING LOT — Fur spater, nicht nie</div>'
+    +'<div style="display:flex;flex-direction:column;gap:7px">'
+    +['bd_park1','bd_park2','bd_park3'].map(function(id){return'<input id="'+id+'" value="'+(saved[id]||'')+'" placeholder="· ——" style="border:none;border-bottom:1.5px solid #c8a060;background:transparent;padding:4px 0;font-family:var(--font);font-size:14px;outline:none;color:var(--brown);width:100%">'}).join('')
+    +'</div></div>'
+    +'<div style="background:var(--tan2);border:2px solid var(--tan);border-radius:14px;padding:14px;margin-bottom:12px">'
+    +'<div style="font-size:11px;font-weight:700;margin-bottom:8px">TIME CHECK</div>'
+    +'<div style="display:flex;gap:12px;flex-wrap:wrap">'
+    +['5 min','15 min','30 min','1+ Std'].map(function(t){return'<label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer"><input type="radio" name="bd_time" value="'+t+'" '+(saved.bd_time===t?'checked':'')+' style="accent-color:var(--orange)"> '+t+'</label>'}).join('')
+    +'</div></div>'
+    +'<div style="background:#eef5e8;border:2px solid #8aaa6a;border-radius:14px;padding:14px">'
+    +'<div style="font-size:11px;font-weight:700;color:#2a5a1a;margin-bottom:8px">DOPAMINE MENU — Pick one quick win</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">'
+    +['2 Min Bewegung','Glas Wasser','Lieblingssong','Freund schreiben','Strecken','Kleine Pause'].map(function(o,i){var key='bd_dop'+i;return'<label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer"><input type="checkbox" id="'+key+'" '+(saved[key]?'checked':'')+' style="accent-color:var(--orange);width:16px;height:16px"> '+o+'</label>'}).join('')
+    +'</div></div>'
+    +'</div>'
+    +'<div class="mfoot"><button class="btn btn-danger btn-sm" onclick="clearBrainDump()">Leeren</button><button class="btn btn-orange" style="flex:1" onclick="saveBrainDump()">Speichern</button></div>';
+}
+function saveBrainDump(){
+  var obj={};
+  ['bd_thoughts','bd_tasks','bd_worries','bd_ideas','bd_priority','bd_park1','bd_park2','bd_park3'].forEach(function(id){var e=document.getElementById(id);if(e)obj[id]=e.value});
+  var tr=document.querySelector('input[name=bd_time]:checked');obj.bd_time=tr?tr.value:'';
+  [0,1,2,3,4,5].forEach(function(i){var e=document.getElementById('bd_dop'+i);if(e)obj['bd_dop'+i]=e.checked});
+  localStorage.setItem('sdm_braindump',JSON.stringify(obj));
+  closeModal();alert('Brain Dump gespeichert!');
+}
+function clearBrainDump(){if(!confirm('Brain Dump loschen?'))return;localStorage.removeItem('sdm_braindump');closeModal()}
+
+// ── MAKE A DECISION ────────────────────────────────────────────────────────
+function openDecision(){
+  document.getElementById('overlay').classList.add('open');
+  var modal=document.getElementById('modal');
+  var s=JSON.parse(localStorage.getItem('sdm_decision')||'{}');
+  var inp=function(id,ph,bold){return'<input id="'+id+'" value="'+(s[id]||'')+'" placeholder="'+(ph||'')+'" style="width:100%;border:none;border-bottom:2px solid var(--brown);background:transparent;padding:6px 0;font-family:var(--font);font-size:'+(bold?'15px':'14px')+';font-weight:'+(bold?'700':'400')+';outline:none;color:var(--brown)">'};
+  var ta=function(id,ph,h){return'<textarea id="'+id+'" placeholder="'+(ph||'')+'" style="width:100%;border:none;background:transparent;font-family:var(--font);font-size:13px;outline:none;color:var(--brown);resize:none;height:'+(h||60)+'px">'+(s[id]||'')+'</textarea>'};
+  modal.innerHTML=
+    '<div class="mhead"><h2>Make a Decision</h2><button class="mclose" onclick="closeModal()">x</button></div>'
+    +'<div class="mbody">'
+    +'<div class="ff"><label>Das Dilemma</label>'+inp('dc_dilemma','Was muss entschieden werden?',true)+'</div>'
+    +'<div class="f2"><div class="ff"><label>Entscheidung bis</label><input id="dc_date" type="date" value="'+(s.dc_date||'')+'" style="width:100%;border:2px solid var(--brown);border-radius:var(--r2);padding:9px 12px;font-family:var(--font);font-size:16px;outline:none;background:var(--white);color:var(--brown)"></div>'
+    +'<div class="ff"><label>Wichtigkeit</label><select id="dc_imp" style="width:100%;border:2px solid var(--brown);border-radius:var(--r2);padding:9px 12px;font-family:var(--font);font-size:15px;background:var(--white);color:var(--brown);outline:none">'+['Trivial','Wichtig','Sehr wichtig','Lebensverandernd'].map(function(o){return'<option'+(s.dc_imp===o?' selected':'')+'>'+o+'</option>'}).join('')+'</select></div></div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">'
+    +'<div style="background:#e8f5ee;border:2px solid var(--green);border-radius:14px;padding:12px"><div style="font-size:11px;font-weight:700;color:var(--green);margin-bottom:6px">BEST CASE</div>'+ta('dc_best','Bester Fall…',70)+'</div>'
+    +'<div style="background:#fff0ee;border:2px solid var(--red);border-radius:14px;padding:12px"><div style="font-size:11px;font-weight:700;color:var(--red);margin-bottom:6px">WORST CASE</div>'+ta('dc_worst','Schlimmster Fall…',70)+'</div>'
+    +'</div>'
+    +'<div style="background:var(--tan2);border:2px solid var(--tan);border-radius:14px;padding:14px;margin-bottom:12px">'
+    +'<div style="font-size:11px;font-weight:700;margin-bottom:8px">PLUSES (+) UND MINUSES (−)</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">'
+    +[1,2,3,4].map(function(n){return'<input id="dc_plus'+n+'" value="'+(s['dc_plus'+n]||'')+'" placeholder="+ ……" style="border:none;border-bottom:1.5px solid var(--green);background:transparent;padding:5px 2px;font-family:var(--font);font-size:13px;outline:none;color:var(--brown);width:100%"><input id="dc_minus'+n+'" value="'+(s['dc_minus'+n]||'')+'" placeholder="- ……" style="border:none;border-bottom:1.5px solid var(--red);background:transparent;padding:5px 2px;font-family:var(--font);font-size:13px;outline:none;color:var(--brown);width:100%">'}).join('')
+    +'</div></div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">'
+    +'<div class="ff"><label>Bauchgefuhl</label><textarea id="dc_gut" style="width:100%;border:2px solid var(--brown);border-radius:var(--r2);padding:8px 10px;font-family:var(--font);font-size:13px;outline:none;background:var(--white);resize:none;height:60px">'+(s.dc_gut||'')+'</textarea></div>'
+    +'<div class="ff"><label>Vernunft sagt</label><textarea id="dc_rational" style="width:100%;border:2px solid var(--brown);border-radius:var(--r2);padding:8px 10px;font-family:var(--font);font-size:13px;outline:none;background:var(--white);resize:none;height:60px">'+(s.dc_rational||'')+'</textarea></div>'
+    +'</div>'
+    +'<div class="ff"><label>Entscheidung</label><input id="dc_decision" value="'+(s.dc_decision||'')+'" placeholder="Meine Entscheidung ist …" style="width:100%;border:2px solid var(--orange);border-radius:var(--r2);padding:10px 12px;font-family:var(--font);font-size:15px;font-weight:700;outline:none;background:var(--white);color:var(--brown)"></div>'
+    +'<div class="ff"><label>Nachste Schritte</label><textarea id="dc_next" style="width:100%;border:2px solid var(--brown);border-radius:var(--r2);padding:8px 10px;font-family:var(--font);font-size:14px;outline:none;background:var(--white);resize:vertical;height:55px">'+(s.dc_next||'')+'</textarea></div>'
+    +'<div style="text-align:center;font-size:11px;opacity:.35;font-style:italic;margin-top:4px">"Or you could always flip a coin"</div>'
+    +'</div>'
+    +'<div class="mfoot"><button class="btn btn-danger btn-sm" onclick="clearDecision()">Leeren</button><button class="btn btn-orange" style="flex:1" onclick="saveDecision()">Speichern</button></div>';
+}
+function saveDecision(){
+  var obj={};
+  ['dc_dilemma','dc_date','dc_imp','dc_best','dc_worst','dc_gut','dc_rational','dc_decision','dc_next'].forEach(function(id){var e=document.getElementById(id);if(e)obj[id]=e.value||e.options&&e.options[e.selectedIndex]&&e.options[e.selectedIndex].value});
+  [1,2,3,4].forEach(function(n){var p=document.getElementById('dc_plus'+n);var m=document.getElementById('dc_minus'+n);if(p)obj['dc_plus'+n]=p.value;if(m)obj['dc_minus'+n]=m.value});
+  localStorage.setItem('sdm_decision',JSON.stringify(obj));
+  closeModal();alert('Entscheidung gespeichert!');
+}
+function clearDecision(){if(!confirm('Entscheidung loschen?'))return;localStorage.removeItem('sdm_decision');closeModal()}
+
+if('Notification'in window&&Notification.permission==='default')Notification.requestPermission();
+load();renderAll();
 </script>
 </body>
 </html>
