@@ -2,711 +2,895 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Studio de Macedo — Lager</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --black:#111111;
-  --white:#ffffff;
-  --offwhite:#f8f8f6;
-  --gray-light:#f0f0ed;
-  --gray-mid:#dededa;
-  --gray-dark:#888880;
-  --red:#b83232;
-  --green:#2a5e42;
+  --black:#111;--white:#fff;--off:#f8f8f6;
+  --gL:#f0f0ed;--gM:#dededa;--gD:#888880;
+  --red:#b83232;--green:#2a5e42;--orange:#c27820;--blue:#1e4a8a;
   --font:'Helvetica Neue',Helvetica,Arial,sans-serif;
 }
-html{background:var(--white);color:var(--black);font-family:var(--font);font-size:14px;line-height:1.5}
-body{min-height:100vh}
+html,body{background:var(--white);color:var(--black);font-family:var(--font);font-size:14px;line-height:1.5;min-height:100vh}
 
-/* ── HEADER ── */
-.site-header{
-  position:sticky;top:0;z-index:100;
-  background:var(--white);
-  border-bottom:1.5px solid var(--black);
-  padding:0 16px;
-  display:flex;align-items:center;justify-content:space-between;
-  height:52px;
-}
-.logo{font-size:13px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase}
+.hdr{position:sticky;top:0;z-index:100;background:var(--white);border-bottom:2px solid var(--black);padding:0 14px;display:flex;align-items:center;justify-content:space-between;height:50px}
+.logo{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
 .logo span{font-weight:300}
-.header-date{font-size:11px;color:var(--gray-dark);letter-spacing:0.06em}
+.hdr-r{font-size:11px;color:var(--gD);text-align:right}
 
-/* ── STATS BAR ── */
-.statsbar{
-  display:flex;border-bottom:1px solid var(--gray-mid);
-  background:var(--offwhite);
-}
-.stat-cell{
-  flex:1;padding:10px 14px;border-right:1px solid var(--gray-mid);
-  min-width:0;
-}
-.stat-cell:last-child{border-right:none}
-.stat-num{font-size:22px;font-weight:300;line-height:1}
-.stat-lbl{font-size:10px;color:var(--gray-dark);text-transform:uppercase;letter-spacing:0.07em;margin-top:3px}
-.stat-warn{color:var(--red)!important}
+.stats{display:flex;border-bottom:1px solid var(--gM);background:var(--off);overflow-x:auto}
+.sc{flex:1;min-width:70px;padding:8px 10px;border-right:1px solid var(--gM)}
+.sc:last-child{border-right:none}
+.sn{font-size:18px;font-weight:300;line-height:1}
+.sl{font-size:9px;color:var(--gD);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+.warn{color:var(--red)!important}.sok2{color:var(--green)!important}.sorange{color:var(--orange)!important}
 
-/* ── ALERT ── */
-.alert{
-  display:none;
-  margin:10px 14px;
-  padding:9px 12px;
-  border:1px solid var(--black);
-  background:var(--offwhite);
-  font-size:12px;
-  line-height:1.5;
-}
-.alert.show{display:block}
+.alert-bar{display:none;padding:7px 14px;background:#fff3cd;border-bottom:1px solid #e0c060;font-size:12px;line-height:1.5}
+.alert-bar.show{display:block}
 
-/* ── NAV ── */
-.nav{display:flex;border-bottom:1.5px solid var(--black)}
-.nav-tab{
-  flex:1;text-align:center;
-  padding:11px 8px;
-  font-size:11px;font-weight:400;
-  letter-spacing:0.1em;text-transform:uppercase;
-  cursor:pointer;user-select:none;
-  border-right:1px solid var(--black);
-  border-bottom:3px solid transparent;
-  transition:background 0.1s;
-}
-.nav-tab:last-child{border-right:none}
-.nav-tab.active{border-bottom:3px solid var(--black);font-weight:700}
-.nav-tab:hover:not(.active){background:var(--gray-light)}
+.nav{display:flex;border-bottom:2px solid var(--black);overflow-x:auto;-webkit-overflow-scrolling:touch}
+.nt{flex-shrink:0;padding:10px 14px;font-size:11px;font-weight:400;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;border-right:1px solid var(--black);border-bottom:3px solid transparent;white-space:nowrap;-webkit-tap-highlight-color:transparent;user-select:none}
+.nt:last-child{border-right:none}
+.nt.active{border-bottom:3px solid var(--black);font-weight:700}
+.nt:hover:not(.active){background:var(--gL)}
 
-/* ── TOOLBAR ── */
-.toolbar{
-  padding:10px 14px;
-  display:flex;gap:7px;flex-wrap:wrap;align-items:center;
-  border-bottom:1px solid var(--gray-mid);
-}
-.toolbar input[type=text]{
-  flex:1;min-width:110px;height:40px;
-  border:1px solid var(--black);
-  padding:0 10px;font-family:var(--font);font-size:16px;
-  background:var(--white);outline:none;border-radius:0;
-  -webkit-appearance:none;
-}
-.toolbar input[type=text]:focus{background:var(--gray-light)}
-.toolbar select{
-  height:40px;border:1px solid var(--black);
-  padding:0 8px;font-family:var(--font);font-size:13px;
-  background:var(--white);cursor:pointer;border-radius:0;outline:none;
-  -webkit-appearance:none;
-}
-.btn{
-  height:42px;padding:0 14px;
-  border:1.5px solid var(--black);
-  font-family:var(--font);font-size:11px;font-weight:700;
-  letter-spacing:0.08em;text-transform:uppercase;
-  background:var(--white);cursor:pointer;
-  transition:background 0.12s,color 0.12s;
-  border-radius:0;white-space:nowrap;
-  -webkit-tap-highlight-color:transparent;
-}
-.btn:hover{background:var(--black);color:var(--white)}
-.btn-fill{background:var(--black);color:var(--white)}
-.btn-fill:hover{background:#333}
-.btn-danger{border-color:var(--red);color:var(--red)}
-.btn-danger:hover{background:var(--red);color:var(--white)}
+.toolbar{padding:10px 14px;display:flex;gap:7px;flex-wrap:wrap;align-items:center;border-bottom:1px solid var(--gM)}
+.toolbar input[type=text]{flex:1;min-width:100px;height:40px;border:1px solid var(--black);padding:0 10px;font-family:var(--font);font-size:16px;background:var(--white);outline:none;-webkit-appearance:none}
+.toolbar input[type=text]:focus{background:var(--gL)}
+.toolbar select{height:40px;border:1px solid var(--black);padding:0 26px 0 8px;font-family:var(--font);font-size:13px;background:var(--white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23111' stroke-width='1.5' fill='none'/%3E%3C/svg%3E") no-repeat right 8px center;cursor:pointer;outline:none;-webkit-appearance:none}
 
-/* ── GRID ── */
-.grid-wrap{padding:12px 14px}
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(155px,1fr));
-  gap:1px;
-  background:var(--black);
-  border:1px solid var(--black);
-}
-.card{
-  background:var(--white);
-  padding:12px;
-  cursor:pointer;
-  transition:background 0.1s;
-  display:flex;flex-direction:column;
-}
-.card:hover{background:var(--gray-light)}
+.btn{height:40px;padding:0 14px;border:1.5px solid var(--black);font-family:var(--font);font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;background:var(--white);cursor:pointer;transition:background .12s,color .12s;white-space:nowrap;-webkit-tap-highlight-color:transparent}
+.btn:hover,.btn:active{background:var(--black);color:var(--white)}
+.btn-fill{background:var(--black);color:var(--white)}.btn-fill:hover{background:#333}
+.btn-danger{border-color:var(--red);color:var(--red)}.btn-danger:hover{background:var(--red);color:var(--white)}
+.btn-orange{border-color:var(--orange);color:var(--orange)}.btn-orange:hover{background:var(--orange);color:var(--white)}
+.btn-green{border-color:var(--green);color:var(--green)}.btn-green:hover{background:var(--green);color:var(--white)}
+.btn-sm{height:32px;font-size:10px;padding:0 10px}
 
-/* product illustration */
-.card-img{
-  width:100%;height:88px;
-  display:flex;align-items:center;justify-content:center;
-  background:var(--offwhite);
-  margin-bottom:9px;
-  overflow:hidden;
-  position:relative;
-}
-.card-img svg{width:72px;height:72px}
+.excel-bar{padding:7px 14px;display:flex;gap:7px;flex-wrap:wrap;border-bottom:1px solid var(--gM);background:var(--off)}
+.excel-bar label.btn{display:flex;align-items:center;cursor:pointer}
+input[type=file]{display:none}
+
+.gw{padding:12px 14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:1px;background:var(--black);border:1px solid var(--black)}
+.card{background:var(--white);padding:11px;cursor:pointer;transition:background .1s;display:flex;flex-direction:column;-webkit-tap-highlight-color:transparent}
+.card:hover,.card:active{background:var(--gL)}
+.card-img{width:100%;height:80px;display:flex;align-items:center;justify-content:center;background:var(--off);margin-bottom:8px;overflow:hidden;position:relative}
+.card-img svg{width:62px;height:62px}
 .card-img img{width:100%;height:100%;object-fit:cover}
-.color-overlay{
-  position:absolute;inset:0;
-  mix-blend-mode:multiply;
-  opacity:0.18;
-}
+.ctype{font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--gD);margin-bottom:2px}
+.cname{font-size:13px;font-weight:700;margin-bottom:1px;line-height:1.2}
+.csku{font-size:9px;color:var(--gD);margin-bottom:2px;font-family:monospace}
+.cloc{font-size:10px;color:var(--orange);margin-bottom:5px;font-weight:500}
+.ctags{display:flex;gap:3px;flex-wrap:wrap;margin-bottom:7px}
+.tag{font-size:10px;padding:2px 6px;border:1px solid var(--black);display:inline-flex;align-items:center;gap:3px}
+.tag-s{border-color:var(--gD);color:var(--gD)}
+.tag-res{border-color:var(--orange);color:var(--orange)}
+.tag-sample{border-color:var(--blue);color:var(--blue)}
+.cdot{display:inline-block;width:9px;height:9px;border-radius:50%;border:1px solid rgba(0,0,0,.2);flex-shrink:0}
+.cstock{display:flex;align-items:baseline;justify-content:space-between;margin-top:auto}
+.snum{font-size:22px;font-weight:300}
+.sunit{font-size:10px;color:var(--gD);margin-left:2px}
+.sg{color:var(--green)}.sr{color:var(--red)}.so{color:var(--orange)}
+.lbadge{font-size:9px;color:var(--red);text-transform:uppercase;font-weight:700}
+.rbadge{font-size:9px;color:var(--orange);text-transform:uppercase}
+.sbar{height:2px;background:var(--gM);margin-top:6px}
+.sfill{height:2px}
+.empty{padding:40px;text-align:center;color:var(--gD);font-size:13px;background:var(--white);grid-column:1/-1}
 
-.card-type{font-size:10px;letter-spacing:0.09em;text-transform:uppercase;color:var(--gray-dark);margin-bottom:3px}
-.card-name{font-size:14px;font-weight:700;margin-bottom:2px;line-height:1.2}
-.card-sku{font-size:10px;color:var(--gray-dark);margin-bottom:7px;font-family:monospace;letter-spacing:0.04em}
-.card-tags{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:9px}
-.tag{font-size:10px;padding:2px 7px;border:1px solid var(--black);letter-spacing:0.04em;display:inline-flex;align-items:center;gap:4px}
-.tag-size{border-color:var(--gray-dark);color:var(--gray-dark)}
-.color-dot{display:inline-block;width:9px;height:9px;border-radius:50%;border:1px solid rgba(0,0,0,0.25);flex-shrink:0}
-
-.card-stock{display:flex;align-items:baseline;justify-content:space-between;margin-top:auto}
-.stock-n{font-size:24px;font-weight:300}
-.stock-unit{font-size:11px;color:var(--gray-dark);margin-left:2px}
-.stock-ok{color:var(--green)}
-.stock-low{color:var(--red)}
-.low-badge{font-size:10px;color:var(--red);letter-spacing:0.04em;text-transform:uppercase;font-weight:700}
-.stock-line{height:2px;background:var(--gray-mid);margin-top:7px}
-.stock-fill{height:2px;transition:width 0.3s}
-
-.empty{
-  padding:40px;text-align:center;
-  color:var(--gray-dark);font-size:13px;
-  background:var(--white);
-  grid-column:1/-1;
-}
-
-/* ── MODAL ── */
-.overlay{
-  display:none;position:fixed;inset:0;
-  background:rgba(0,0,0,0.55);
-  z-index:200;
-}
+/* MODAL */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200}
 .overlay.open{display:block}
-.modal{
-  position:fixed;
-  left:0;right:0;bottom:0;
-  background:var(--white);
-  border-top:2px solid var(--black);
-  border-radius:0;
-  max-height:92vh;
-  display:flex;flex-direction:column;
-  overflow:hidden;
-}
-.modal-head{
-  padding:14px 16px 11px;
-  border-bottom:1.5px solid var(--black);
-  display:flex;justify-content:space-between;align-items:center;
-  flex-shrink:0;
-  background:var(--white);
-}
-.modal-head h2{font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase}
-.modal-close{
-  font-size:24px;cursor:pointer;line-height:1;
-  background:none;border:none;font-family:var(--font);
-  color:var(--black);padding:4px 6px;
-}
-.modal-body{
-  padding:14px 16px;
-  overflow-y:auto;
-  flex:1;
-  -webkit-overflow-scrolling:touch;
-}
-.form-field{margin-bottom:13px}
-.form-field label{
-  display:block;font-size:11px;
-  text-transform:uppercase;letter-spacing:0.08em;
-  color:var(--gray-dark);margin-bottom:5px;font-weight:700;
-}
-.form-field input,.form-field select,.form-field textarea{
-  width:100%;border:1px solid var(--black);
-  padding:10px 10px;font-family:var(--font);font-size:16px;
-  background:var(--white);outline:none;border-radius:0;
-  -webkit-appearance:none;appearance:none;
-}
-.form-field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23111' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:30px;}
-.form-field input:focus,.form-field select:focus,.form-field textarea:focus{background:var(--gray-light)}
-.form-field textarea{resize:vertical;height:60px;font-size:15px}
-.form-2col{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.modal-foot{
-  padding:12px 16px;
-  border-top:1px solid var(--gray-mid);
-  display:flex;gap:8px;
-  flex-shrink:0;
-  background:var(--white);
-  padding-bottom:calc(12px + env(safe-area-inset-bottom));
-}
-.modal-foot .btn{flex:1;justify-content:center;height:46px;font-size:13px}
+.modal{position:fixed;left:0;right:0;bottom:0;background:var(--white);border-top:2px solid var(--black);max-height:93vh;display:flex;flex-direction:column;overflow:hidden}
+.mhead{padding:12px 16px 10px;border-bottom:1.5px solid var(--black);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;background:var(--white)}
+.mhead h2{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.mclose{font-size:24px;cursor:pointer;background:none;border:none;font-family:var(--font);color:var(--black);padding:4px 6px;line-height:1}
+.mbody{padding:13px 16px;overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch}
+.mfoot{padding:11px 16px;border-top:1px solid var(--gM);display:flex;gap:8px;flex-shrink:0;background:var(--white);padding-bottom:calc(11px + env(safe-area-inset-bottom))}
+.mfoot .btn{flex:1;height:46px;font-size:13px}
+.ff{margin-bottom:11px}
+.ff label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--gD);margin-bottom:4px;font-weight:700}
+.ff input,.ff select,.ff textarea{width:100%;border:1px solid var(--black);padding:9px;font-family:var(--font);font-size:16px;background:var(--white);outline:none;-webkit-appearance:none}
+.ff select{background:var(--white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23111' stroke-width='1.5' fill='none'/%3E%3C/svg%3E") no-repeat right 10px center;padding-right:30px}
+.ff input:focus,.ff select:focus,.ff textarea:focus{background:var(--gL)}
+.ff textarea{resize:vertical;height:52px;font-size:14px}
+.f2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.divider{border:none;border-top:1px solid var(--gM);margin:11px 0}
 
-/* ── SS PICKER ── */
-.ss-grid{
-  display:grid;grid-template-columns:1fr 1fr;gap:5px;
-  max-height:230px;overflow-y:auto;margin-top:5px;
-}
-.ss-item{
-  padding:7px 8px;border:1px solid var(--gray-mid);
-  font-size:12px;cursor:pointer;transition:all 0.1s;
-  display:flex;flex-direction:column;gap:2px;
-}
-.ss-item:hover,.ss-item.selected{border-color:var(--black);background:var(--gray-light)}
-.ss-name{font-weight:700;font-size:12px}
-.ss-sku{font-size:10px;color:var(--gray-dark);font-family:monospace}
-.ss-gsm{font-size:10px;color:var(--gray-dark)}
-.divider{border:none;border-top:1px solid var(--gray-mid);margin:12px 0}
-.section-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--gray-dark);margin-bottom:5px}
+/* SS PICKER */
+.ss-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px;max-height:190px;overflow-y:auto;margin-top:5px}
+.ssi{padding:7px 8px;border:1px solid var(--gM);cursor:pointer;transition:all .1s}
+.ssi:hover,.ssi.sel{border-color:var(--black);background:var(--gL)}
+.ssi-name{font-weight:700;font-size:11px}
+.ssi-sku{font-size:10px;color:var(--gD);font-family:monospace}
+.ssi-sub{font-size:10px;color:var(--gD)}
 
-/* ── COLOR PICKER ── */
-.color-picker-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px}
-.cpick{
-  width:24px;height:24px;border-radius:50%;
-  border:2px solid transparent;cursor:pointer;
-  transition:border-color 0.1s;
-}
-.cpick:hover,.cpick.selected{border-color:var(--black)}
+/* COLOR DOTS */
+.cdots{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.cpick{width:22px;height:22px;border-radius:50%;border:2px solid transparent;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.cpick.sel{border-color:var(--black)!important}
 
-@media(max-width:500px){
-  .grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
-  .stat-num{font-size:18px}
-  .stat-lbl{font-size:9px}
-}
+/* RESERVATIONEN */
+.res-list{padding:0 14px 14px}
+.res-card{border:1px solid var(--black);padding:12px;margin-bottom:8px;background:var(--white)}
+.res-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.res-auftrag{font-size:13px;font-weight:700;margin-bottom:3px}
+.res-detail{font-size:12px;color:var(--gD)}
+.res-date{font-size:11px;color:var(--orange);margin-top:3px;font-weight:500}
+.res-stock{margin-top:8px;padding:8px;background:var(--off);font-size:12px;border-left:3px solid var(--green)}
+.res-stock.warn{border-color:var(--red)}
+.res-stock.partial{border-color:var(--orange)}
+.res-actions{display:flex;gap:5px;flex-shrink:0}
+.res-empty{padding:30px;text-align:center;color:var(--gD);font-size:13px}
+.sec-hdr{padding:10px 14px 8px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gD);border-bottom:1px solid var(--gM);background:var(--off);margin-bottom:0}
+.toolbar-res{padding:10px 14px;display:flex;justify-content:flex-end;border-bottom:1px solid var(--gM)}
+
+/* ACCESSOIRES TAB */
+.acc-list{padding:12px 14px}
+.acc-card{border:1px solid var(--black);padding:11px;margin-bottom:7px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;background:var(--white)}
+.acc-card:hover{background:var(--gL)}
+.acc-name{font-size:13px;font-weight:500}
+.acc-typ{font-size:10px;color:var(--gD);text-transform:uppercase;letter-spacing:.06em}
+.acc-n{font-size:22px;font-weight:300}
 </style>
 </head>
 <body>
 
-<header class="site-header">
-  <div class="logo">Studio <span>de Macedo</span> — Lager</div>
-  <div class="header-date" id="headerDate"></div>
+<header class="hdr">
+  <div class="logo">Studio <span>de Macedo</span></div>
+  <div class="hdr-r" id="hdrDate"></div>
 </header>
 
-<div class="statsbar" id="statsbar"></div>
-<div class="alert" id="alert"></div>
+<div class="stats" id="stats"></div>
+<div class="alert-bar" id="alertBar"></div>
 
 <div class="nav">
-  <div class="nav-tab active" data-tab="textilien">Textilien</div>
-  <div class="nav-tab" data-tab="material">Farben &amp; Material</div>
+  <div class="nt active" data-tab="textilien">Textilien</div>
+  <div class="nt" data-tab="accessoires">Bags &amp; Acc.</div>
+  <div class="nt" data-tab="material">Farben</div>
+  <div class="nt" data-tab="reservationen">Aufträge</div>
 </div>
 
-<div class="toolbar">
-  <input type="text" id="searchInput" placeholder="Suchen …">
-  <select id="filterA"></select>
-  <select id="filterB"></select>
-  <button class="btn btn-fill" id="addBtn">+ Neu</button>
-</div>
-
-<div class="grid-wrap">
-  <div class="grid" id="grid"></div>
-</div>
+<div id="tabContent"></div>
 
 <div class="overlay" id="overlay">
   <div class="modal" id="modal"></div>
 </div>
 
 <script>
-// ─── SVG ILLUSTRATIONS ────────────────────────────────────────────────────────
-const SVG_TSHIRT = (color='#888') => `<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M20 14 L10 22 L18 26 L18 62 L62 62 L62 26 L70 22 L60 14 C58 20 52 24 40 24 C28 24 22 20 20 14Z" fill="${color}" stroke="#111" stroke-width="1.5" stroke-linejoin="round"/>
-</svg>`;
-
-const SVG_HOODIE = (color='#888') => `<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M20 14 L10 24 L18 28 L18 64 L62 64 L62 28 L70 24 L60 14 C58 20 52 22 40 22 C28 22 22 20 20 14Z" fill="${color}" stroke="#111" stroke-width="1.5" stroke-linejoin="round"/>
-  <path d="M32 14 C32 14 34 28 40 28 C46 28 48 14 48 14" fill="${color}" stroke="#111" stroke-width="1.5" stroke-linejoin="round"/>
-  <circle cx="40" cy="14" r="5" fill="${color}" stroke="#111" stroke-width="1.5"/>
-  <line x1="18" y1="44" x2="62" y2="44" stroke="#111" stroke-width="1"/>
-</svg>`;
-
-const SVG_CREWNECK = (color='#888') => `<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M20 16 L10 26 L18 30 L18 64 L62 64 L62 30 L70 26 L60 16 C58 22 52 24 40 24 C28 24 22 22 20 16Z" fill="${color}" stroke="#111" stroke-width="1.5" stroke-linejoin="round"/>
-  <path d="M33 16 Q40 22 47 16" fill="none" stroke="#111" stroke-width="1.5"/>
-</svg>`;
-
-const SVG_ZIPHOODIE = (color='#888') => `<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M20 14 L10 24 L18 28 L18 64 L62 64 L62 28 L70 24 L60 14 C58 20 52 22 40 22 C28 22 22 20 20 14Z" fill="${color}" stroke="#111" stroke-width="1.5" stroke-linejoin="round"/>
-  <path d="M34 14 C34 14 36 18 40 18 C44 18 46 14 46 14" fill="${color}" stroke="#111" stroke-width="1.5"/>
-  <circle cx="40" cy="14" r="4.5" fill="${color}" stroke="#111" stroke-width="1.5"/>
-  <line x1="40" y1="18" x2="40" y2="64" stroke="#111" stroke-width="1.2"/>
-  <line x1="18" y1="44" x2="62" y2="44" stroke="#111" stroke-width="0.8"/>
-</svg>`;
-
-const SVG_TANKTOP = (color='#888') => `<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M28 12 L18 22 L18 64 L62 64 L62 22 L52 12 Q48 22 40 22 Q32 22 28 12Z" fill="${color}" stroke="#111" stroke-width="1.5" stroke-linejoin="round"/>
-</svg>`;
-
-const SVG_FARBDOSE = () => `<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect x="22" y="24" width="36" height="38" rx="3" fill="#ddd" stroke="#111" stroke-width="1.5"/>
-  <rect x="22" y="24" width="36" height="10" rx="2" fill="#bbb" stroke="#111" stroke-width="1.5"/>
-  <rect x="30" y="18" width="20" height="8" rx="2" fill="#ccc" stroke="#111" stroke-width="1.2"/>
-  <circle cx="40" cy="48" r="7" fill="white" stroke="#111" stroke-width="1"/>
-  <circle cx="40" cy="48" r="4" fill="#999"/>
-</svg>`;
-
-const SVG_FLASCHE = () => `<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect x="34" y="14" width="12" height="8" rx="2" fill="#ccc" stroke="#111" stroke-width="1.2"/>
-  <path d="M30 22 Q24 30 24 40 L24 62 Q24 64 26 64 L54 64 Q56 64 56 62 L56 40 Q56 30 50 22Z" fill="#ddd" stroke="#111" stroke-width="1.5"/>
-  <rect x="24" y="38" width="32" height="6" fill="#bbb" stroke="#111" stroke-width="0.8"/>
-</svg>`;
-
-// ─── Color map ────────────────────────────────────────────────────────────────
-const COLORS = {
-  'Schwarz':'#1a1a1a','Black':'#1a1a1a',
-  'Weiß':'#f0f0ec','White':'#f0f0ec','Weiss':'#f0f0ec',
-  'Navy':'#1e2d55','Marineblau':'#1e2d55',
-  'Grau':'#9a9a94','Grey':'#9a9a94','Gray':'#9a9a94',
-  'Hellgrau':'#d0d0cc','Light Grey':'#d0d0cc',
-  'Anthrazit':'#3a3a38','Anthracite':'#3a3a38',
-  'Rot':'#b83232','Red':'#b83232',
-  'Burgund':'#6d1a1a','Burgundy':'#6d1a1a',
-  'Forest':'#2a4430','Waldgrün':'#2a4430','Bottle':'#2a4430',
-  'Beige':'#d4c5a5','Sand':'#d4c5a5','Natural':'#d4c5a5',
-  'Khaki':'#b0a878',
-  'Hellblau':'#a2bfd4','Sky Blue':'#a2bfd4',
-  'Blau':'#2255a4','Blue':'#2255a4',
-  'Camel':'#c09060',
-  'Ecru':'#e8e0cc','Off White':'#e8e0cc',
-  'Dusty':'#c8b8a8','Desert Dust':'#c8b8a8',
+// ── SVG ILLUSTRATIONS ────────────────────────────────────────────────────
+const SVG={
+  tshirt:c=>`<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 15L9 24L18 28L18 63L62 63L62 28L71 24L60 15C57 21 51 25 40 25C29 25 23 21 20 15Z" fill="${c}" stroke="#111" stroke-width="1.8" stroke-linejoin="round"/></svg>`,
+  hoodie:c=>`<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 14L9 25L18 29L18 64L62 64L62 29L71 25L60 14C57 20 51 23 40 23C29 23 23 20 20 14Z" fill="${c}" stroke="#111" stroke-width="1.8" stroke-linejoin="round"/><path d="M31 14C31 14 34 27 40 27C46 27 49 14 49 14" fill="${c}" stroke="#111" stroke-width="1.5" stroke-linejoin="round"/><circle cx="40" cy="14" r="5.5" fill="${c}" stroke="#111" stroke-width="1.5"/><line x1="18" y1="45" x2="62" y2="45" stroke="#111" stroke-width=".7" opacity=".4"/></svg>`,
+  crewneck:c=>`<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 16L9 27L18 31L18 64L62 64L62 31L71 27L60 16C57 22 51 25 40 25C29 25 23 22 20 16Z" fill="${c}" stroke="#111" stroke-width="1.8" stroke-linejoin="round"/><path d="M32 16Q40 23 48 16" fill="none" stroke="#111" stroke-width="1.5"/></svg>`,
+  longsleeve:c=>`<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 18L6 30L14 34L14 63L66 63L66 34L74 30L60 18C57 23 51 26 40 26C29 26 23 23 20 18Z" fill="${c}" stroke="#111" stroke-width="1.8" stroke-linejoin="round"/></svg>`,
+  jacke:c=>`<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 14L8 26L18 30L18 65L62 65L62 30L72 26L60 14C57 20 51 22 40 22C29 22 23 20 20 14Z" fill="${c}" stroke="#111" stroke-width="1.8" stroke-linejoin="round"/><line x1="40" y1="22" x2="40" y2="65" stroke="#111" stroke-width="1.2"/><rect x="32" y="35" width="7" height="5" rx="1" fill="${c}" stroke="#111" stroke-width="1"/></svg>`,
+  weste:c=>`<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M25 14L14 26L24 30L24 65L56 65L56 30L66 26L55 14C52 20 47 23 40 23C33 23 28 20 25 14Z" fill="${c}" stroke="#111" stroke-width="1.8" stroke-linejoin="round"/><line x1="40" y1="23" x2="40" y2="65" stroke="#111" stroke-width="1.2"/></svg>`,
+  totebag:()=>`<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 30L15 65L65 65L62 30Z" fill="#ddd" stroke="#111" stroke-width="1.5"/><path d="M30 30C30 22 34 16 40 16C46 16 50 22 50 30" fill="none" stroke="#111" stroke-width="1.8" stroke-linecap="round"/></svg>`,
+  farbdose:()=>`<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="20" y="26" width="40" height="36" rx="3" fill="#ddd" stroke="#111" stroke-width="1.5"/><rect x="20" y="26" width="40" height="10" rx="2" fill="#bbb" stroke="#111" stroke-width="1.5"/><rect x="28" y="18" width="24" height="9" rx="2" fill="#ccc" stroke="#111" stroke-width="1.2"/></svg>`,
+  flasche:()=>`<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="33" y="13" width="14" height="9" rx="2" fill="#ccc" stroke="#111" stroke-width="1.2"/><path d="M29 22Q23 30 23 41L23 63Q23 65 25 65L55 65Q57 65 57 63L57 41Q57 30 51 22Z" fill="#ddd" stroke="#111" stroke-width="1.5"/></svg>`,
 };
-function clr(n){return COLORS[n]||'#aaa'}
 
-// ─── SS Products catalogue ────────────────────────────────────────────────────
-const SS = [
-  {name:'Creator 2.0',    sku:'STTU755', cat:'T-Shirt Unisex',          fit:'Medium Fit',   gsm:'180 GSM', svg:'tshirt',    sizes:['XS','S','M','L','XL','XXL','3XL']},
-  {name:'Rocker',         sku:'STTU758', cat:'T-Shirt Unisex',          fit:'Regular Fit',  gsm:'180 GSM', svg:'tshirt',    sizes:['XS','S','M','L','XL','XXL']},
-  {name:'Blaster 2.0',    sku:'STTU959', cat:'T-Shirt Oversized',       fit:'Oversized',    gsm:'200 GSM', svg:'tshirt',    sizes:['XS','S','M','L','XL','XXL']},
-  {name:'Asher',          sku:'STTU078', cat:'T-Shirt Oversized',       fit:'Oversized',    gsm:'280 GSM', svg:'tshirt',    sizes:['XS','S','M','L','XL','XXL']},
-  {name:'Stella Serena',  sku:'SATW008', cat:'T-Shirt Damen',           fit:'Medium Fit',   gsm:'155 GSM', svg:'tshirt',    sizes:['XS','S','M','L','XL']},
-  {name:'Stella Ella',    sku:'SATW031', cat:'T-Shirt Damen',           fit:'Fitted',       gsm:'180 GSM', svg:'tshirt',    sizes:['XS','S','M','L','XL']},
-  {name:'Stella Nova',    sku:'SATW030', cat:'T-Shirt Damen',           fit:'Relaxed',      gsm:'155 GSM', svg:'tshirt',    sizes:['XS','S','M','L','XL']},
-  {name:'Drummer 2.0',    sku:'STSU168', cat:'Hoodie Unisex',           fit:'Regular Fit',  gsm:'280 GSM', svg:'hoodie',    sizes:['XS','S','M','L','XL','XXL']},
-  {name:'Slammer 2.0',    sku:'STSU211', cat:'Hoodie Oversized',        fit:'Oversized',    gsm:'380 GSM', svg:'hoodie',    sizes:['XS','S','M','L','XL','XXL']},
-  {name:'Connector 2.0',  sku:'STSU207', cat:'Zip-Hoodie Unisex',       fit:'Regular Fit',  gsm:'300 GSM', svg:'ziphoodie', sizes:['XS','S','M','L','XL','XXL']},
-  {name:'Changer 2.0',    sku:'STSU173', cat:'Crewneck Unisex',         fit:'Regular Fit',  gsm:'280 GSM', svg:'crewneck',  sizes:['XS','S','M','L','XL','XXL']},
-  {name:'Stella Ava',     sku:'SATW033', cat:'Tank Top Damen',          fit:'Fitted',       gsm:'180 GSM', svg:'tanktop',   sizes:['XS','S','M','L','XL']},
-];
-function ssByName(n){return SS.find(s=>s.name===n)||null}
+const CLRS={
+  'Schwarz':'#1a1a1a','Weiß':'#f0f0ec','Weiss':'#f0f0ec','Off White':'#e8e2d4',
+  'Natural Raw':'#d4c8a8','Cotton Pink':'#e8b4b8','Navy':'#1e2d55','Grau':'#9a9a94',
+  'Dark Heather Grey':'#6a6a64','Light Heather Grey':'#c0c0ba','Heritage Brown':'#7a5a3a',
+  'Glazed Green':'#6a8a5a','Black Rock':'#2a2a2a','Fiesta':'#e87060',
+  'Serene Blue':'#7aA4c4','Caribbean Blue':'#4090c4','Vulcano Stone':'#8a8078',
+  'Lemon':'#e8d860','Beige':'#d4c5a5','Red Brown':'#8a3a2a','Pink':'#e090a0',
+};
+function clr(n){return CLRS[n]||'#aaa'}
+
 function svgFor(item){
-  const p=ssByName(item.ss);
-  const t=p?p.svg:'tshirt';
   const c=clr(item.farbe);
-  if(t==='hoodie')   return SVG_HOODIE(c);
-  if(t==='crewneck') return SVG_CREWNECK(c);
-  if(t==='ziphoodie')return SVG_ZIPHOODIE(c);
-  if(t==='tanktop')  return SVG_TANKTOP(c);
-  return SVG_TSHIRT(c);
+  const cat=(item.cat||'').toLowerCase();
+  if(cat.includes('hoodie')) return SVG.hoodie(c);
+  if(cat.includes('crewneck')||cat.includes('sweatshirt')) return SVG.crewneck(c);
+  if(cat.includes('longsleeve')||cat.includes('ls')) return SVG.longsleeve(c);
+  if(cat.includes('jacke')||cat.includes('bomber')||cat.includes('liner')) return SVG.jacke(c);
+  if(cat.includes('weste')) return SVG.weste(c);
+  if(cat.includes('bag')||cat.includes('tote')) return SVG.totebag();
+  return SVG.tshirt(c);
 }
 
-// ─── localStorage persistence ────────────────────────────────────────────────
+// ── SS CATALOGUE ──────────────────────────────────────────────────────────
+const SS=[
+  {name:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',gsm:'180 GSM',sizes:['XS','S','M','L','XL','XXL','3XL']},
+  {name:'Sparker 2.0',sku:'STTU061',cat:'T-Shirt Unisex',gsm:'180 GSM',sizes:['XS','S','M','L','XL','XXL']},
+  {name:'Blaster 2.0',sku:'STTU959',cat:'T-Shirt Oversized',gsm:'200 GSM',sizes:['XS','S','M','L','XL','XXL']},
+  {name:'Asher',sku:'STTU078',cat:'T-Shirt Oversized',gsm:'280 GSM',sizes:['XS','S','M','L','XL','XXL']},
+  {name:'Freestyler',sku:'STTU799',cat:'T-Shirt Unisex',gsm:'180 GSM',sizes:['XS','S','M','L','XL','XXL']},
+  {name:'Radder 2.0',sku:'STTU868',cat:'T-Shirt Unisex',gsm:'200 GSM',sizes:['XS','S','M','L','XL','XXL']},
+  {name:'Stella Muser',sku:'SAWU034',cat:'Sweatshirt Damen',gsm:'280 GSM',sizes:['XS','S','M','L','XL']},
+  {name:'Stella Nova',sku:'SATW030',cat:'T-Shirt Damen',gsm:'155 GSM',sizes:['XS','S','M','L','XL']},
+  {name:'Stella Serena',sku:'SATW008',cat:'T-Shirt Damen',gsm:'155 GSM',sizes:['XS','S','M','L','XL']},
+  {name:'Stella Ella',sku:'SATW031',cat:'T-Shirt Damen',gsm:'180 GSM',sizes:['XS','S','M','L','XL']},
+  {name:'Drummer 2.0',sku:'STSU168',cat:'Hoodie Unisex',gsm:'280 GSM',sizes:['XS','S','M','L','XL','XXL']},
+  {name:'Slammer 2.0',sku:'STSU211',cat:'Hoodie Oversized',gsm:'380 GSM',sizes:['XS','S','M','L','XL','XXL']},
+  {name:'Connector 2.0',sku:'STSU207',cat:'Zip-Hoodie Unisex',gsm:'300 GSM',sizes:['XS','S','M','L','XL','XXL']},
+  {name:'Changer 2.0',sku:'STSU173',cat:'Crewneck Unisex',gsm:'280 GSM',sizes:['XS','S','M','L','XL','XXL']},
+  {name:'Stella Ava',sku:'SATW033',cat:'Tank Top Damen',gsm:'180 GSM',sizes:['XS','S','M','L','XL']},
+];
+
+// ── STORAGE ───────────────────────────────────────────────────────────────
 function load(){
   try{
-    const t=JSON.parse(localStorage.getItem('sdm_textilien'));
-    const m=JSON.parse(localStorage.getItem('sdm_material'));
-    if(t) data.textilien=t;
-    if(m) data.material=m;
-    const nid=JSON.parse(localStorage.getItem('sdm_nextid'));
-    if(nid){nextId.textilien=nid.textilien;nextId.material=nid.material}
+    ['t','m','r','a'].forEach(k=>{
+      const v=JSON.parse(localStorage.getItem('sdm_'+k));
+      if(v) data[{t:'textilien',m:'material',r:'reservationen',a:'accessoires'}[k]]=v;
+    });
+    const n=JSON.parse(localStorage.getItem('sdm_nid'));
+    if(n) Object.assign(nid,n);
   }catch(e){}
 }
 function save(){
   try{
-    localStorage.setItem('sdm_textilien',JSON.stringify(data.textilien));
-    localStorage.setItem('sdm_material',JSON.stringify(data.material));
-    localStorage.setItem('sdm_nextid',JSON.stringify(nextId));
+    localStorage.setItem('sdm_t',JSON.stringify(data.textilien));
+    localStorage.setItem('sdm_m',JSON.stringify(data.material));
+    localStorage.setItem('sdm_r',JSON.stringify(data.reservationen));
+    localStorage.setItem('sdm_a',JSON.stringify(data.accessoires));
+    localStorage.setItem('sdm_nid',JSON.stringify(nid));
   }catch(e){}
 }
 
-// ─── Data ─────────────────────────────────────────────────────────────────────
-let data = {
-  textilien:[
-    {id:1,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'S',bestand:23,min:8,img:'',notiz:''},
-    {id:2,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'M',bestand:31,min:8,img:'',notiz:''},
-    {id:3,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'L',bestand:6, min:8,img:'',notiz:''},
-    {id:4,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Weiß',   groesse:'M',bestand:18,min:8,img:'',notiz:''},
-    {id:5,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Navy',   groesse:'M',bestand:4, min:6,img:'',notiz:''},
-    {id:6,ss:'Stella Serena',sku:'SATW008',cat:'T-Shirt Damen',farbe:'Schwarz',groesse:'S',bestand:12,min:6,img:'',notiz:''},
-    {id:7,ss:'Drummer 2.0', sku:'STSU168',cat:'Hoodie Unisex', farbe:'Schwarz',groesse:'M',bestand:9, min:4,img:'',notiz:''},
-    {id:8,ss:'Drummer 2.0', sku:'STSU168',cat:'Hoodie Unisex', farbe:'Grau',   groesse:'L',bestand:2, min:4,img:'',notiz:''},
-    {id:9,ss:'Changer 2.0', sku:'STSU173',cat:'Crewneck Unisex',farbe:'Weiß', groesse:'M',bestand:7, min:4,img:'',notiz:''},
-    {id:10,ss:'Blaster 2.0',sku:'STTU959',cat:'T-Shirt Oversized',farbe:'Schwarz',groesse:'L',bestand:5,min:3,img:'',notiz:''},
-  ],
-  material:[
-    {id:1,name:'Plastisol Weiß',   typ:'Siebdruckfarbe',hersteller:'Murakami',einheit:'kg',bestand:4.5,min:2,img:'',notiz:''},
-    {id:2,name:'Plastisol Schwarz',typ:'Siebdruckfarbe',hersteller:'Murakami',einheit:'kg',bestand:3.2,min:2,img:'',notiz:''},
-    {id:3,name:'Plastisol Rot',    typ:'Siebdruckfarbe',hersteller:'Murakami',einheit:'kg',bestand:0.8,min:1,img:'',notiz:''},
-    {id:4,name:'Plastisol Blau',   typ:'Siebdruckfarbe',hersteller:'Murakami',einheit:'kg',bestand:1.1,min:1,img:'',notiz:''},
-    {id:5,name:'Wasserbasis Klar', typ:'Siebdruckfarbe',hersteller:'Permaset',einheit:'l', bestand:2.0,min:1,img:'',notiz:''},
-    {id:6,name:'Verdünner Standard',typ:'Verdünner',    hersteller:'',        einheit:'l', bestand:0.5,min:1,img:'',notiz:''},
-    {id:7,name:'Siebdruckreiniger',typ:'Reiniger',      hersteller:'',        einheit:'l', bestand:3.0,min:1,img:'',notiz:''},
-    {id:8,name:'Fotosieb-Emulsion',typ:'Emulsion',      hersteller:'Murakami',einheit:'l', bestand:0.3,min:0.5,img:'',notiz:''},
-  ]
+// ── REAL INVENTORY DATA (from PDF 14.01.2026) ─────────────────────────────
+let data={
+textilien:[
+  // Creator 2.0 Schwarz
+  {id:1,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'S',lagerort:'M',bestand:3,min:3,img:'',notiz:'',sample:1},
+  {id:2,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'M',lagerort:'M',bestand:7,min:3,img:'',notiz:'',sample:1},
+  {id:3,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'L',lagerort:'M',bestand:6,min:3,img:'',notiz:'',sample:1},
+  {id:4,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'XL',lagerort:'M',bestand:9,min:3,img:'',notiz:'',sample:1},
+  {id:5,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'XXL',lagerort:'M',bestand:4,min:2,img:'',notiz:'',sample:0},
+  // Creator 2.0 Weiß
+  {id:6,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Weiß',groesse:'S',lagerort:'',bestand:4,min:3,img:'',notiz:'',sample:0},
+  {id:7,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Weiß',groesse:'M',lagerort:'',bestand:9,min:3,img:'',notiz:'',sample:0},
+  {id:8,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Weiß',groesse:'L',lagerort:'',bestand:9,min:3,img:'',notiz:'',sample:0},
+  {id:9,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Weiß',groesse:'XL',lagerort:'',bestand:1,min:2,img:'',notiz:'',sample:0},
+  // Creator 2.0 Off White
+  {id:10,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Off White',groesse:'S',lagerort:'',bestand:0,min:2,img:'',notiz:'',sample:0},
+  // Creator 2.0 Cotton Pink
+  {id:11,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Cotton Pink',groesse:'XXS',lagerort:'',bestand:4,min:2,img:'',notiz:'',sample:0},
+  {id:12,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Cotton Pink',groesse:'XS',lagerort:'',bestand:4,min:2,img:'',notiz:'',sample:0},
+  {id:13,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Cotton Pink',groesse:'S',lagerort:'',bestand:6,min:3,img:'',notiz:'',sample:0},
+  {id:14,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Cotton Pink',groesse:'M',lagerort:'',bestand:2,min:2,img:'',notiz:'',sample:0},
+  {id:15,ss:'Creator 2.0',sku:'STTU755',cat:'T-Shirt Unisex',farbe:'Cotton Pink',groesse:'L',lagerort:'',bestand:2,min:2,img:'',notiz:'',sample:0},
+  // Sparker 2.0 Schwarz
+  {id:16,ss:'Sparker 2.0',sku:'STTU061',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'XS',lagerort:'M',bestand:4,min:3,img:'',notiz:'',sample:1},
+  {id:17,ss:'Sparker 2.0',sku:'STTU061',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'S',lagerort:'M',bestand:10,min:3,img:'',notiz:'',sample:1},
+  {id:18,ss:'Sparker 2.0',sku:'STTU061',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'M',lagerort:'M',bestand:6,min:3,img:'',notiz:'',sample:1},
+  {id:19,ss:'Sparker 2.0',sku:'STTU061',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'L',lagerort:'M',bestand:9,min:3,img:'',notiz:'',sample:1},
+  {id:20,ss:'Sparker 2.0',sku:'STTU061',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'XL',lagerort:'M',bestand:6,min:3,img:'',notiz:'',sample:1},
+  // Sparker 2.0 Weiß
+  {id:21,ss:'Sparker 2.0',sku:'STTU061',cat:'T-Shirt Unisex',farbe:'Weiß',groesse:'S',lagerort:'',bestand:5,min:3,img:'',notiz:'',sample:0},
+  {id:22,ss:'Sparker 2.0',sku:'STTU061',cat:'T-Shirt Unisex',farbe:'Weiß',groesse:'M',lagerort:'',bestand:9,min:3,img:'',notiz:'',sample:0},
+  {id:23,ss:'Sparker 2.0',sku:'STTU061',cat:'T-Shirt Unisex',farbe:'Weiß',groesse:'L',lagerort:'',bestand:7,min:3,img:'',notiz:'',sample:0},
+  {id:24,ss:'Sparker 2.0',sku:'STTU061',cat:'T-Shirt Unisex',farbe:'Weiß',groesse:'XL',lagerort:'',bestand:4,min:2,img:'',notiz:'',sample:0},
+  // Sparker 2.0 Off White
+  {id:25,ss:'Sparker 2.0',sku:'STTU061',cat:'T-Shirt Unisex',farbe:'Off White',groesse:'S',lagerort:'',bestand:6,min:3,img:'',notiz:'',sample:0},
+  {id:26,ss:'Sparker 2.0',sku:'STTU061',cat:'T-Shirt Unisex',farbe:'Off White',groesse:'M',lagerort:'',bestand:4,min:3,img:'',notiz:'',sample:0},
+  {id:27,ss:'Sparker 2.0',sku:'STTU061',cat:'T-Shirt Unisex',farbe:'Off White',groesse:'L',lagerort:'',bestand:5,min:3,img:'',notiz:'',sample:0},
+  // Sparker 2.0 Natural Raw
+  {id:28,ss:'Sparker 2.0',sku:'STTU061',cat:'T-Shirt Unisex',farbe:'Natural Raw',groesse:'XS',lagerort:'Box 1',bestand:1,min:2,img:'',notiz:'',sample:0},
+  {id:29,ss:'Sparker 2.0',sku:'STTU061',cat:'T-Shirt Unisex',farbe:'Natural Raw',groesse:'S',lagerort:'Box 1',bestand:2,min:2,img:'',notiz:'',sample:0},
+  {id:30,ss:'Sparker 2.0',sku:'STTU061',cat:'T-Shirt Unisex',farbe:'Natural Raw',groesse:'M',lagerort:'Box 1',bestand:2,min:2,img:'',notiz:'',sample:0},
+  // Freestyler
+  {id:31,ss:'Freestyler',sku:'STTU799',cat:'T-Shirt Unisex',farbe:'Dark Heather Grey',groesse:'XXS',lagerort:'M',bestand:1,min:2,img:'',notiz:'1x S,M,L bei Sarah Schott',sample:1},
+  {id:32,ss:'Freestyler',sku:'STTU799',cat:'T-Shirt Unisex',farbe:'Dark Heather Grey',groesse:'XS',lagerort:'M',bestand:2,min:2,img:'',notiz:'1x S,M,L bei Sarah Schott',sample:0},
+  {id:33,ss:'Freestyler',sku:'STTU799',cat:'T-Shirt Unisex',farbe:'Dark Heather Grey',groesse:'S',lagerort:'M',bestand:4,min:2,img:'',notiz:'',sample:0},
+  {id:34,ss:'Freestyler',sku:'STTU799',cat:'T-Shirt Unisex',farbe:'Dark Heather Grey',groesse:'M',lagerort:'M',bestand:4,min:2,img:'',notiz:'',sample:0},
+  {id:35,ss:'Freestyler',sku:'STTU799',cat:'T-Shirt Unisex',farbe:'Dark Heather Grey',groesse:'L',lagerort:'M',bestand:6,min:3,img:'',notiz:'',sample:0},
+  {id:36,ss:'Freestyler',sku:'STTU799',cat:'T-Shirt Unisex',farbe:'Dark Heather Grey',groesse:'XL',lagerort:'M',bestand:1,min:2,img:'',notiz:'',sample:0},
+  {id:37,ss:'Freestyler Vintage',sku:'',cat:'T-Shirt Unisex',farbe:'Black Rock',groesse:'S',lagerort:'M',bestand:3,min:2,img:'',notiz:'',sample:1},
+  {id:38,ss:'Freestyler Vintage',sku:'',cat:'T-Shirt Unisex',farbe:'Black Rock',groesse:'M',lagerort:'M',bestand:3,min:2,img:'',notiz:'',sample:0},
+  {id:39,ss:'Freestyler Vintage',sku:'',cat:'T-Shirt Unisex',farbe:'Black Rock',groesse:'L',lagerort:'M',bestand:2,min:2,img:'',notiz:'',sample:0},
+  // Asher
+  {id:40,ss:'Asher',sku:'STTU078',cat:'T-Shirt Oversized',farbe:'Weiß',groesse:'S',lagerort:'',bestand:1,min:2,img:'',notiz:'',sample:0},
+  {id:41,ss:'Asher',sku:'STTU078',cat:'T-Shirt Oversized',farbe:'Weiß',groesse:'L',lagerort:'',bestand:1,min:2,img:'',notiz:'',sample:0},
+  // Blaster
+  {id:42,ss:'Blaster',sku:'',cat:'T-Shirt Oversized',farbe:'Schwarz',groesse:'onesize',lagerort:'Box 1',bestand:1,min:2,img:'',notiz:'',sample:0},
+  // Stella Muser
+  {id:43,ss:'Stella Muser',sku:'SAWU034',cat:'Sweatshirt Damen',farbe:'Off White',groesse:'XS',lagerort:'M',bestand:1,min:2,img:'',notiz:'',sample:1},
+  {id:44,ss:'Stella Muser',sku:'SAWU034',cat:'Sweatshirt Damen',farbe:'Off White',groesse:'S',lagerort:'M',bestand:7,min:3,img:'',notiz:'',sample:0},
+  {id:45,ss:'Stella Muser',sku:'SAWU034',cat:'Sweatshirt Damen',farbe:'Off White',groesse:'M',lagerort:'M',bestand:4,min:2,img:'',notiz:'',sample:0},
+  {id:46,ss:'Stella Muser',sku:'SAWU034',cat:'Sweatshirt Damen',farbe:'Off White',groesse:'L',lagerort:'M',bestand:3,min:2,img:'',notiz:'',sample:0},
+  {id:47,ss:'Stella Muser',sku:'SAWU034',cat:'Sweatshirt Damen',farbe:'Weiß',groesse:'onesize',lagerort:'M',bestand:1,min:2,img:'',notiz:'',sample:1},
+  // Stella Nova Black
+  {id:48,ss:'Stella Nova',sku:'SATW030',cat:'T-Shirt Damen',farbe:'Schwarz',groesse:'onesize',lagerort:'M',bestand:1,min:2,img:'',notiz:'bei Sarah Schott',sample:1},
+  // Stella Collider
+  {id:49,ss:'Stella Collider',sku:'',cat:'T-Shirt Damen',farbe:'Schwarz',groesse:'XS',lagerort:'',bestand:1,min:2,img:'',notiz:'',sample:0},
+  // Longsleeves
+  {id:50,ss:'Creator LS 2.0',sku:'',cat:'Longsleeve Unisex',farbe:'Weiß',groesse:'S',lagerort:'Box 2',bestand:1,min:2,img:'',notiz:'',sample:1},
+  {id:51,ss:'Creator LS 2.0',sku:'',cat:'Longsleeve Unisex',farbe:'Weiß',groesse:'M',lagerort:'Box 2',bestand:1,min:2,img:'',notiz:'',sample:0},
+  // Breezer
+  {id:52,ss:'Breezer',sku:'',cat:'Jacke',farbe:'Weiß',groesse:'S',lagerort:'Box 1',bestand:2,min:1,img:'',notiz:'',sample:1},
+  {id:53,ss:'Breezer',sku:'',cat:'Jacke',farbe:'Weiß',groesse:'M',lagerort:'Box 1',bestand:3,min:1,img:'',notiz:'',sample:0},
+  {id:54,ss:'Breezer',sku:'',cat:'Jacke',farbe:'Weiß',groesse:'L',lagerort:'Box 1',bestand:4,min:1,img:'',notiz:'',sample:0},
+  {id:55,ss:'Breezer',sku:'',cat:'Jacke',farbe:'Weiß',groesse:'XL',lagerort:'Box 1',bestand:1,min:1,img:'',notiz:'',sample:0},
+  // Liner Vest
+  {id:56,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Schwarz',groesse:'XS',lagerort:'',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:57,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Schwarz',groesse:'M',lagerort:'',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:58,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Schwarz',groesse:'L',lagerort:'',bestand:5,min:1,img:'',notiz:'',sample:0},
+  {id:59,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Schwarz',groesse:'XL',lagerort:'',bestand:1,min:1,img:'',notiz:'',sample:0},
+  // Changer
+  {id:60,ss:'Changer 2.0',sku:'STSU173',cat:'Crewneck Unisex',farbe:'Glazed Green',groesse:'onesize',lagerort:'Box 2',bestand:1,min:1,img:'',notiz:'',sample:0},
+  // Crafter
+  {id:61,ss:'Crafter',sku:'',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'onesize',lagerort:'Box 1',bestand:5,min:2,img:'',notiz:'',sample:1},
+  // Sparker Old
+  {id:62,ss:'Sparker (Old)',sku:'',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'L',lagerort:'Box 1',bestand:2,min:1,img:'',notiz:'',sample:0},
+  // MING JOSÉ
+  {id:63,ss:'Stella Muser Club Tropical',sku:'',cat:'Sweatshirt Damen',farbe:'Pink',groesse:'XS',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:64,ss:'Stella Muser Club Tropical',sku:'',cat:'Sweatshirt Damen',farbe:'Pink',groesse:'S',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'',sample:0},
+  {id:65,ss:'Stella Muser Club Tropical',sku:'',cat:'Sweatshirt Damen',farbe:'Pink',groesse:'M',lagerort:'Ming José',bestand:5,min:1,img:'',notiz:'',sample:0},
+  {id:66,ss:'Stella Muser Club Tropical',sku:'',cat:'Sweatshirt Damen',farbe:'Pink',groesse:'L',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'',sample:0},
+  {id:67,ss:'Stella Muser Club Tropical',sku:'',cat:'Sweatshirt Damen',farbe:'Off White',groesse:'XS',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'XS dreckig',sample:0},
+  {id:68,ss:'Stella Muser Club Tropical',sku:'',cat:'Sweatshirt Damen',farbe:'Off White',groesse:'S',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:69,ss:'Stella Muser Club Tropical',sku:'',cat:'Sweatshirt Damen',farbe:'Light Heather Grey',groesse:'onesize',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:70,ss:'Coach Jacket',sku:'',cat:'Jacke',farbe:'Schwarz',groesse:'onesize',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:71,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Red Brown',groesse:'XS',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:72,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Red Brown',groesse:'S',lagerort:'Ming José',bestand:3,min:1,img:'',notiz:'',sample:0},
+  {id:73,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Red Brown',groesse:'M',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:74,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Beige',groesse:'S',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'',sample:0},
+  {id:75,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Beige',groesse:'M',lagerort:'Ming José',bestand:3,min:1,img:'',notiz:'',sample:0},
+  {id:76,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Beige',groesse:'L',lagerort:'Ming José',bestand:3,min:1,img:'',notiz:'',sample:0},
+  {id:77,ss:'Liner Vest',sku:'',cat:'Weste',farbe:'Beige',groesse:'XL',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:78,ss:'Bomber Jacket',sku:'',cat:'Jacke',farbe:'Schwarz',groesse:'S',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:79,ss:'Bomber Jacket',sku:'',cat:'Jacke',farbe:'Schwarz',groesse:'M',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'',sample:0},
+  {id:80,ss:'Bomber Jacket',sku:'',cat:'Jacke',farbe:'Schwarz',groesse:'L',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:81,ss:'Stella Muser',sku:'',cat:'Sweatshirt Damen',farbe:'Weiß',groesse:'XS',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'',sample:0},
+  {id:82,ss:'Stella Muser',sku:'',cat:'Sweatshirt Damen',farbe:'Weiß',groesse:'S',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'',sample:0},
+  {id:83,ss:'Stella Muser',sku:'',cat:'Sweatshirt Damen',farbe:'Weiß',groesse:'M',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:84,ss:'Stella Muser',sku:'',cat:'Sweatshirt Damen',farbe:'Weiß',groesse:'L',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:85,ss:'Stella Muser',sku:'',cat:'Sweatshirt Damen',farbe:'Weiß',groesse:'XL',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:86,ss:'Stella Muser',sku:'',cat:'Sweatshirt Damen',farbe:'Grau',groesse:'XS',lagerort:'Ming José',bestand:3,min:1,img:'',notiz:'',sample:0},
+  {id:87,ss:'Stella Muser',sku:'',cat:'Sweatshirt Damen',farbe:'Grau',groesse:'S',lagerort:'Ming José',bestand:3,min:1,img:'',notiz:'',sample:0},
+  {id:88,ss:'Stella Muser',sku:'',cat:'Sweatshirt Damen',farbe:'Grau',groesse:'M',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'',sample:0},
+  {id:89,ss:'Stella Muser Club Tropical',sku:'',cat:'Sweatshirt Damen',farbe:'Fiesta',groesse:'S',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'',sample:0},
+  {id:90,ss:'Stella Muser Club Tropical',sku:'',cat:'Sweatshirt Damen',farbe:'Fiesta',groesse:'M',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:91,ss:'Muser Dog',sku:'',cat:'Sweatshirt Damen',farbe:'Schwarz',groesse:'XS',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'',sample:0},
+  {id:92,ss:'Muser Dog',sku:'',cat:'Sweatshirt Damen',farbe:'Schwarz',groesse:'S',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'',sample:0},
+  {id:93,ss:'Muser Dog',sku:'',cat:'Sweatshirt Damen',farbe:'Schwarz',groesse:'M',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:94,ss:'Muser Dog',sku:'',cat:'Sweatshirt Damen',farbe:'Schwarz',groesse:'L',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:95,ss:'Freestyler (For the Arts)',sku:'',cat:'T-Shirt Unisex',farbe:'Grau',groesse:'XXS',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:96,ss:'Freestyler (For the Arts)',sku:'',cat:'T-Shirt Unisex',farbe:'Grau',groesse:'XS',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:97,ss:'Freestyler (For the Arts)',sku:'',cat:'T-Shirt Unisex',farbe:'Grau',groesse:'S',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:98,ss:'Freestyler (For the Arts)',sku:'',cat:'T-Shirt Unisex',farbe:'Grau',groesse:'M',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:99,ss:'Freestyler (For the Arts)',sku:'',cat:'T-Shirt Unisex',farbe:'Grau',groesse:'L',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:100,ss:'Freestyler (For the Arts)',sku:'',cat:'T-Shirt Unisex',farbe:'Grau',groesse:'XL',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:101,ss:'Sparker Dog',sku:'',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'XS',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'',sample:0},
+  {id:102,ss:'Sparker Dog',sku:'',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'S',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'',sample:0},
+  {id:103,ss:'Sparker Dog',sku:'',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'M',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:104,ss:'Sparker Dog',sku:'',cat:'T-Shirt Unisex',farbe:'Schwarz',groesse:'L',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  // Lotus Collab
+  {id:105,ss:'Muser LS Lotus',sku:'',cat:'Longsleeve Damen',farbe:'Schwarz',groesse:'S',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'Lotus Fragrance',sample:0},
+  {id:106,ss:'Muser LS Lotus',sku:'',cat:'Longsleeve Damen',farbe:'Schwarz',groesse:'M',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'Lotus Fragrance',sample:0},
+  {id:107,ss:'Creator LS 2.0 Lotus',sku:'',cat:'Longsleeve Unisex',farbe:'Schwarz',groesse:'XS',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'Lotus Fragrance',sample:0},
+  {id:108,ss:'Creator LS 2.0 Lotus',sku:'',cat:'Longsleeve Unisex',farbe:'Schwarz',groesse:'S',lagerort:'Ming José',bestand:4,min:1,img:'',notiz:'Lotus Fragrance',sample:0},
+  {id:109,ss:'Creator LS 2.0 Lotus',sku:'',cat:'Longsleeve Unisex',farbe:'Schwarz',groesse:'M',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'Lotus Fragrance',sample:0},
+  {id:110,ss:'Creator LS 2.0 Lotus',sku:'',cat:'Longsleeve Unisex',farbe:'Schwarz',groesse:'L',lagerort:'Ming José',bestand:4,min:1,img:'',notiz:'Lotus Fragrance',sample:0},
+  {id:111,ss:'Creator LS 2.0 Lotus',sku:'',cat:'Longsleeve Unisex',farbe:'Schwarz',groesse:'XL',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'Lotus Fragrance',sample:0},
+  {id:112,ss:'Asher Lotus',sku:'',cat:'T-Shirt Oversized',farbe:'Weiß',groesse:'XS',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'Lotus Fragrance',sample:0},
+  {id:113,ss:'Asher Lotus',sku:'',cat:'T-Shirt Oversized',farbe:'Weiß',groesse:'S',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'Lotus Fragrance',sample:0},
+  {id:114,ss:'Asher Lotus',sku:'',cat:'T-Shirt Oversized',farbe:'Weiß',groesse:'M',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'Lotus Fragrance',sample:0},
+  {id:115,ss:'Muser LS Lotus',sku:'',cat:'Longsleeve Damen',farbe:'Weiß',groesse:'XS',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'Lotus Fragrance',sample:0},
+  {id:116,ss:'Muser LS Lotus',sku:'',cat:'Longsleeve Damen',farbe:'Weiß',groesse:'S',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'Lotus Fragrance',sample:0},
+  {id:117,ss:'Muser LS Lotus',sku:'',cat:'Longsleeve Damen',farbe:'Weiß',groesse:'M',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'Lotus Fragrance',sample:0},
+  {id:118,ss:'Creator LS 2.0 Lotus',sku:'',cat:'Longsleeve Unisex',farbe:'Weiß',groesse:'S',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'Lotus Fragrance',sample:0},
+  {id:119,ss:'Creator LS 2.0 Lotus',sku:'',cat:'Longsleeve Unisex',farbe:'Weiß',groesse:'M',lagerort:'Ming José',bestand:4,min:1,img:'',notiz:'Lotus Fragrance',sample:0},
+  {id:120,ss:'Radder 2.0',sku:'STTU868',cat:'T-Shirt Unisex',farbe:'Lemon',groesse:'XS',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:121,ss:'Radder 2.0',sku:'STTU868',cat:'T-Shirt Unisex',farbe:'Lemon',groesse:'S',lagerort:'Ming José',bestand:3,min:1,img:'',notiz:'',sample:0},
+  {id:122,ss:'Radder 2.0',sku:'STTU868',cat:'T-Shirt Unisex',farbe:'Lemon',groesse:'M',lagerort:'Ming José',bestand:2,min:1,img:'',notiz:'',sample:0},
+  // Kids / Baby
+  {id:123,ss:'Baby Changer',sku:'',cat:'Baby',farbe:'Serene Blue',groesse:'12-18M',lagerort:'',bestand:9,min:2,img:'',notiz:'',sample:0},
+  {id:124,ss:'Baby Changer',sku:'',cat:'Baby',farbe:'Serene Blue',groesse:'18-24M',lagerort:'',bestand:4,min:2,img:'',notiz:'',sample:0},
+  {id:125,ss:'Mini Creator 2.0',sku:'',cat:'Kids',farbe:'Weiß',groesse:'3-4J',lagerort:'',bestand:6,min:2,img:'',notiz:'',sample:0},
+  {id:126,ss:'Mini Creator 2.0',sku:'',cat:'Kids',farbe:'Weiß',groesse:'5-6J',lagerort:'',bestand:2,min:2,img:'',notiz:'',sample:0},
+  {id:127,ss:'Mini Creator 2.0',sku:'',cat:'Kids',farbe:'Caribbean Blue',groesse:'3-4J',lagerort:'',bestand:8,min:2,img:'',notiz:'',sample:0},
+  {id:128,ss:'Mini Creator 2.0',sku:'',cat:'Kids',farbe:'Vulcano Stone',groesse:'3-4J',lagerort:'',bestand:2,min:2,img:'',notiz:'',sample:0},
+  {id:129,ss:'Mini Creator 2.0',sku:'',cat:'Kids',farbe:'Vulcano Stone',groesse:'5-6J',lagerort:'',bestand:4,min:2,img:'',notiz:'',sample:0},
+  {id:130,ss:'Mini Creator 2.0',sku:'',cat:'Kids',farbe:'Vulcano Stone',groesse:'7-8J',lagerort:'',bestand:4,min:2,img:'',notiz:'',sample:0},
+  {id:131,ss:'Mini Changer 2.0',sku:'',cat:'Kids',farbe:'Lemon',groesse:'3-4J',lagerort:'',bestand:3,min:2,img:'',notiz:'',sample:0},
+  {id:132,ss:'Mini Changer 2.0',sku:'',cat:'Kids',farbe:'Lemon',groesse:'5-6J',lagerort:'',bestand:4,min:2,img:'',notiz:'',sample:0},
+  {id:133,ss:'Mini Changer 2.0',sku:'',cat:'Kids',farbe:'Lemon',groesse:'7-8J',lagerort:'',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:134,ss:'Mini Changer 2.0',sku:'',cat:'Kids',farbe:'Lemon',groesse:'9-11J',lagerort:'',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:135,ss:'Mini Changer 2.0',sku:'',cat:'Kids',farbe:'Heritage Brown',groesse:'3-4J',lagerort:'',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:136,ss:'Mini Changer 2.0',sku:'',cat:'Kids',farbe:'Heritage Brown',groesse:'5-6J',lagerort:'',bestand:2,min:1,img:'',notiz:'',sample:0},
+  {id:137,ss:'Mini Changer 2.0',sku:'',cat:'Kids',farbe:'Heritage Brown',groesse:'7-8J',lagerort:'',bestand:2,min:1,img:'',notiz:'',sample:0},
+  // Hoodies Ming José
+  {id:138,ss:'Hoodie',sku:'',cat:'Hoodie Unisex',farbe:'Grau',groesse:'S',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:139,ss:'Hoodie',sku:'',cat:'Hoodie Unisex',farbe:'Grau',groesse:'M',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+  {id:140,ss:'Hoodie',sku:'',cat:'Hoodie Unisex',farbe:'Grau',groesse:'L',lagerort:'Ming José',bestand:1,min:1,img:'',notiz:'',sample:0},
+],
+accessoires:[
+  {id:1,name:'Light Tote Bag Sky Blue',typ:'Tote Bag',lagerort:'',bestand:5,min:3,img:'',notiz:''},
+  {id:2,name:'Light Tote Bag Mint',typ:'Tote Bag',lagerort:'',bestand:5,min:3,img:'',notiz:''},
+  {id:3,name:'Light Tote Bag Lime Green',typ:'Tote Bag',lagerort:'',bestand:5,min:3,img:'',notiz:''},
+  {id:4,name:'Light Tote Bag Orange',typ:'Tote Bag',lagerort:'',bestand:5,min:3,img:'',notiz:''},
+  {id:5,name:'Light Tote Bag Pink',typ:'Tote Bag',lagerort:'',bestand:8,min:3,img:'',notiz:''},
+  {id:6,name:'Light Tote Bag Red',typ:'Tote Bag',lagerort:'',bestand:19,min:5,img:'',notiz:''},
+  {id:7,name:'Shopping Bag 2.0 Black',typ:'Shopping Bag',lagerort:'',bestand:5,min:3,img:'',notiz:''},
+  {id:8,name:'Shopping Bag 2.0 Latte',typ:'Shopping Bag',lagerort:'',bestand:10,min:3,img:'',notiz:''},
+  {id:9,name:'Shopping Bag Natural',typ:'Shopping Bag',lagerort:'',bestand:10,min:3,img:'',notiz:''},
+  {id:10,name:'Tote Bag Natural',typ:'Tote Bag',lagerort:'',bestand:5,min:3,img:'',notiz:''},
+  {id:11,name:'Tote Bag Black',typ:'Tote Bag',lagerort:'',bestand:6,min:3,img:'',notiz:''},
+  {id:12,name:'Re-Tote Bag Black',typ:'Tote Bag',lagerort:'',bestand:14,min:5,img:'',notiz:''},
+  {id:13,name:'Mid Tote Bag Fiesta',typ:'Tote Bag',lagerort:'',bestand:17,min:5,img:'',notiz:''},
+  {id:14,name:'Mid Tote Bag Heritage Brown',typ:'Tote Bag',lagerort:'',bestand:11,min:5,img:'',notiz:''},
+  {id:15,name:'Pencil Cases Natural',typ:'Accessoire',lagerort:'',bestand:12,min:5,img:'',notiz:''},
+],
+material:[
+  {id:1,name:'Plastisol Weiß',typ:'Siebdruckfarbe',hersteller:'Murakami',einheit:'kg',lagerort:'',bestand:0,min:2,img:'',notiz:''},
+  {id:2,name:'Plastisol Schwarz',typ:'Siebdruckfarbe',hersteller:'Murakami',einheit:'kg',lagerort:'',bestand:0,min:2,img:'',notiz:''},
+  {id:3,name:'Siebdruckreiniger',typ:'Reiniger',hersteller:'',einheit:'l',lagerort:'',bestand:0,min:1,img:'',notiz:''},
+  {id:4,name:'Verdünner',typ:'Verdünner',hersteller:'',einheit:'l',lagerort:'',bestand:0,min:1,img:'',notiz:''},
+  {id:5,name:'Fotosieb-Emulsion',typ:'Emulsion',hersteller:'Murakami',einheit:'l',lagerort:'',bestand:0,min:0.5,img:'',notiz:'Deckweiss bei Dylan'},
+],
+reservationen:[
+  {id:1,auftrag:'Ravi — Chimpy Festival',artikel:'Hoodies + T-Shirts',menge:100,datum:'2025-08-06',status:'offen',notiz:'50x Hoodies, 50x T-Shirts'},
+  {id:2,auftrag:'Nina Loosli',artikel:'Stella Muser & Sparker',menge:0,datum:'',status:'offen',notiz:''},
+  {id:3,auftrag:'TCF — Asdin',artikel:'Creator 2.0 + Mini Creator',menge:0,datum:'',status:'offen',notiz:''},
+  {id:4,auftrag:'Sophie Beugen — Racing Garage 94',artikel:'Merch',menge:0,datum:'',status:'offen',notiz:''},
+  {id:5,auftrag:'Vermicelleria',artikel:'',menge:0,datum:'2025-09-30',status:'offen',notiz:'Samples yellow, End Sept'},
+  {id:6,auftrag:'Lehmag ETH',artikel:'',menge:0,datum:'',status:'offen',notiz:''},
+]
 };
-let nextId={textilien:11,material:9};
+let nid={t:141,m:6,r:7,a:16};
 let tab='textilien',editId=null,search='',fA='',fB='';
 
-// ─── Render stats ─────────────────────────────────────────────────────────────
+// ── STOCK CHECK for reservations ──────────────────────────────────────────
+function checkStock(res){
+  if(!res.artikel||res.menge<=0)return null;
+  const q=res.artikel.toLowerCase();
+  const matches=data.textilien.filter(i=>{
+    const name=(i.ss+' '+i.farbe+' '+i.cat).toLowerCase();
+    return q.split(/[\s,+&]+/).some(w=>w.length>2&&name.includes(w));
+  });
+  const total=matches.reduce((a,i)=>a+i.bestand,0);
+  if(!matches.length)return{ok:null,msg:'Artikel nicht im Lager gefunden'};
+  if(total>=res.menge)return{ok:true,msg:`✓ Genug am Lager: ${total} Stk verfügbar`};
+  if(total>0)return{ok:'partial',msg:`⚠ Nur ${total}/${res.menge} Stk am Lager`};
+  return{ok:false,msg:`✗ Nicht am Lager — ${res.menge} Stk müssen bestellt werden`};
+}
+
+// ── STATS ─────────────────────────────────────────────────────────────────
 function renderStats(){
-  const t=data.textilien,m=data.material;
+  const t=data.textilien,m=data.material,r=data.reservationen,a=data.accessoires;
   const tLow=t.filter(i=>i.bestand<i.min).length;
   const mLow=m.filter(i=>i.bestand<i.min).length;
-  document.getElementById('statsbar').innerHTML=`
-    <div class="stat-cell"><div class="stat-num">${t.reduce((a,i)=>a+i.bestand,0)}</div><div class="stat-lbl">Textilien</div></div>
-    <div class="stat-cell"><div class="stat-num">${t.length}</div><div class="stat-lbl">Artikel</div></div>
-    <div class="stat-cell"><div class="stat-num">${m.length}</div><div class="stat-lbl">Material</div></div>
-    <div class="stat-cell"><div class="stat-num ${(tLow+mLow)?'stat-warn':''}">${tLow+mLow}</div><div class="stat-lbl">Nachbestellen</div></div>`;
+  const aLow=a.filter(i=>i.bestand<i.min).length;
+  const rOffen=r.filter(i=>i.status==='offen').length;
+  document.getElementById('stats').innerHTML=`
+    <div class="sc"><div class="sn">${t.reduce((a,i)=>a+i.bestand,0)}</div><div class="sl">Textilien</div></div>
+    <div class="sc"><div class="sn">${a.reduce((s,i)=>s+i.bestand,0)}</div><div class="sl">Bags/Acc</div></div>
+    <div class="sc"><div class="sn ${rOffen?'sorange':''}">${rOffen}</div><div class="sl">Aufträge</div></div>
+    <div class="sc"><div class="sn ${(tLow+mLow+aLow)?'warn':''}">${tLow+mLow+aLow}</div><div class="sl">Nachbest.</div></div>`;
   const lows=[...t.filter(i=>i.bestand<i.min).map(i=>`${i.ss} ${i.farbe} ${i.groesse}`),...m.filter(i=>i.bestand<i.min).map(i=>i.name)];
-  const al=document.getElementById('alert');
-  if(lows.length){al.innerHTML='⚠ &nbsp;Nachbestellen: &nbsp;'+lows.join(' &nbsp;·&nbsp; ');al.classList.add('show')}
+  const al=document.getElementById('alertBar');
+  if(lows.length){al.innerHTML='⚠ &nbsp;Nachbestellen: '+lows.join(' · ');al.classList.add('show')}
   else al.classList.remove('show');
 }
 
-// ─── Filters ──────────────────────────────────────────────────────────────────
-function unique(arr,key){return[...new Set(arr.map(i=>i[key]))].sort()}
-function renderFilters(){
-  const fa=document.getElementById('filterA'),fb=document.getElementById('filterB');
-  if(tab==='textilien'){
-    fa.innerHTML=`<option value="">Alle Farben</option>`+unique(data.textilien,'farbe').map(v=>`<option ${fA===v?'selected':''}>${v}</option>`).join('');
-    fb.innerHTML=`<option value="">Alle Größen</option>`+['XS','S','M','L','XL','XXL','3XL'].map(v=>`<option ${fB===v?'selected':''}>${v}</option>`).join('');
-    fb.style.display='';
-  } else {
-    fa.innerHTML=`<option value="">Alle Typen</option>`+unique(data.material,'typ').map(v=>`<option ${fA===v?'selected':''}>${v}</option>`).join('');
-    fb.style.display='none';
-  }
-}
+// ── FILTERS ───────────────────────────────────────────────────────────────
+function unique(arr,key){return[...new Set(arr.map(i=>i[key]).filter(Boolean))].sort()}
 function getFiltered(){
   let items=[...data[tab]];
-  if(search) items=items.filter(i=>JSON.stringify(i).toLowerCase().includes(search.toLowerCase()));
-  if(tab==='textilien'){
-    if(fA) items=items.filter(i=>i.farbe===fA);
-    if(fB) items=items.filter(i=>i.groesse===fB);
-  } else {
-    if(fA) items=items.filter(i=>i.typ===fA);
-  }
+  if(search)items=items.filter(i=>JSON.stringify(i).toLowerCase().includes(search.toLowerCase()));
+  if(tab==='textilien'){if(fA)items=items.filter(i=>i.farbe===fA);if(fB)items=items.filter(i=>i.groesse===fB)}
+  else if(tab==='material'){if(fA)items=items.filter(i=>i.typ===fA)}
+  else if(tab==='accessoires'){if(fA)items=items.filter(i=>i.typ===fA)}
   return items;
 }
 
-// ─── Grid ─────────────────────────────────────────────────────────────────────
+// ── TAB CONTENT ───────────────────────────────────────────────────────────
+function renderTabContent(){
+  const tc=document.getElementById('tabContent');
+  if(tab==='reservationen'){tc.innerHTML=renderResTab();return}
+  tc.innerHTML=`
+    <div class="excel-bar">
+      <label class="btn" for="xlImport">⬆ Excel Import</label>
+      <input type="file" id="xlImport" accept=".xlsx,.xls,.csv">
+      <button class="btn" onclick="exportExcel()">⬇ Excel Export</button>
+    </div>
+    <div class="toolbar">
+      <input type="text" id="srch" placeholder="Suchen …" value="${search}">
+      <select id="fA"></select>
+      ${tab!=='material'?'<select id="fB"></select>':''}
+      <button class="btn btn-fill" id="addBtn">+ Neu</button>
+    </div>
+    <div class="gw"><div class="grid" id="grid"></div></div>`;
+  document.getElementById('xlImport').addEventListener('change',importExcel);
+  document.getElementById('srch').addEventListener('input',e=>{search=e.target.value;renderGrid()});
+  document.getElementById('fA').addEventListener('change',e=>{fA=e.target.value;renderGrid()});
+  const fb=document.getElementById('fB');
+  if(fb)fb.addEventListener('change',e=>{fB=e.target.value;renderGrid()});
+  document.getElementById('addBtn').addEventListener('click',openAdd);
+  renderFilters();renderGrid();
+}
+
+function renderFilters(){
+  const fa=document.getElementById('fA'),fb=document.getElementById('fB');
+  if(!fa)return;
+  if(tab==='textilien'){
+    fa.innerHTML=`<option value="">Alle Farben</option>`+unique(data.textilien,'farbe').map(v=>`<option ${fA===v?'selected':''}>${v}</option>`).join('');
+    if(fb)fb.innerHTML=`<option value="">Alle Größen</option>`+['XXS','XS','S','M','L','XL','XXL','3XL','onesize','3-4J','5-6J','7-8J','9-11J','12-18M','18-24M'].map(v=>`<option ${fB===v?'selected':''}>${v}</option>`).join('');
+  }else if(tab==='material'){
+    fa.innerHTML=`<option value="">Alle Typen</option>`+unique(data.material,'typ').map(v=>`<option ${fA===v?'selected':''}>${v}</option>`).join('');
+  }else if(tab==='accessoires'){
+    fa.innerHTML=`<option value="">Alle Typen</option>`+unique(data.accessoires,'typ').map(v=>`<option ${fA===v?'selected':''}>${v}</option>`).join('');
+  }
+}
+
 function renderGrid(){
   const items=getFiltered();
   const g=document.getElementById('grid');
-  if(!items.length){g.innerHTML='<div class="empty">Keine Einträge gefunden.</div>';return}
+  if(!g)return;
+  if(!items.length){g.innerHTML='<div class="empty">Keine Einträge.</div>';return}
   g.innerHTML=items.map(item=>{
     const pct=Math.min(100,Math.round(item.bestand/Math.max(item.min*2,1)*100));
-    const fill=item.bestand<item.min?'#b83232':'#2a5e42';
-    const cls=item.bestand<item.min?'stock-low':'stock-ok';
+    const low=item.bestand<item.min;
+    const fill=low?'#b83232':'#2a5e42';
+    const cls=low?'sr':'sg';
     if(tab==='textilien'){
-      const imgContent=item.img
-        ?`<img src="${item.img}" alt="${item.ss}" onerror="this.style.display='none'">`
-        :svgFor(item);
+      const imgH=item.img?`<img src="${item.img}" alt="" onerror="this.style.display='none'">`:svgFor(item);
       return `<div class="card" onclick="openEdit(${item.id})">
-        <div class="card-img">${imgContent}</div>
-        <div class="card-type">${item.cat}</div>
-        <div class="card-name">${item.ss}</div>
-        <div class="card-sku">${item.sku}</div>
-        <div class="card-tags">
-          <span class="tag"><span class="color-dot" style="background:${clr(item.farbe)}"></span>${item.farbe}</span>
-          <span class="tag tag-size">${item.groesse}</span>
+        <div class="card-img">${imgH}</div>
+        <div class="ctype">${item.cat}</div>
+        <div class="cname">${item.ss}</div>
+        ${item.sku?`<div class="csku">${item.sku}</div>`:''}
+        ${item.lagerort?`<div class="cloc">📍 ${item.lagerort}</div>`:''}
+        <div class="ctags">
+          <span class="tag"><span class="cdot" style="background:${clr(item.farbe)}"></span>${item.farbe}</span>
+          <span class="tag tag-s">${item.groesse}</span>
+          ${item.sample?'<span class="tag tag-sample">Sample</span>':''}
         </div>
-        <div class="card-stock">
-          <div><span class="stock-n ${cls}">${item.bestand}</span><span class="stock-unit">Stk</span></div>
-          ${item.bestand<item.min?'<span class="low-badge">Nachbestellen</span>':''}
-        </div>
-        <div class="stock-line"><div class="stock-fill" style="width:${pct}%;background:${fill}"></div></div>
+        ${item.notiz?`<div style="font-size:10px;color:var(--gD);margin-bottom:5px;font-style:italic">${item.notiz}</div>`:''}
+        <div class="cstock"><div><span class="snum ${cls}">${item.bestand}</span><span class="sunit">Stk</span></div>${low?'<span class="lbadge">Nachbest.</span>':''}</div>
+        <div class="sbar"><div class="sfill" style="width:${pct}%;background:${fill}"></div></div>
       </div>`;
-    } else {
-      const imgContent=item.img
-        ?`<img src="${item.img}" alt="${item.name}" onerror="this.style.display='none'">`
-        :(item.typ==='Verdünner'||item.typ==='Reiniger'||item.typ==='Emulsion'?SVG_FLASCHE():SVG_FARBDOSE());
+    }else if(tab==='accessoires'){
+      return `<div class="card" onclick="openEditAcc(${item.id})">
+        <div class="card-img">${SVG.totebag()}</div>
+        <div class="ctype">${item.typ}</div>
+        <div class="cname">${item.name}</div>
+        ${item.lagerort?`<div class="cloc">📍 ${item.lagerort}</div>`:''}
+        <div class="cstock"><div><span class="snum ${cls}">${item.bestand}</span><span class="sunit">Stk</span></div>${low?'<span class="lbadge">Nachbest.</span>':''}</div>
+        <div class="sbar"><div class="sfill" style="width:${pct}%;background:${fill}"></div></div>
+      </div>`;
+    }else{
+      const imgH=item.img?`<img src="${item.img}" alt="" onerror="this.style.display='none'">`:((item.typ==='Verdünner'||item.typ==='Reiniger'||item.typ==='Emulsion')?SVG.flasche():SVG.farbdose());
       return `<div class="card" onclick="openEdit(${item.id})">
-        <div class="card-img">${imgContent}</div>
-        <div class="card-type">${item.typ}</div>
-        <div class="card-name">${item.name}</div>
-        <div class="card-sku">${item.hersteller||'—'}</div>
-        <div class="card-tags"><span class="tag">${item.einheit}</span></div>
-        <div class="card-stock">
-          <div><span class="stock-n ${cls}">${item.bestand}</span><span class="stock-unit">${item.einheit}</span></div>
-          ${item.bestand<item.min?'<span class="low-badge">Nachbestellen</span>':''}
-        </div>
-        <div class="stock-line"><div class="stock-fill" style="width:${pct}%;background:${fill}"></div></div>
+        <div class="card-img">${imgH}</div>
+        <div class="ctype">${item.typ}</div>
+        <div class="cname">${item.name}</div>
+        <div class="csku">${item.hersteller||'—'}</div>
+        ${item.lagerort?`<div class="cloc">📍 ${item.lagerort}</div>`:''}
+        <div class="ctags"><span class="tag">${item.einheit}</span></div>
+        <div class="cstock"><div><span class="snum ${cls}">${item.bestand}</span><span class="sunit">${item.einheit}</span></div>${low?'<span class="lbadge">Nachbest.</span>':''}</div>
+        <div class="sbar"><div class="sfill" style="width:${pct}%;background:${fill}"></div></div>
       </div>`;
     }
   }).join('');
 }
 
-function render(){renderStats();renderFilters();renderGrid()}
+// ── RESERVATIONEN TAB ─────────────────────────────────────────────────────
+function renderResTab(){
+  const offen=data.reservationen.filter(r=>r.status==='offen');
+  const erledigt=data.reservationen.filter(r=>r.status==='erledigt');
+  let html=`<div class="toolbar-res"><button class="btn btn-fill" onclick="openAddRes()">+ Neuer Auftrag</button></div>`;
+  html+=`<div class="sec-hdr">Offene Aufträge (${offen.length})</div><div class="res-list">`;
+  if(!offen.length)html+=`<div class="res-empty">Keine offenen Aufträge.</div>`;
+  offen.forEach(r=>{
+    const st=checkStock(r);
+    let stockHtml='';
+    if(st){
+      const cls=st.ok===true?'':'st.ok==='partial'?'partial':'warn';
+      stockHtml=`<div class="res-stock ${st.ok===true?'':st.ok==='partial'?'partial':'warn'}">${st.msg}</div>`;
+    }
+    html+=`<div class="res-card">
+      <div class="res-head">
+        <div>
+          <div class="res-auftrag">${r.auftrag}</div>
+          ${r.artikel?`<div class="res-detail">${r.artikel}${r.menge?' · '+r.menge+' Stk':''}</div>`:''}
+          ${r.notiz?`<div class="res-detail" style="font-style:italic">${r.notiz}</div>`:''}
+          ${r.datum?`<div class="res-date">📅 ${fmtDate(r.datum)}</div>`:''}
+        </div>
+        <div class="res-actions">
+          <button class="btn btn-sm" onclick="openEditRes(${r.id})">✏</button>
+          <button class="btn btn-sm btn-green" onclick="erledigtRes(${r.id})">✓</button>
+        </div>
+      </div>
+      ${stockHtml}
+    </div>`;
+  });
+  html+=`</div>`;
+  if(erledigt.length){
+    html+=`<div class="sec-hdr">Erledigt (${erledigt.length})</div><div class="res-list">`;
+    erledigt.slice(-5).reverse().forEach(r=>{
+      html+=`<div class="res-card" style="opacity:.45">
+        <div class="res-head">
+          <div><div class="res-auftrag" style="text-decoration:line-through">${r.auftrag}</div><div class="res-detail">✓ erledigt</div></div>
+          <div class="res-actions"><button class="btn btn-sm btn-danger" onclick="deleteRes(${r.id})">✕</button></div>
+        </div>
+      </div>`;
+    });
+    html+=`</div>`;
+  }
+  return html;
+}
 
-// ─── Modal ────────────────────────────────────────────────────────────────────
-function openAdd(){editId=null;showModal()}
-function openEdit(id){editId=id;showModal()}
+function fmtDate(d){if(!d)return'—';try{return new Date(d).toLocaleDateString('de-CH',{day:'2-digit',month:'2-digit',year:'numeric'})}catch{return d}}
+function erledigtRes(id){const r=data.reservationen.find(x=>x.id===id);if(r)r.status='erledigt';save();renderAll()}
+function deleteRes(id){if(!confirm('Löschen?'))return;data.reservationen=data.reservationen.filter(x=>x.id!==id);save();renderAll()}
+
+function openAddRes(){editId=null;showResModal()}
+function openEditRes(id){editId=id;showResModal()}
+function showResModal(){
+  document.getElementById('overlay').classList.add('open');
+  const modal=document.getElementById('modal');
+  const isEdit=editId!==null;
+  const r=isEdit?data.reservationen.find(x=>x.id===editId):null;
+  const artOpts=[...new Set(data.textilien.map(i=>`${i.ss} ${i.farbe} ${i.groesse}`))];
+  modal.innerHTML=`
+    <div class="mhead"><h2>${isEdit?'Auftrag bearbeiten':'Neuer Auftrag'}</h2><button class="mclose" onclick="closeModal()">×</button></div>
+    <div class="mbody">
+      <div class="ff"><label>Kunde / Auftraggeber</label><input id="r_a" value="${r?r.auftrag:''}" placeholder="z.B. Ravi — Chimpy Festival"></div>
+      <div class="ff"><label>Artikel / Produkt</label>
+        <select id="r_art"><option value="">— wählen —</option>${artOpts.map(a=>`<option ${r&&r.artikel===a?'selected':''}>${a}</option>`).join('')}<option value="__c">Anderer Artikel …</option></select>
+        <div id="r_cw" style="margin-top:5px;${r&&r.artikel&&!artOpts.includes(r.artikel)?'':'display:none'}"><input id="r_c" value="${r&&r.artikel&&!artOpts.includes(r.artikel)?r.artikel:''}" placeholder="Artikel beschreiben"></div>
+      </div>
+      <div class="f2">
+        <div class="ff"><label>Menge (Stk)</label><input id="r_m" type="number" value="${r?r.menge:0}" min="0"></div>
+        <div class="ff"><label>Deadline</label><input id="r_d" type="date" value="${r?r.datum:''}"></div>
+      </div>
+      <div class="ff"><label>Notiz / Druckart</label><textarea id="r_n">${r?r.notiz:''}</textarea></div>
+      ${isEdit?`<button class="btn btn-danger" style="width:100%;margin-top:6px" onclick="deleteRes(${editId});closeModal()">Auftrag löschen</button>`:''}
+    </div>
+    <div class="mfoot">
+      <button class="btn" onclick="closeModal()">Abbrechen</button>
+      <button class="btn btn-fill" onclick="saveRes()">Speichern</button>
+    </div>`;
+  document.getElementById('r_art').addEventListener('change',e=>{
+    document.getElementById('r_cw').style.display=e.target.value==='__c'?'':'none';
+  });
+}
+function saveRes(){
+  const isEdit=editId!==null;
+  let art=document.getElementById('r_art').value;
+  if(art==='__c'){const c=document.getElementById('r_c');art=c?c.value||'Unbekannt':'Unbekannt';}
+  const obj={
+    id:isEdit?editId:nid.r++,
+    auftrag:document.getElementById('r_a').value||'Auftrag',
+    artikel:art,menge:parseInt(document.getElementById('r_m').value)||0,
+    datum:document.getElementById('r_d').value,
+    status:isEdit?data.reservationen.find(x=>x.id===editId).status:'offen',
+    notiz:document.getElementById('r_n').value,
+  };
+  if(isEdit){const i=data.reservationen.findIndex(x=>x.id===editId);data.reservationen[i]=obj}
+  else data.reservationen.push(obj);
+  save();closeModal();renderAll();
+}
+
+// ── ITEM MODAL ─────────────────────────────────────────────────────────────
+function openAdd(){editId=null;showItemModal()}
+function openEdit(id){editId=id;showItemModal()}
+function openEditAcc(id){editId=id;showAccModal()}
 function closeModal(){document.getElementById('overlay').classList.remove('open')}
 
-const COLOR_OPTIONS=Object.keys(COLORS).filter((_,i)=>i%2===0);
-
-function showModal(){
+const CLRKEYS=Object.keys(CLRS);
+function showItemModal(){
   document.getElementById('overlay').classList.add('open');
   const modal=document.getElementById('modal');
   const isEdit=editId!==null;
   const item=isEdit?data[tab].find(i=>i.id===editId):null;
-
   if(tab==='textilien'){
     modal.innerHTML=`
-      <div class="modal-head">
-        <h2>${isEdit?'Bestand bearbeiten':'Neuer Textil-Artikel'}</h2>
-        <button class="modal-close" onclick="closeModal()">×</button>
-      </div>
-      <div class="modal-body">
-        ${!isEdit?`<div class="form-field">
-          <label>Stanley/Stella Modell wählen</label>
-          <div class="ss-grid">${SS.map(p=>`
-            <div class="ss-item" id="ss_${p.sku}" onclick="pickSS('${p.name}','${p.sku}','${p.cat}','${p.sizes.join(',')}')">
-              <div class="ss-name">${p.name}</div>
-              <div class="ss-sku">${p.sku}</div>
-              <div class="ss-gsm">${p.gsm} · ${p.fit}</div>
-            </div>`).join('')}
-          </div>
-          <hr class="divider">
-        </div>`:''}
-        <div class="form-2col">
-          <div class="form-field"><label>Modell</label><input id="m_ss" value="${item?item.ss:''}" placeholder="Creator 2.0"></div>
-          <div class="form-field"><label>SKU</label><input id="m_sku" value="${item?item.sku:''}" placeholder="STTU755" style="font-family:monospace;font-size:12px"></div>
+      <div class="mhead"><h2>${isEdit?'Bestand bearbeiten':'Neuer Artikel'}</h2><button class="mclose" onclick="closeModal()">×</button></div>
+      <div class="mbody">
+        ${!isEdit?`<div class="ff"><label>Stanley/Stella Modell</label><div class="ss-grid">${SS.map(p=>`<div class="ssi" id="ssi_${p.sku}" onclick="pickSS('${p.name}','${p.sku}','${p.cat}','${p.sizes.join(',')}')"><div class="ssi-name">${p.name}</div><div class="ssi-sku">${p.sku}</div><div class="ssi-sub">${p.gsm}</div></div>`).join('')}</div><hr class="divider"></div>`:''}
+        <div class="f2">
+          <div class="ff"><label>Modell</label><input id="m_ss" value="${item?item.ss:''}" placeholder="Creator 2.0"></div>
+          <div class="ff"><label>SKU</label><input id="m_sku" value="${item?item.sku:''}" placeholder="STTU755" style="font-family:monospace;font-size:13px"></div>
         </div>
-        <div class="form-field"><label>Kategorie</label><input id="m_cat" value="${item?item.cat:''}" placeholder="T-Shirt Unisex"></div>
-        <div class="form-2col">
-          <div class="form-field"><label>Farbe</label>
-            <select id="m_farbe" onchange="syncColorDots()">${COLOR_OPTIONS.map(c=>`<option ${item&&item.farbe===c?'selected':''}>${c}</option>`).join('')}<option value="__custom">Andere …</option></select>
-            <div class="color-picker-row" id="colorDots">${COLOR_OPTIONS.map(c=>`<div class="cpick ${item&&item.farbe===c?'selected':''}" style="background:${clr(c)};border-color:${clr(c)==='#f0f0ec'?'#aaa':'transparent'}" title="${c}" onclick="pickColor('${c}')"></div>`).join('')}</div>
+        <div class="ff"><label>Kategorie</label><input id="m_cat" value="${item?item.cat:''}" placeholder="T-Shirt Unisex"></div>
+        <div class="f2">
+          <div class="ff"><label>Farbe</label>
+            <select id="m_f" onchange="syncDots()">${CLRKEYS.map(c=>`<option ${item&&item.farbe===c?'selected':''}>${c}</option>`).join('')}<option value="__c">Andere…</option></select>
+            <div class="cdots">${CLRKEYS.map(c=>`<div class="cpick ${item&&item.farbe===c?'sel':''}" style="background:${clr(c)}" title="${c}" onclick="pickClr('${c}')"></div>`).join('')}</div>
           </div>
-          <div class="form-field"><label>Größe</label>
-            <select id="m_groesse">${['XS','S','M','L','XL','XXL','3XL'].map(s=>`<option ${item&&item.groesse===s?'selected':''}>${s}</option>`).join('')}</select>
-          </div>
+          <div class="ff"><label>Größe</label><select id="m_gr">${['XXS','XS','S','M','L','XL','XXL','3XL','onesize','3-4J','5-6J','7-8J','9-11J','12-18M','18-24M'].map(s=>`<option ${item&&item.groesse===s?'selected':''}>${s}</option>`).join('')}</select></div>
         </div>
-        <div class="form-2col">
-          <div class="form-field"><label>Bestand (Stück)</label><input id="m_bestand" type="number" value="${item?item.bestand:0}" min="0"></div>
-          <div class="form-field"><label>Mindestbestand</label><input id="m_min" type="number" value="${item?item.min:5}" min="0"></div>
+        <div class="ff"><label>Lagerort</label><input id="m_loc" value="${item?item.lagerort:''}" placeholder="z.B. Regal A1, Ming José, Box 1"></div>
+        <div class="f2">
+          <div class="ff"><label>Bestand (Stk)</label><input id="m_b" type="number" value="${item?item.bestand:0}" min="0"></div>
+          <div class="ff"><label>Mindestbestand</label><input id="m_min" type="number" value="${item?item.min:3}" min="0"></div>
         </div>
-        <div class="form-field"><label>Foto-URL (optional)</label><input id="m_img" value="${item?item.img:''}" placeholder="https://…"></div>
-        <div class="form-field"><label>Notiz</label><textarea id="m_notiz">${item?item.notiz:''}</textarea></div>
+        <div class="ff"><label>Foto-URL (optional)</label><input id="m_img" value="${item?item.img:''}" placeholder="https://…" type="url"></div>
+        <div class="ff"><label>Notiz</label><textarea id="m_not">${item?item.notiz:''}</textarea></div>
+        <div class="ff"><label><input type="checkbox" id="m_smp" ${item&&item.sample?'checked':''}> Sample</label></div>
         ${isEdit?`<button class="btn btn-danger" style="width:100%;margin-top:6px" onclick="deleteItem()">Artikel löschen</button>`:''}
       </div>
-      <div class="modal-foot">
+      <div class="mfoot">
         <button class="btn" onclick="closeModal()">Abbrechen</button>
         <button class="btn btn-fill" onclick="saveItem()">Speichern</button>
       </div>`;
-  } else {
+  }else{
     modal.innerHTML=`
-      <div class="modal-head">
-        <h2>${isEdit?'Material bearbeiten':'Neues Material'}</h2>
-        <button class="modal-close" onclick="closeModal()">×</button>
-      </div>
-      <div class="modal-body">
-        <div class="form-field"><label>Bezeichnung</label><input id="m_name" value="${item?item.name:''}" placeholder="z.B. Plastisol Weiß"></div>
-        <div class="form-2col">
-          <div class="form-field"><label>Typ</label>
-            <select id="m_typ">${['Siebdruckfarbe','Verdünner','Reiniger','Emulsion','Klischee','Sieb','Sonstiges'].map(s=>`<option ${item&&item.typ===s?'selected':''}>${s}</option>`).join('')}</select>
-          </div>
-          <div class="form-field"><label>Einheit</label>
-            <select id="m_einheit">${['kg','l','Stück','ml'].map(s=>`<option ${item&&item.einheit===s?'selected':''}>${s}</option>`).join('')}</select>
-          </div>
+      <div class="mhead"><h2>${isEdit?'Material bearbeiten':'Neues Material'}</h2><button class="mclose" onclick="closeModal()">×</button></div>
+      <div class="mbody">
+        <div class="ff"><label>Bezeichnung</label><input id="m_ss" value="${item?item.name:''}" placeholder="z.B. Plastisol Weiß"></div>
+        <div class="f2">
+          <div class="ff"><label>Typ</label><select id="m_cat">${['Siebdruckfarbe','Verdünner','Reiniger','Emulsion','Klischee','Sieb','Sonstiges'].map(s=>`<option ${item&&item.typ===s?'selected':''}>${s}</option>`).join('')}</select></div>
+          <div class="ff"><label>Einheit</label><select id="m_gr">${['kg','l','Stück','ml'].map(s=>`<option ${item&&item.einheit===s?'selected':''}>${s}</option>`).join('')}</select></div>
         </div>
-        <div class="form-field"><label>Hersteller</label><input id="m_hersteller" value="${item?item.hersteller:''}" placeholder="z.B. Murakami"></div>
-        <div class="form-2col">
-          <div class="form-field"><label>Bestand</label><input id="m_bestand" type="number" step="0.1" value="${item?item.bestand:0}"></div>
-          <div class="form-field"><label>Mindestbestand</label><input id="m_min" type="number" step="0.1" value="${item?item.min:1}"></div>
+        <div class="ff"><label>Hersteller</label><input id="m_f" value="${item?item.hersteller:''}" placeholder="z.B. Murakami"></div>
+        <div class="ff"><label>Lagerort</label><input id="m_loc" value="${item?item.lagerort:''}" placeholder="z.B. Schrank G1"></div>
+        <div class="f2">
+          <div class="ff"><label>Bestand</label><input id="m_b" type="number" step="0.1" value="${item?item.bestand:0}"></div>
+          <div class="ff"><label>Mindestbestand</label><input id="m_min" type="number" step="0.1" value="${item?item.min:1}"></div>
         </div>
-        <div class="form-field"><label>Foto-URL (optional)</label><input id="m_img" value="${item?item.img:''}" placeholder="https://…"></div>
-        <div class="form-field"><label>Notiz</label><textarea id="m_notiz">${item?item.notiz:''}</textarea></div>
-        ${isEdit?`<button class="btn btn-danger" style="width:100%;margin-top:6px" onclick="deleteItem()">Artikel löschen</button>`:''}
+        <div class="ff"><label>Foto-URL</label><input id="m_img" value="${item?item.img:''}" placeholder="https://…" type="url"></div>
+        <div class="ff"><label>Notiz</label><textarea id="m_not">${item?item.notiz:''}</textarea></div>
+        ${isEdit?`<button class="btn btn-danger" style="width:100%;margin-top:6px" onclick="deleteItem()">Löschen</button>`:''}
       </div>
-      <div class="modal-foot">
+      <div class="mfoot">
         <button class="btn" onclick="closeModal()">Abbrechen</button>
         <button class="btn btn-fill" onclick="saveItem()">Speichern</button>
       </div>`;
   }
+}
+
+function showAccModal(){
+  document.getElementById('overlay').classList.add('open');
+  const modal=document.getElementById('modal');
+  const isEdit=editId!==null;
+  const item=isEdit?data.accessoires.find(i=>i.id===editId):null;
+  modal.innerHTML=`
+    <div class="mhead"><h2>${isEdit?'Bearbeiten':'Neuer Artikel'}</h2><button class="mclose" onclick="closeModal()">×</button></div>
+    <div class="mbody">
+      <div class="ff"><label>Name</label><input id="m_ss" value="${item?item.name:''}" placeholder="z.B. Light Tote Bag Sky Blue"></div>
+      <div class="ff"><label>Typ</label><select id="m_cat">${['Tote Bag','Shopping Bag','Accessoire','Sonstiges'].map(s=>`<option ${item&&item.typ===s?'selected':''}>${s}</option>`).join('')}</select></div>
+      <div class="ff"><label>Lagerort</label><input id="m_loc" value="${item?item.lagerort:''}" placeholder="z.B. Regal B1"></div>
+      <div class="f2">
+        <div class="ff"><label>Bestand (Stk)</label><input id="m_b" type="number" value="${item?item.bestand:0}" min="0"></div>
+        <div class="ff"><label>Mindestbestand</label><input id="m_min" type="number" value="${item?item.min:3}" min="0"></div>
+      </div>
+      <div class="ff"><label>Notiz</label><textarea id="m_not">${item?item.notiz:''}</textarea></div>
+      ${isEdit?`<button class="btn btn-danger" style="width:100%;margin-top:6px" onclick="deleteItem()">Löschen</button>`:''}
+    </div>
+    <div class="mfoot">
+      <button class="btn" onclick="closeModal()">Abbrechen</button>
+      <button class="btn btn-fill" onclick="saveAcc()">Speichern</button>
+    </div>`;
+}
+
+function saveAcc(){
+  const isEdit=editId!==null;
+  const obj={
+    id:isEdit?editId:nid.a++,
+    name:gv('m_ss')||'Unbekannt',typ:gv('m_cat'),lagerort:gv('m_loc'),
+    bestand:parseFloat(gv('m_b'))||0,min:parseFloat(gv('m_min'))||3,
+    img:'',notiz:gv('m_not'),
+  };
+  if(isEdit){const i=data.accessoires.findIndex(x=>x.id===editId);data.accessoires[i]=obj}
+  else data.accessoires.push(obj);
+  save();closeModal();renderAll();
 }
 
 function pickSS(name,sku,cat,sizes){
-  document.querySelectorAll('.ss-item').forEach(x=>x.classList.remove('selected'));
-  const el=document.getElementById('ss_'+sku);
-  if(el) el.classList.add('selected');
-  const mss=document.getElementById('m_ss');
-  const msku=document.getElementById('m_sku');
-  const mcat=document.getElementById('m_cat');
-  const mg=document.getElementById('m_groesse');
-  if(mss) mss.value=name;
-  if(msku) msku.value=sku;
-  if(mcat) mcat.value=cat;
-  if(mg){mg.innerHTML=sizes.split(',').map(s=>`<option>${s}</option>`).join('')}
+  document.querySelectorAll('.ssi').forEach(x=>x.classList.remove('sel'));
+  const el=document.getElementById('ssi_'+sku);if(el)el.classList.add('sel');
+  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v};
+  set('m_ss',name);set('m_sku',sku);set('m_cat',cat);
+  const gr=document.getElementById('m_gr');
+  if(gr)gr.innerHTML=sizes.split(',').map(s=>`<option>${s}</option>`).join('');
 }
-
-function pickColor(c){
-  const sel=document.getElementById('m_farbe');
-  if(sel){
-    for(let i=0;i<sel.options.length;i++){if(sel.options[i].value===c){sel.selectedIndex=i;break}}
-  }
-  document.querySelectorAll('.cpick').forEach(d=>{d.classList.toggle('selected',d.title===c)});
+function pickClr(c){
+  const sel=document.getElementById('m_f');
+  if(sel){for(let i=0;i<sel.options.length;i++){if(sel.options[i].value===c){sel.selectedIndex=i;break}}}
+  document.querySelectorAll('.cpick').forEach(d=>d.classList.toggle('sel',d.title===c));
 }
-
-function syncColorDots(){
-  const sel=document.getElementById('m_farbe');
-  if(!sel) return;
-  const v=sel.value;
-  document.querySelectorAll('.cpick').forEach(d=>d.classList.toggle('selected',d.title===v));
+function syncDots(){
+  const v=document.getElementById('m_f')?.value;
+  document.querySelectorAll('.cpick').forEach(d=>d.classList.toggle('sel',d.title===v));
 }
+const gv=id=>{const e=document.getElementById(id);return e?e.value:''};
 
 function saveItem(){
   const isEdit=editId!==null;
   if(tab==='textilien'){
-    const farbe=document.getElementById('m_farbe').value==='__custom'
-      ?(prompt('Farbe eingeben:')||'Unbekannt')
-      :document.getElementById('m_farbe').value;
-    const obj={
-      id:isEdit?editId:nextId.textilien++,
-      ss:document.getElementById('m_ss').value||'Unbekannt',
-      sku:document.getElementById('m_sku').value||'',
-      cat:document.getElementById('m_cat').value||'T-Shirt',
-      farbe,
-      groesse:document.getElementById('m_groesse').value,
-      bestand:parseFloat(document.getElementById('m_bestand').value)||0,
-      min:parseFloat(document.getElementById('m_min').value)||5,
-      img:document.getElementById('m_img').value.trim(),
-      notiz:document.getElementById('m_notiz').value,
-    };
+    let farbe=gv('m_f');if(farbe==='__c')farbe=prompt('Farbe:')||'Unbekannt';
+    const smp=document.getElementById('m_smp');
+    const obj={id:isEdit?editId:nid.t++,ss:gv('m_ss')||'?',sku:gv('m_sku'),cat:gv('m_cat')||'T-Shirt',
+      farbe,groesse:gv('m_gr'),lagerort:gv('m_loc'),
+      bestand:parseFloat(gv('m_b'))||0,min:parseFloat(gv('m_min'))||3,
+      img:gv('m_img').trim(),notiz:gv('m_not'),sample:smp&&smp.checked?1:0};
     if(isEdit){const i=data.textilien.findIndex(x=>x.id===editId);data.textilien[i]=obj}
     else data.textilien.push(obj);
-  } else {
-    const obj={
-      id:isEdit?editId:nextId.material++,
-      name:document.getElementById('m_name').value||'Unbekannt',
-      typ:document.getElementById('m_typ').value,
-      hersteller:document.getElementById('m_hersteller').value,
-      einheit:document.getElementById('m_einheit').value,
-      bestand:parseFloat(document.getElementById('m_bestand').value)||0,
-      min:parseFloat(document.getElementById('m_min').value)||1,
-      img:document.getElementById('m_img').value.trim(),
-      notiz:document.getElementById('m_notiz').value,
-    };
+  }else{
+    const obj={id:isEdit?editId:nid.m++,name:gv('m_ss')||'?',typ:gv('m_cat'),hersteller:gv('m_f'),
+      einheit:gv('m_gr'),lagerort:gv('m_loc'),
+      bestand:parseFloat(gv('m_b'))||0,min:parseFloat(gv('m_min'))||1,
+      img:gv('m_img').trim(),notiz:gv('m_not')};
     if(isEdit){const i=data.material.findIndex(x=>x.id===editId);data.material[i]=obj}
     else data.material.push(obj);
   }
-  save();closeModal();render();
+  save();closeModal();renderAll();
 }
-
 function deleteItem(){
-  if(!confirm('Artikel wirklich löschen?')) return;
-  if(tab==='textilien') data.textilien=data.textilien.filter(i=>i.id!==editId);
-  else data.material=data.material.filter(i=>i.id!==editId);
-  save();closeModal();render();
+  if(!confirm('Löschen?'))return;
+  if(tab==='textilien')data.textilien=data.textilien.filter(i=>i.id!==editId);
+  else if(tab==='material')data.material=data.material.filter(i=>i.id!==editId);
+  else if(tab==='accessoires')data.accessoires=data.accessoires.filter(i=>i.id!==editId);
+  save();closeModal();renderAll();
 }
 
-// ─── Events ───────────────────────────────────────────────────────────────────
-document.querySelectorAll('.nav-tab').forEach(t=>t.addEventListener('click',()=>{
-  document.querySelectorAll('.nav-tab').forEach(x=>x.classList.remove('active'));
-  t.classList.add('active');tab=t.dataset.tab;fA='';fB='';search='';
-  document.getElementById('filterA').value='';
-  document.getElementById('filterB').value='';
-  document.getElementById('searchInput').value='';
-  render();
+// ── EXCEL ─────────────────────────────────────────────────────────────────
+function importExcel(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try{
+      const wb=XLSX.read(ev.target.result,{type:'array'});
+      const ws=wb.Sheets[wb.SheetNames[0]];
+      const rows=XLSX.utils.sheet_to_json(ws,{defval:''});
+      if(!rows.length){alert('Keine Daten.');return}
+      let imp=0;
+      rows.forEach(row=>{
+        const k=Object.keys(row);
+        const get=ns=>{for(const n of ns){const f=k.find(x=>x.toLowerCase()===n);if(f&&row[f]!==''&&row[f]!==undefined)return String(row[f]);}return ''};
+        if(tab==='textilien'){
+          const b=parseFloat(get(['bestand','menge','stock','qty','anzahl']))||0;
+          if(b===0)return;
+          data.textilien.push({id:nid.t++,
+            ss:get(['modell','produkt','name','ss','model'])||'Import',
+            sku:get(['sku','artikelnummer']),cat:get(['kategorie','category','typ'])||'T-Shirt',
+            farbe:get(['farbe','color','colour']),groesse:get(['grösse','groesse','größe','size','gr']),
+            lagerort:get(['lagerort','ort','regal','place','location']),
+            bestand:b,min:parseFloat(get(['mindest','min','minimum']))||3,
+            img:get(['bild','foto','image','img']).trim(),notiz:get(['notiz','note','notes','bemerkung']),sample:0});imp++;
+        }else{
+          data.material.push({id:nid.m++,
+            name:get(['name','bezeichnung','produkt'])||'Import',
+            typ:get(['typ','type','kategorie'])||'Sonstiges',
+            hersteller:get(['hersteller','brand','marke']),
+            einheit:get(['einheit','unit'])||'kg',
+            lagerort:get(['lagerort','ort']),
+            bestand:parseFloat(get(['bestand','menge','stock','qty']))||0,
+            min:parseFloat(get(['mindest','min']))||1,
+            img:'',notiz:get(['notiz','note'])});imp++;
+        }
+      });
+      save();renderAll();alert(`✓ ${imp} Artikel importiert!`);
+    }catch(err){alert('Fehler: '+err.message)}
+    e.target.value='';
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function exportExcel(){
+  const wb=XLSX.utils.book_new();
+  const tRows=data.textilien.map(i=>({'Modell':i.ss,'SKU':i.sku,'Kategorie':i.cat,'Farbe':i.farbe,'Grösse':i.groesse,'Lagerort':i.lagerort,'Bestand':i.bestand,'Mindestbestand':i.min,'Sample':i.sample?'Ja':'','Notiz':i.notiz}));
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(tRows),'Textilien');
+  const aRows=data.accessoires.map(i=>({'Name':i.name,'Typ':i.typ,'Lagerort':i.lagerort,'Bestand':i.bestand,'Mindestbestand':i.min,'Notiz':i.notiz}));
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(aRows),'Bags & Accessoires');
+  const mRows=data.material.map(i=>({'Name':i.name,'Typ':i.typ,'Hersteller':i.hersteller,'Einheit':i.einheit,'Lagerort':i.lagerort,'Bestand':i.bestand,'Mindestbestand':i.min,'Notiz':i.notiz}));
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(mRows),'Material');
+  const rRows=data.reservationen.map(r=>({'Auftrag':r.auftrag,'Artikel':r.artikel,'Menge':r.menge,'Deadline':r.datum,'Status':r.status,'Notiz':r.notiz}));
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rRows),'Aufträge');
+  XLSX.writeFile(wb,`StudiodeMacedo_Lager_${new Date().toISOString().slice(0,10)}.xlsx`);
+}
+
+// ── EVENTS ────────────────────────────────────────────────────────────────
+document.querySelectorAll('.nt').forEach(t=>t.addEventListener('click',()=>{
+  document.querySelectorAll('.nt').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');tab=t.dataset.tab;fA='';fB='';search='';renderAll();
 }));
-document.getElementById('searchInput').addEventListener('input',e=>{search=e.target.value;renderGrid()});
-document.getElementById('filterA').addEventListener('change',e=>{fA=e.target.value;renderGrid()});
-document.getElementById('filterB').addEventListener('change',e=>{fB=e.target.value;renderGrid()});
-document.getElementById('addBtn').addEventListener('click',openAdd);
 document.getElementById('overlay').addEventListener('click',e=>{if(e.target===document.getElementById('overlay'))closeModal()});
 
-// ─── Init ────────────────────────────────────────────────────────────────────
-document.getElementById('headerDate').textContent=new Date().toLocaleDateString('de-CH',{day:'2-digit',month:'2-digit',year:'numeric'});
-load();
-render();
+document.getElementById('hdrDate').textContent=new Date().toLocaleDateString('de-CH',{day:'2-digit',month:'2-digit',year:'numeric'});
+load();renderAll();
 </script>
 </body>
 </html>
